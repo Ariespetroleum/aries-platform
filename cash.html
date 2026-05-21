@@ -133,6 +133,9 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 </div>
 
 <script>
+// ── 唯一需要修改的地方：把 SHEET_URL 放在顶部 ──
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
+
 let station = localStorage.getItem('ap_station') || '';
 let lang = localStorage.getItem('ap_lang') || 'en';
 
@@ -343,8 +346,6 @@ function submitForm(){
   };
   document.getElementById('loading-text').textContent=L.submitting;
   document.getElementById('loadingOverlay').classList.add('show');
-  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
-  if(!SHEET_URL){ setTimeout(()=>onSuccess(),350); return; }
   fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
     .then(()=>onSuccess()).catch(()=>onSuccess());
 }
