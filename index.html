@@ -121,9 +121,7 @@ body {
 
 .confirm-heading span,
 .station-heading span,
-.menu-greeting span {
-  color: var(--accent2);
-}
+.menu-greeting span { color: var(--accent2); }
 
 .confirm-card {
   background: var(--surface);
@@ -329,8 +327,6 @@ body {
   transform: translateY(-2px);
 }
 
-.menu-card.wide { grid-column: 1 / -1; }
-
 .card-stripe {
   position: absolute;
   top: 0;
@@ -345,7 +341,6 @@ body {
 .stripe-orange { background: linear-gradient(90deg, var(--warn), transparent); }
 .stripe-blue { background: linear-gradient(90deg, var(--accent2), transparent); }
 .stripe-purple { background: linear-gradient(90deg, var(--purple), transparent); }
-.stripe-gray { background: linear-gradient(90deg, var(--muted), transparent); }
 
 .card-icon {
   font-size: 24px;
@@ -389,7 +384,7 @@ body {
   border: 1px solid rgba(248,113,113,.2);
 }
 
-.badge-mgr {
+.badge-ops {
   background: rgba(167,139,250,.1);
   color: var(--purple);
   border: 1px solid rgba(167,139,250,.2);
@@ -578,7 +573,7 @@ body {
     <div class="menu-grid">
       <div class="menu-card" onclick="go('maintenance.html')">
         <div class="card-stripe stripe-orange"></div>
-        <span class="card-badge badge-mgr" id="b-o1"></span>
+        <span class="card-badge badge-ops" id="b-o1"></span>
         <span class="card-icon">🛠️</span>
         <div class="card-title" id="c-maint-t"></div>
         <div class="card-sub" id="c-maint-s"></div>
@@ -586,7 +581,7 @@ body {
 
       <div class="menu-card" onclick="go('roster.html')">
         <div class="card-stripe stripe-purple"></div>
-        <span class="card-badge badge-mgr" id="b-o2"></span>
+        <span class="card-badge badge-ops" id="b-o2"></span>
         <span class="card-icon">📅</span>
         <div class="card-title" id="c-roster-t"></div>
         <div class="card-sub" id="c-roster-s"></div>
@@ -599,6 +594,8 @@ body {
 <div class="footer" id="footer-txt"></div>
 
 <script>
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
+
 const STATIONS = [
   { name:'Sinopec Frankston', loc:'Frankston, VIC', cls:'dot-sinopec', icon:'⛽' },
   { name:'Sinopec Thomastown', loc:'Thomastown, VIC', cls:'dot-sinopec', icon:'⛽' },
@@ -631,6 +628,7 @@ const STRINGS = {
     greet: { morning:'morning', afternoon:'afternoon', evening:'evening' },
     maintenanceAlert: 'Maintenance In Progress',
     maintenanceAlertClick: 'Tap here to complete final record',
+    maintenanceSyncFail: 'Could not sync maintenance status. Local reminder may still appear.',
     cards: {
       temp: { t:'Temperature Log', s:'Morning / Afternoon / Night' },
       cig: { t:'Cigarette Stock', s:'End of shift count' },
@@ -665,6 +663,7 @@ const STRINGS = {
     greet: { morning:'', afternoon:'', evening:'' },
     maintenanceAlert: '维修仍在进行中',
     maintenanceAlertClick: '点击这里完成最终登记',
+    maintenanceSyncFail: '无法同步维修状态，可能只显示本机提醒。',
     cards: {
       temp: { t:'温度记录', s:'早班 / 午班 / 夜班' },
       cig: { t:'香烟库存盘点', s:'班次结束时填写' },
@@ -682,10 +681,9 @@ const STRINGS = {
 
 let lang = localStorage.getItem('ap_lang') || 'en';
 let station = localStorage.getItem('ap_station') || '';
+let openMaintenanceJobs = [];
 
-function t() {
-  return STRINGS[lang];
-}
+function t() { return STRINGS[lang]; }
 
 function stationData(name) {
   return STATIONS.find(s => s.name === name) || null;
@@ -795,10 +793,12 @@ function selectStation(name) {
   localStorage.setItem('ap_station', name);
   applyLang();
   showScreen('menu');
+  loadOpenMaintenance();
 }
 
 function confirmStation() {
   showScreen('menu');
+  loadOpenMaintenance();
 }
 
 function go(page) {
@@ -827,7 +827,32 @@ function updateDateGreeting() {
   document.getElementById('m-greeting').innerHTML = t().greeting(t().greet[g]);
 }
 
-function getOpenMaintenanceJobs() {
+async function loadOpenMaintenance() {
+  if (!station || !WEB_APP_URL) {
+    openMaintenanceJobs = getLocalOpenMaintenanceJobs();
+    renderMaintenanceAlerts();
+    return;
+  }
+
+  try {
+    const url = `${WEB_APP_URL}?action=getOpenMaintenance&station=${encodeURIComponent(station)}&t=${Date.now()}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (data && data.success && Array.isArray(data.jobs)) {
+      openMaintenanceJobs = data.jobs;
+    } else {
+      openMaintenanceJobs = getLocalOpenMaintenanceJobs();
+    }
+
+  } catch (e) {
+    openMaintenanceJobs = getLocalOpenMaintenanceJobs();
+  }
+
+  renderMaintenanceAlerts();
+}
+
+function getLocalOpenMaintenanceJobs() {
   if (!station) return [];
 
   const jobs = [];
@@ -852,7 +877,7 @@ function renderMaintenanceAlerts() {
   const box = document.getElementById('maintenance-alerts');
   if (!box) return;
 
-  const jobs = getOpenMaintenanceJobs();
+  const jobs = openMaintenanceJobs || [];
   const s = t();
 
   if (!jobs.length) {
@@ -869,12 +894,12 @@ function renderMaintenanceAlerts() {
 
       <div class="maintenance-alert-body">
         <div>
-          <strong>${escapeHtml(job.companyName || 'Contractor')}</strong>
-          — ${escapeHtml(job.equipmentDisplay || job.equipment || 'Equipment')}
+          <strong>${escapeHtml(job.companyName || job.CompanyName || 'Contractor')}</strong>
+          — ${escapeHtml(job.equipmentDisplay || job.EquipmentDisplay || job.equipment || job.Equipment || 'Equipment')}
         </div>
 
         <div class="maintenance-alert-time">
-          Arrived ${escapeHtml(job.arrivalTime || '--:--')}
+          Arrived ${escapeHtml(job.arrivalTime || job.ArrivalTime || '--:--')}
         </div>
 
         <div class="maintenance-alert-time">
@@ -905,9 +930,16 @@ applyLang();
 
 if (station) {
   showScreen('confirm');
+  loadOpenMaintenance();
 } else {
   showScreen('station');
 }
+
+setInterval(() => {
+  if (station) {
+    loadOpenMaintenance();
+  }
+}, 60000);
 </script>
 
 </body>
