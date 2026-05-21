@@ -10,631 +10,86 @@
 
 <style>
 :root{
-  --bg:#0f1117;
-  --surface:#181c25;
-  --surface2:#1f2433;
-  --border:#2a3044;
-  --border2:#353f58;
-  --accent:#4ade80;
-  --accent2:#22d3ee;
-  --warn:#fb923c;
-  --danger:#f87171;
-  --purple:#a78bfa;
-  --text:#e8eaf0;
-  --muted:#7a8299;
-  --label:#a0aabb;
-  --mono:'DM Mono',monospace;
-  --sans:'Sora',sans-serif;
+  --bg:#0f1117;--surface:#181c25;--surface2:#1f2433;--border:#2a3044;--border2:#353f58;
+  --accent:#4ade80;--accent2:#22d3ee;--warn:#fb923c;--danger:#f87171;--purple:#a78bfa;
+  --text:#e8eaf0;--muted:#7a8299;--label:#a0aabb;
+  --mono:'DM Mono',monospace;--sans:'Sora',sans-serif;
 }
-
 *{box-sizing:border-box;margin:0;padding:0}
-
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:var(--sans);
-  font-size:14px;
-  min-height:100vh;
-  padding-bottom:56px;
-}
-
-.header{
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:13px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:100;
-}
-
-.header-left{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.back-btn{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  color:var(--muted);
-  font-size:13px;
-  cursor:pointer;
-  padding:4px 10px 4px 0;
-  border-right:1px solid var(--border);
-  margin-right:2px;
-  white-space:nowrap;
-}
-
-.back-arrow{font-size:15px}
-
-.back-label{
-  font-family:var(--mono);
-  font-size:11px;
-  letter-spacing:.04em;
-}
-
-.header-title{
-  font-size:13px;
-  font-weight:600;
-}
-
-.header-sub{
-  font-size:10px;
-  color:var(--muted);
-  font-family:var(--mono);
-  margin-top:1px;
-}
-
-.lang-toggle{
-  display:flex;
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:6px;
-  overflow:hidden;
-}
-
-.lang-btn{
-  padding:4px 9px;
-  font-family:var(--mono);
-  font-size:11px;
-  font-weight:500;
-  color:var(--muted);
-  cursor:pointer;
-  border:none;
-  background:transparent;
-}
-
-.lang-btn.active{
-  background:var(--border2);
-  color:var(--text);
-}
-
-.no-station{
-  display:none;
-  background:rgba(248,113,113,.08);
-  border-bottom:1px solid rgba(248,113,113,.3);
-  padding:12px 16px;
-  text-align:center;
-}
-
-.no-station.show{display:block}
-
-.no-station-msg{
-  font-size:13px;
-  color:var(--danger);
-  margin-bottom:8px;
-}
-
-.no-station-link{
-  display:inline-block;
-  background:var(--danger);
-  color:#1a0000;
-  font-size:12px;
-  font-weight:600;
-  padding:7px 16px;
-  border-radius:7px;
-  text-decoration:none;
-}
-
-.station-bar{
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  padding:8px 16px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.station-dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--accent2);
-  box-shadow:0 0 6px var(--accent2);
-}
-
-.station-name{
-  font-family:var(--mono);
-  font-size:11px;
-  color:var(--label);
-}
-
-.station-name span{
-  color:var(--text);
-  font-weight:600;
-}
-
-.badge{
-  margin-left:auto;
-  font-family:var(--mono);
-  font-size:9px;
-  font-weight:600;
-  letter-spacing:.08em;
-  padding:2px 7px;
-  border-radius:4px;
-  background:rgba(34,211,238,.1);
-  color:var(--accent2);
-  border:1px solid rgba(34,211,238,.2);
-}
-
-.container{
-  max-width:680px;
-  margin:0 auto;
-  padding:18px 16px;
-}
-
-.hero{
-  margin-bottom:16px;
-}
-
-.eyebrow{
-  font-family:var(--mono);
-  font-size:10px;
-  color:var(--muted);
-  letter-spacing:.12em;
-  text-transform:uppercase;
-  margin-bottom:6px;
-}
-
-.title{
-  font-size:22px;
-  font-weight:700;
-  line-height:1.3;
-}
-
-.title span{
-  color:var(--accent2);
-}
-
-.sub{
-  margin-top:6px;
-  font-size:12px;
-  color:var(--muted);
-  line-height:1.5;
-}
-
-.week-nav{
-  display:flex;
-  gap:8px;
-  margin:14px 0;
-}
-
-.week-btn{
-  flex:1;
-  border:none;
-  border-radius:9px;
-  background:var(--surface2);
-  color:var(--label);
-  border:1px solid var(--border);
-  padding:10px;
-  font-family:var(--mono);
-  font-size:11px;
-  cursor:pointer;
-}
-
-.week-btn.primary{
-  background:rgba(34,211,238,.1);
-  color:var(--accent2);
-  border-color:rgba(34,211,238,.25);
-}
-
-.manager-strip{
-  background:rgba(167,139,250,.08);
-  border:1px solid rgba(167,139,250,.25);
-  border-radius:12px;
-  padding:12px;
-  margin-bottom:16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.manager-strip-left{
-  min-width:0;
-}
-
-.manager-strip-title{
-  font-size:13px;
-  font-weight:700;
-  color:var(--purple);
-}
-
-.manager-strip-sub{
-  font-size:11px;
-  color:var(--muted);
-  margin-top:3px;
-  line-height:1.4;
-}
-
-.small-btn{
-  border:none;
-  border-radius:8px;
-  background:var(--surface2);
-  color:var(--label);
-  border:1px solid var(--border);
-  padding:8px 11px;
-  font-family:var(--mono);
-  font-size:11px;
-  cursor:pointer;
-  white-space:nowrap;
-}
-
-.small-btn.primary{
-  background:var(--purple);
-  color:#16091f;
-  border-color:var(--purple);
-  font-weight:700;
-}
-
-.small-btn.danger{
-  background:rgba(248,113,113,.1);
-  color:var(--danger);
-  border-color:rgba(248,113,113,.25);
-}
-
-.day-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:13px;
-  overflow:hidden;
-  margin-bottom:12px;
-}
-
-.day-header{
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  padding:11px 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.day-name{
-  font-size:14px;
-  font-weight:700;
-}
-
-.day-date{
-  font-family:var(--mono);
-  font-size:10px;
-  color:var(--muted);
-}
-
-.shift-list{
-  padding:10px;
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.shift-card{
-  background:rgba(255,255,255,.025);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:11px;
-}
-
-.shift-top{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:8px;
-}
-
-.shift-name{
-  font-size:13px;
-  font-weight:700;
-}
-
-.shift-time{
-  font-family:var(--mono);
-  font-size:11px;
-  color:var(--accent2);
-  margin-top:3px;
-}
-
-.staff-name{
-  font-size:14px;
-  font-weight:700;
-  color:var(--accent);
-}
-
-.role{
-  font-size:11px;
-  color:var(--muted);
-  margin-top:3px;
-}
-
-.shift-notes{
-  font-size:11px;
-  color:var(--label);
-  line-height:1.5;
-  border-top:1px solid var(--border);
-  padding-top:8px;
-  margin-top:8px;
-}
-
-.empty{
-  padding:14px;
-  font-size:12px;
-  color:var(--muted);
-  text-align:center;
-}
-
-.admin-panel{
-  display:none;
-  margin-top:18px;
-}
-
-.admin-panel.show{
-  display:block;
-}
-
-.section{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:12px;
-  overflow:hidden;
-  margin-bottom:14px;
-}
-
-.section-header{
-  padding:10px 14px;
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.section-title{
-  font-size:11px;
-  font-family:var(--mono);
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:var(--label);
-  font-weight:700;
-}
-
-.section-body{
-  padding:14px;
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.field.full{
-  grid-column:1/-1;
-}
-
-.field label{
-  display:block;
-  font-size:10px;
-  color:var(--muted);
-  letter-spacing:.07em;
-  text-transform:uppercase;
-  margin-bottom:5px;
-  font-family:var(--mono);
-}
-
-.field input,
-.field select,
-.field textarea{
-  width:100%;
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:8px;
-  color:var(--text);
-  font-family:var(--sans);
-  font-size:13px;
-  padding:10px 12px;
-  outline:none;
-}
-
-.field textarea{
-  resize:vertical;
-  min-height:70px;
-  line-height:1.5;
-}
-
-.field select option{
-  background:#1f2433;
-}
-
-.actions{
-  display:flex;
-  gap:10px;
-  margin-top:12px;
-}
-
-.btn{
-  width:100%;
-  border:none;
-  border-radius:10px;
-  font-family:var(--sans);
-  font-size:14px;
-  font-weight:700;
-  padding:13px;
-  cursor:pointer;
-}
-
-.btn-primary{
-  background:var(--accent2);
-  color:#06171a;
-}
-
-.btn-secondary{
-  background:var(--surface2);
-  color:var(--label);
-  border:1px solid var(--border);
-}
-
-.btn-danger{
-  background:rgba(248,113,113,.1);
-  color:var(--danger);
-  border:1px solid rgba(248,113,113,.25);
-}
-
-.staff-list{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.staff-item{
-  background:rgba(255,255,255,.025);
-  border:1px solid var(--border);
-  border-radius:10px;
-  padding:10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-}
-
-.staff-item-name{
-  font-weight:700;
-  font-size:13px;
-}
-
-.staff-item-meta{
-  font-size:11px;
-  color:var(--muted);
-  margin-top:3px;
-}
-
-.alert{
-  display:none;
-  border-radius:9px;
-  padding:10px 12px;
-  font-size:12px;
-  line-height:1.5;
-  margin-bottom:12px;
-}
-
-.alert.show{
-  display:block;
-}
-
-.alert.warn{
-  display:block;
-  background:rgba(251,146,60,.08);
-  border:1px solid rgba(251,146,60,.3);
-  color:var(--warn);
-}
-
-.alert.ok{
-  display:block;
-  background:rgba(74,222,128,.08);
-  border:1px solid rgba(74,222,128,.25);
-  color:var(--accent);
-}
-
-.loading{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(15,17,23,.82);
-  z-index:999;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:14px;
-}
-
-.loading.show{
-  display:flex;
-}
-
-.spinner{
-  width:36px;
-  height:36px;
-  border:3px solid var(--border2);
-  border-top-color:var(--accent2);
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-.loading-text{
-  font-family:var(--mono);
-  font-size:12px;
-  color:var(--muted);
-}
-
-@media(max-width:520px){
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-
-  .manager-strip{
-    flex-direction:column;
-    align-items:stretch;
-  }
-
-  .actions{
-    flex-direction:column;
-  }
-}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;padding-bottom:56px}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:10px}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 10px 4px 0;border-right:1px solid var(--border);margin-right:2px;white-space:nowrap}
+.back-arrow{font-size:15px}.back-label{font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+.header-title{font-size:13px;font-weight:600}.header-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px}
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.lang-btn{padding:4px 9px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:transparent}
+.lang-btn.active{background:var(--border2);color:var(--text)}
+.no-station{display:none;background:rgba(248,113,113,.08);border-bottom:1px solid rgba(248,113,113,.3);padding:12px 16px;text-align:center}
+.no-station.show{display:block}.no-station-msg{font-size:13px;color:var(--danger);margin-bottom:8px}
+.no-station-link{display:inline-block;background:var(--danger);color:#1a0000;font-size:12px;font-weight:600;padding:7px 16px;border-radius:7px;text-decoration:none}
+.station-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
+.station-dot{width:6px;height:6px;border-radius:50%;background:var(--accent2);box-shadow:0 0 6px var(--accent2)}
+.station-name{font-family:var(--mono);font-size:11px;color:var(--label)}.station-name span{color:var(--text);font-weight:600}
+.badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;padding:2px 7px;border-radius:4px;background:rgba(34,211,238,.1);color:var(--accent2);border:1px solid rgba(34,211,238,.2)}
+.container{max-width:680px;margin:0 auto;padding:18px 16px}.hero{margin-bottom:16px}
+.eyebrow{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.title{font-size:22px;font-weight:700;line-height:1.3}.title span{color:var(--accent2)}
+.sub{margin-top:6px;font-size:12px;color:var(--muted);line-height:1.5}
+.week-nav{display:flex;gap:8px;margin:14px 0}
+.week-btn{flex:1;border:none;border-radius:9px;background:var(--surface2);color:var(--label);border:1px solid var(--border);padding:10px;font-family:var(--mono);font-size:11px;cursor:pointer}
+.week-btn.primary{background:rgba(34,211,238,.1);color:var(--accent2);border-color:rgba(34,211,238,.25)}
+.manager-strip{background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.25);border-radius:12px;padding:12px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.manager-strip-title{font-size:13px;font-weight:700;color:var(--purple)}
+.manager-strip-sub{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}
+.small-btn{border:none;border-radius:8px;background:var(--surface2);color:var(--label);border:1px solid var(--border);padding:8px 11px;font-family:var(--mono);font-size:11px;cursor:pointer;white-space:nowrap}
+.small-btn.primary{background:var(--purple);color:#16091f;border-color:var(--purple);font-weight:700}
+.small-btn.danger{background:rgba(248,113,113,.1);color:var(--danger);border-color:rgba(248,113,113,.25)}
+.day-card{background:var(--surface);border:1px solid var(--border);border-radius:13px;overflow:hidden;margin-bottom:12px}
+.day-header{background:var(--surface2);border-bottom:1px solid var(--border);padding:11px 14px;display:flex;align-items:center;justify-content:space-between}
+.day-name{font-size:14px;font-weight:700}.day-date{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.shift-list{padding:10px;display:flex;flex-direction:column;gap:8px}
+.shift-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:11px}
+.shift-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:8px}
+.shift-name{font-size:13px;font-weight:700}.shift-time{font-family:var(--mono);font-size:11px;color:var(--accent2);margin-top:3px}
+.staff-name{font-size:14px;font-weight:700;color:var(--accent)}.role{font-size:11px;color:var(--muted);margin-top:3px}
+.shift-notes{font-size:11px;color:var(--label);line-height:1.5;border-top:1px solid var(--border);padding-top:8px;margin-top:8px}
+.empty{padding:14px;font-size:12px;color:var(--muted);text-align:center}
+.admin-panel{display:none;margin-top:18px}.admin-panel.show{display:block}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px}
+.section-header{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.section-title{font-size:11px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--label);font-weight:700}
+.section-body{padding:14px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field.full{grid-column:1/-1}
+.field label{display:block;font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono)}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;outline:none}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5}.field select option{background:#1f2433}
+.actions{display:flex;gap:10px;margin-top:12px}
+.btn{width:100%;border:none;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:700;padding:13px;cursor:pointer}
+.btn-primary{background:var(--accent2);color:#06171a}.btn-secondary{background:var(--surface2);color:var(--label);border:1px solid var(--border)}
+.staff-list{display:flex;flex-direction:column;gap:8px}
+.staff-item{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.staff-item-name{font-weight:700;font-size:13px}.staff-item-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.alert{display:none;border-radius:9px;padding:10px 12px;font-size:12px;line-height:1.5;margin-bottom:12px}
+.alert.warn{display:block;background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.3);color:var(--warn)}
+.alert.ok{display:block;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.25);color:var(--accent)}
+.loading{display:none;position:fixed;inset:0;background:rgba(15,17,23,.82);z-index:999;align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.loading.show{display:flex}.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent2);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}.loading-text{font-family:var(--mono);font-size:12px;color:var(--muted)}
+@media(max-width:520px){.form-grid{grid-template-columns:1fr}.manager-strip{flex-direction:column;align-items:stretch}.actions{flex-direction:column}}
 </style>
 </head>
 
 <body>
 
-<div class="loading" id="loading">
-  <div class="spinner"></div>
-  <div class="loading-text" id="loadingText">Loading…</div>
-</div>
+<div class="loading" id="loading"><div class="spinner"></div><div class="loading-text" id="loadingText">Loading…</div></div>
 
 <div class="header">
   <div class="header-left">
-    <div class="back-btn" onclick="goPortal()">
-      <span class="back-arrow">←</span>
-      <span class="back-label" id="h-back">Portal</span>
-    </div>
-    <div>
-      <div class="header-title" id="h-title">Weekly Roster</div>
-      <div class="header-sub" id="h-sub">VIEW SHIFT SCHEDULE</div>
-    </div>
+    <div class="back-btn" onclick="goPortal()"><span class="back-arrow">←</span><span class="back-label" id="h-back">Portal</span></div>
+    <div><div class="header-title" id="h-title">Weekly Roster</div><div class="header-sub" id="h-sub">VIEW SHIFT SCHEDULE</div></div>
   </div>
-
-  <div class="lang-toggle">
-    <button class="lang-btn" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" onclick="setLang('zh')">中文</button>
-  </div>
+  <div class="lang-toggle"><button class="lang-btn" onclick="setLang('en')">EN</button><button class="lang-btn" onclick="setLang('zh')">中文</button></div>
 </div>
 
 <div class="no-station" id="noStation">
@@ -649,7 +104,6 @@ body{
 </div>
 
 <div class="container">
-
   <div class="hero">
     <div class="eyebrow" id="eyebrow">Weekly Roster</div>
     <div class="title" id="pageTitle">This Week's <span>Roster</span></div>
@@ -663,728 +117,315 @@ body{
   </div>
 
   <div class="manager-strip">
-    <div class="manager-strip-left">
-      <div class="manager-strip-title" id="managerTitle">Manager Access</div>
-      <div class="manager-strip-sub" id="managerSub">Managers can add staff and edit roster for this station.</div>
+    <div>
+      <div class="manager-strip-title" id="managerTitle">Roster Manager Access</div>
+      <div class="manager-strip-sub" id="managerSub">Station managers can add staff and edit roster for this station only.</div>
     </div>
-    <button class="small-btn primary" onclick="managerLogin()" id="managerBtn">Manager Login</button>
+    <button class="small-btn primary" onclick="managerLogin()" id="managerBtn">Roster Manager Login</button>
   </div>
 
   <div id="statusBox"></div>
-
   <div id="rosterView"></div>
 
   <div class="admin-panel" id="adminPanel">
-
     <div class="section">
       <div class="section-header">
         <div class="section-title" id="staffSectionTitle">Staff List</div>
         <button class="small-btn danger" onclick="managerLogout()" id="logoutBtn">Logout</button>
       </div>
-
       <div class="section-body">
         <div class="form-grid">
-          <div class="field">
-            <label id="lStaffName">Staff Name</label>
-            <input type="text" id="staffName">
-          </div>
-
-          <div class="field">
-            <label id="lStaffRole">Role</label>
-            <select id="staffRole">
-              <option>Cashier</option>
-              <option>Manager</option>
-              <option>Console Operator</option>
-              <option>Training</option>
-            </select>
-          </div>
-
-          <div class="field full">
-            <label id="lStaffPhone">Phone / Notes</label>
-            <input type="text" id="staffPhone">
-          </div>
+          <div class="field"><label id="lStaffName">Staff Name</label><input type="text" id="staffName"></div>
+          <div class="field"><label id="lStaffRole">Role</label><select id="staffRole"><option>Cashier</option><option>Manager</option><option>Console Operator</option><option>Training</option></select></div>
+          <div class="field full"><label id="lStaffPhone">Phone / Notes</label><input type="text" id="staffPhone"></div>
         </div>
-
-        <div class="actions">
-          <button class="btn btn-primary" onclick="addStaff()" id="addStaffBtn">Add Staff</button>
-        </div>
-
+        <div class="actions"><button class="btn btn-primary" onclick="addStaff()" id="addStaffBtn">Add Staff</button></div>
         <div style="height:12px"></div>
         <div class="staff-list" id="staffList"></div>
       </div>
     </div>
 
     <div class="section">
-      <div class="section-header">
-        <div class="section-title" id="rosterSectionTitle">Add / Edit Shift</div>
-      </div>
-
+      <div class="section-header"><div class="section-title" id="rosterSectionTitle">Add / Edit Shift</div></div>
       <div class="section-body">
         <div class="form-grid">
-          <div class="field">
-            <label id="lDate">Date</label>
-            <input type="date" id="shiftDate">
-          </div>
-
-          <div class="field">
-            <label id="lShiftName">Shift</label>
-            <select id="shiftName">
-              <option>Morning Shift</option>
-              <option>Afternoon Shift</option>
-              <option>Evening Shift</option>
-              <option>Night Shift</option>
-              <option>Custom Shift</option>
-            </select>
-          </div>
-
-          <div class="field">
-            <label id="lStart">Start Time</label>
-            <input type="time" id="startTime">
-          </div>
-
-          <div class="field">
-            <label id="lFinish">Finish Time</label>
-            <input type="time" id="finishTime">
-          </div>
-
-          <div class="field">
-            <label id="lStaff">Staff</label>
-            <select id="shiftStaff"></select>
-          </div>
-
-          <div class="field">
-            <label id="lRole">Role</label>
-            <select id="shiftRole">
-              <option>Cashier</option>
-              <option>Manager</option>
-              <option>Console Operator</option>
-              <option>Training</option>
-            </select>
-          </div>
-
-          <div class="field full">
-            <label id="lNotes">Notes</label>
-            <textarea id="shiftNotes"></textarea>
-          </div>
+          <div class="field"><label id="lDate">Date</label><input type="date" id="shiftDate"></div>
+          <div class="field"><label id="lShiftName">Shift</label><select id="shiftName"><option>Morning Shift</option><option>Afternoon Shift</option><option>Evening Shift</option><option>Night Shift</option><option>Custom Shift</option></select></div>
+          <div class="field"><label id="lStart">Start Time</label><input type="time" id="startTime"></div>
+          <div class="field"><label id="lFinish">Finish Time</label><input type="time" id="finishTime"></div>
+          <div class="field"><label id="lStaff">Staff</label><select id="shiftStaff"></select></div>
+          <div class="field"><label id="lRole">Role</label><select id="shiftRole"><option>Cashier</option><option>Manager</option><option>Console Operator</option><option>Training</option></select></div>
+          <div class="field full"><label id="lNotes">Notes</label><textarea id="shiftNotes"></textarea></div>
         </div>
-
         <div class="actions">
           <button class="btn btn-primary" onclick="saveShift()" id="saveShiftBtn">Save Shift</button>
           <button class="btn btn-secondary" onclick="clearShiftForm()" id="clearShiftBtn">Clear</button>
         </div>
       </div>
     </div>
-
   </div>
-
 </div>
 
 <script>
 const WEB_APP_URL = '';
-
-const MANAGER_PIN = '8888';
+const MANAGER_PIN = '6666';
 
 let station = localStorage.getItem('ap_station') || '';
 let lang = localStorage.getItem('ap_lang') || 'en';
 let weekOffset = 0;
 let editingShiftId = '';
-
 let staff = [];
 let roster = [];
 
 const TEXT = {
   en: {
-    pageTitle: 'Roster — Aries Petroleum',
-    hBack: 'Portal',
-    hTitle: 'Weekly Roster',
-    hSub: 'VIEW SHIFT SCHEDULE',
-    noStationMsg: 'No station selected. Please return to the portal first.',
-    noStationLink: '← Go to Portal',
-    badge: 'ROSTER',
-    eyebrow: 'Weekly Roster',
-    title: 'This Week’s <span>Roster</span>',
-    sub: 'Check your upcoming shifts for this station.',
-    prev: '← Previous',
-    thisWeek: 'This Week',
-    next: 'Next →',
-    managerTitle: 'Manager Access',
-    managerSub: 'Managers can add staff and edit roster for this station.',
-    managerLogin: 'Manager Login',
-    managerLogout: 'Logout',
-    pinPrompt: 'Enter Manager PIN',
-    wrongPin: 'Incorrect PIN.',
-    staffSection: 'Staff List',
-    rosterSection: 'Add / Edit Shift',
-    staffName: 'Staff Name',
-    staffRole: 'Role',
-    staffPhone: 'Phone / Notes',
-    addStaff: 'Add Staff',
-    date: 'Date',
-    shift: 'Shift',
-    start: 'Start Time',
-    finish: 'Finish Time',
-    staff: 'Staff',
-    role: 'Role',
-    notes: 'Notes',
-    saveShift: 'Save Shift',
-    clear: 'Clear',
-    noRoster: 'No roster entered for this day.',
-    noStaff: 'No staff added yet.',
-    edit: 'Edit',
-    remove: 'Remove',
-    savedLocal: 'Saved locally. Google Sheet URL not connected yet.',
-    savedSheet: 'Saved to Google Sheet.',
-    loading: 'Loading…',
-    saving: 'Saving…',
-    selectStaff: 'Please select staff.',
-    fillRequired: 'Please complete date, staff, start time and finish time.',
-    weekStarting: 'Week starting',
-    removeConfirm: 'Remove this shift?'
+    pageTitle:'Roster — Aries Petroleum',hBack:'Portal',hTitle:'Weekly Roster',hSub:'VIEW SHIFT SCHEDULE',
+    noStationMsg:'No station selected. Please return to the portal first.',noStationLink:'← Go to Portal',badge:'ROSTER',
+    eyebrow:'Weekly Roster',title:'This Week’s <span>Roster</span>',sub:'Check your upcoming shifts for this station.',
+    prev:'← Previous',thisWeek:'This Week',next:'Next →',
+    managerTitle:'Roster Manager Access',
+    managerSub:'Station managers can add staff and edit roster for this station only.',
+    managerLogin:'Roster Manager Login',managerLogout:'Logout',
+    pinPrompt:'Enter Roster Manager PIN',wrongPin:'Incorrect PIN.',
+    staffSection:'Staff List',rosterSection:'Add / Edit Shift',
+    staffName:'Staff Name',staffRole:'Role',staffPhone:'Phone / Notes',addStaff:'Add Staff',
+    date:'Date',shift:'Shift',start:'Start Time',finish:'Finish Time',staff:'Staff',role:'Role',notes:'Notes',
+    saveShift:'Save Shift',clear:'Clear',noRoster:'No roster entered for this day.',noStaff:'No staff added yet.',
+    edit:'Edit',remove:'Remove',savedLocal:'Saved locally. Google Sheet URL not connected yet.',savedSheet:'Saved to Google Sheet.',
+    loading:'Loading…',saving:'Saving…',fillRequired:'Please complete date, staff, start time and finish time.',
+    weekStarting:'Week starting',removeConfirm:'Remove this shift?'
   },
   zh: {
-    pageTitle: '排班表 — Aries Petroleum',
-    hBack: '首页',
-    hTitle: '每周排班',
-    hSub: '查看上班时间',
-    noStationMsg: '未选择站点，请先返回首页选择站点。',
-    noStationLink: '← 返回首页',
-    badge: '排班',
-    eyebrow: '每周排班',
-    title: '本周<span>排班表</span>',
-    sub: '查看本站员工本周上班时间。',
-    prev: '← 上一周',
-    thisWeek: '本周',
-    next: '下一周 →',
-    managerTitle: 'Manager 权限',
-    managerSub: 'Manager 可以添加员工并编辑本站排班。',
-    managerLogin: 'Manager 登录',
-    managerLogout: '退出',
-    pinPrompt: '请输入 Manager PIN',
-    wrongPin: 'PIN 不正确。',
-    staffSection: '员工名单',
-    rosterSection: '添加 / 修改班次',
-    staffName: '员工姓名',
-    staffRole: '职位',
-    staffPhone: '电话 / 备注',
-    addStaff: '添加员工',
-    date: '日期',
-    shift: '班次',
-    start: '开始时间',
-    finish: '结束时间',
-    staff: '员工',
-    role: '职位',
-    notes: '备注',
-    saveShift: '保存班次',
-    clear: '清空',
-    noRoster: '当天还没有排班。',
-    noStaff: '还没有添加员工。',
-    edit: '修改',
-    remove: '删除',
-    savedLocal: '已保存到本机。Google Sheet 网址还未连接。',
-    savedSheet: '已保存到 Google Sheet。',
-    loading: '加载中…',
-    saving: '保存中…',
-    selectStaff: '请选择员工。',
-    fillRequired: '请填写日期、员工、开始时间和结束时间。',
-    weekStarting: '本周开始',
-    removeConfirm: '确定删除这个班次吗？'
+    pageTitle:'排班表 — Aries Petroleum',hBack:'首页',hTitle:'每周排班',hSub:'查看上班时间',
+    noStationMsg:'未选择站点，请先返回首页选择站点。',noStationLink:'← 返回首页',badge:'排班',
+    eyebrow:'每周排班',title:'本周<span>排班表</span>',sub:'查看本站员工本周上班时间。',
+    prev:'← 上一周',thisWeek:'本周',next:'下一周 →',
+    managerTitle:'排班管理权限',
+    managerSub:'站长可以添加员工并编辑本站排班，仅限排班功能。',
+    managerLogin:'站长排班登录',managerLogout:'退出',
+    pinPrompt:'请输入站长排班 PIN',wrongPin:'PIN 不正确。',
+    staffSection:'员工名单',rosterSection:'添加 / 修改班次',
+    staffName:'员工姓名',staffRole:'职位',staffPhone:'电话 / 备注',addStaff:'添加员工',
+    date:'日期',shift:'班次',start:'开始时间',finish:'结束时间',staff:'员工',role:'职位',notes:'备注',
+    saveShift:'保存班次',clear:'清空',noRoster:'当天还没有排班。',noStaff:'还没有添加员工。',
+    edit:'修改',remove:'删除',savedLocal:'已保存到本机。Google Sheet 网址还未连接。',savedSheet:'已保存到 Google Sheet。',
+    loading:'加载中…',saving:'保存中…',fillRequired:'请填写日期、员工、开始时间和结束时间。',
+    weekStarting:'本周开始',removeConfirm:'确定删除这个班次吗？'
   }
 };
 
-function T(){
-  return TEXT[lang];
-}
-
-function setText(id, value){
-  const el = document.getElementById(id);
-  if(el) el.textContent = value;
-}
+function T(){return TEXT[lang]}
+function setText(id,value){const el=document.getElementById(id);if(el)el.textContent=value}
 
 function applyLang(){
-  const t = T();
-
-  document.title = t.pageTitle;
-
-  setText('h-back', t.hBack);
-  setText('h-title', t.hTitle);
-  setText('h-sub', t.hSub);
-  setText('noStationMsg', t.noStationMsg);
-  setText('noStationLink', t.noStationLink);
-  setText('badge', t.badge);
-
-  setText('eyebrow', t.eyebrow);
-  document.getElementById('pageTitle').innerHTML = t.title;
-  setText('pageSub', t.sub);
-
-  setText('prevWeekBtn', t.prev);
-  setText('thisWeekBtn', t.thisWeek);
-  setText('nextWeekBtn', t.next);
-
-  setText('managerTitle', t.managerTitle);
-  setText('managerSub', t.managerSub);
-  setText('managerBtn', isManager() ? t.managerLogout : t.managerLogin);
-
-  setText('staffSectionTitle', t.staffSection);
-  setText('rosterSectionTitle', t.rosterSection);
-
-  setText('lStaffName', t.staffName);
-  setText('lStaffRole', t.staffRole);
-  setText('lStaffPhone', t.staffPhone);
-  setText('addStaffBtn', t.addStaff);
-
-  setText('lDate', t.date);
-  setText('lShiftName', t.shift);
-  setText('lStart', t.start);
-  setText('lFinish', t.finish);
-  setText('lStaff', t.staff);
-  setText('lRole', t.role);
-  setText('lNotes', t.notes);
-  setText('saveShiftBtn', t.saveShift);
-  setText('clearShiftBtn', t.clear);
-  setText('logoutBtn', t.managerLogout);
-
-  document.querySelectorAll('.lang-btn').forEach(b=>{
-    b.classList.toggle('active',
-      (lang === 'en' && b.textContent === 'EN') ||
-      (lang === 'zh' && b.textContent === '中文')
-    );
-  });
-
-  if(station){
-    document.getElementById('stationDisplay').innerHTML = `<span>${escapeHtml(station)}</span>`;
-  }
-
+  const t=T();
+  document.title=t.pageTitle;
+  setText('h-back',t.hBack);setText('h-title',t.hTitle);setText('h-sub',t.hSub);
+  setText('noStationMsg',t.noStationMsg);setText('noStationLink',t.noStationLink);setText('badge',t.badge);
+  setText('eyebrow',t.eyebrow);document.getElementById('pageTitle').innerHTML=t.title;setText('pageSub',t.sub);
+  setText('prevWeekBtn',t.prev);setText('thisWeekBtn',t.thisWeek);setText('nextWeekBtn',t.next);
+  setText('managerTitle',t.managerTitle);setText('managerSub',t.managerSub);setText('managerBtn',isManager()?t.managerLogout:t.managerLogin);
+  setText('staffSectionTitle',t.staffSection);setText('rosterSectionTitle',t.rosterSection);
+  setText('lStaffName',t.staffName);setText('lStaffRole',t.staffRole);setText('lStaffPhone',t.staffPhone);setText('addStaffBtn',t.addStaff);
+  setText('lDate',t.date);setText('lShiftName',t.shift);setText('lStart',t.start);setText('lFinish',t.finish);
+  setText('lStaff',t.staff);setText('lRole',t.role);setText('lNotes',t.notes);setText('saveShiftBtn',t.saveShift);setText('clearShiftBtn',t.clear);setText('logoutBtn',t.managerLogout);
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文')));
+  if(station)document.getElementById('stationDisplay').innerHTML=`<span>${escapeHtml(station)}</span>`;
   renderAll();
 }
 
-function setLang(l){
-  lang = l;
-  localStorage.setItem('ap_lang', l);
-  applyLang();
-}
-
-function goPortal(){
-  window.location.href = 'index.html';
-}
-
-function isManager(){
-  return localStorage.getItem('ap_manager_login') === 'true';
-}
+function setLang(l){lang=l;localStorage.setItem('ap_lang',l);applyLang()}
+function goPortal(){window.location.href='index.html'}
+function isManager(){return localStorage.getItem('ap_roster_manager_login')==='true'}
 
 function managerLogin(){
-  if(isManager()){
-    managerLogout();
-    return;
-  }
-
-  const pin = prompt(T().pinPrompt);
-  if(pin === MANAGER_PIN){
-    localStorage.setItem('ap_manager_login', 'true');
+  if(isManager()){managerLogout();return}
+  const pin=prompt(T().pinPrompt);
+  if(pin===MANAGER_PIN){
+    localStorage.setItem('ap_roster_manager_login','true');
     document.getElementById('adminPanel').classList.add('show');
     applyLang();
-  }else if(pin !== null){
-    showStatus(T().wrongPin, 'warn');
-  }
+  }else if(pin!==null){showStatus(T().wrongPin,'warn')}
 }
 
 function managerLogout(){
-  localStorage.removeItem('ap_manager_login');
+  localStorage.removeItem('ap_roster_manager_login');
   document.getElementById('adminPanel').classList.remove('show');
   applyLang();
 }
 
-function storageKey(type){
-  return `ap_${type}_${station}`;
-}
+function storageKey(type){return `ap_${type}_${station}`}
 
 function loadLocal(){
-  staff = JSON.parse(localStorage.getItem(storageKey('staff')) || '[]');
-  roster = JSON.parse(localStorage.getItem(storageKey('roster')) || '[]');
-
-  if(staff.length === 0){
-    staff = [
-      { id: makeId(), name: 'Sample Staff 1', role: 'Cashier', phone: '' },
-      { id: makeId(), name: 'Sample Staff 2', role: 'Cashier', phone: '' }
+  staff=JSON.parse(localStorage.getItem(storageKey('staff'))||'[]');
+  roster=JSON.parse(localStorage.getItem(storageKey('roster'))||'[]');
+  if(staff.length===0){
+    staff=[
+      {id:makeId(),name:'Sample Staff 1',role:'Cashier',phone:''},
+      {id:makeId(),name:'Sample Staff 2',role:'Cashier',phone:''}
     ];
     saveLocalOnly();
   }
 }
 
 function saveLocalOnly(){
-  localStorage.setItem(storageKey('staff'), JSON.stringify(staff));
-  localStorage.setItem(storageKey('roster'), JSON.stringify(roster));
+  localStorage.setItem(storageKey('staff'),JSON.stringify(staff));
+  localStorage.setItem(storageKey('roster'),JSON.stringify(roster));
 }
 
 async function loadFromSheet(){
-  if(!WEB_APP_URL){
-    loadLocal();
-    return;
-  }
-
+  if(!WEB_APP_URL){loadLocal();return}
   showLoading(T().loading);
-
   try{
-    const url = `${WEB_APP_URL}?action=getRosterData&station=${encodeURIComponent(station)}`;
-    const res = await fetch(url);
-    const data = await res.json();
-
-    staff = Array.isArray(data.staff) ? data.staff : [];
-    roster = Array.isArray(data.roster) ? data.roster : [];
-
+    const url=`${WEB_APP_URL}?action=getRosterData&station=${encodeURIComponent(station)}`;
+    const res=await fetch(url);
+    const data=await res.json();
+    staff=Array.isArray(data.staff)?data.staff:[];
+    roster=Array.isArray(data.roster)?data.roster:[];
     saveLocalOnly();
   }catch(e){
     loadLocal();
-    showStatus('Could not load from Google Sheet. Local data shown.', 'warn');
-  }finally{
-    hideLoading();
-  }
+    showStatus('Could not load from Google Sheet. Local data shown.','warn');
+  }finally{hideLoading()}
 }
 
 async function saveToSheet(payload){
   saveLocalOnly();
-
-  if(!WEB_APP_URL){
-    showStatus(T().savedLocal, 'warn');
-    return;
-  }
-
+  if(!WEB_APP_URL){showStatus(T().savedLocal,'warn');return}
   showLoading(T().saving);
-
   try{
-    await fetch(WEB_APP_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    showStatus(T().savedSheet, 'ok');
-  }catch(e){
-    showStatus(T().savedLocal, 'warn');
-  }finally{
-    hideLoading();
-  }
+    await fetch(WEB_APP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    showStatus(T().savedSheet,'ok');
+  }catch(e){showStatus(T().savedLocal,'warn')}
+  finally{hideLoading()}
 }
 
 function addStaff(){
-  const name = document.getElementById('staffName').value.trim();
-  const role = document.getElementById('staffRole').value;
-  const phone = document.getElementById('staffPhone').value.trim();
-
-  if(!name){
-    showStatus(T().fillRequired, 'warn');
-    return;
-  }
-
-  staff.push({
-    id: makeId(),
-    station,
-    name,
-    role,
-    phone,
-    active: true
-  });
-
-  document.getElementById('staffName').value = '';
-  document.getElementById('staffPhone').value = '';
-
+  const name=document.getElementById('staffName').value.trim();
+  const role=document.getElementById('staffRole').value;
+  const phone=document.getElementById('staffPhone').value.trim();
+  if(!name){showStatus(T().fillRequired,'warn');return}
+  staff.push({id:makeId(),station,name,role,phone,active:true});
+  document.getElementById('staffName').value='';
+  document.getElementById('staffPhone').value='';
   renderAll();
-
-  saveToSheet({
-    formType: 'rosterStaffSave',
-    station,
-    staff,
-    updatedAt: new Date().toISOString()
-  });
+  saveToSheet({formType:'rosterStaffSave',station,staff,updatedAt:new Date().toISOString()});
 }
 
 function removeStaff(id){
-  staff = staff.filter(s => s.id !== id);
+  staff=staff.filter(s=>s.id!==id);
   renderAll();
-
-  saveToSheet({
-    formType: 'rosterStaffSave',
-    station,
-    staff,
-    updatedAt: new Date().toISOString()
-  });
+  saveToSheet({formType:'rosterStaffSave',station,staff,updatedAt:new Date().toISOString()});
 }
 
 function saveShift(){
-  const date = document.getElementById('shiftDate').value;
-  const shiftName = document.getElementById('shiftName').value;
-  const startTime = document.getElementById('startTime').value;
-  const finishTime = document.getElementById('finishTime').value;
-  const staffName = document.getElementById('shiftStaff').value;
-  const role = document.getElementById('shiftRole').value;
-  const notes = document.getElementById('shiftNotes').value.trim();
-
-  if(!date || !staffName || !startTime || !finishTime){
-    showStatus(T().fillRequired, 'warn');
-    return;
-  }
-
-  const item = {
-    id: editingShiftId || makeId(),
-    station,
-    date,
-    shiftName,
-    startTime,
-    finishTime,
-    staffName,
-    role,
-    notes,
-    updatedAt: new Date().toISOString()
-  };
-
-  if(editingShiftId){
-    roster = roster.map(r => r.id === editingShiftId ? item : r);
-  }else{
-    roster.push(item);
-  }
-
-  clearShiftForm();
-  renderAll();
-
-  saveToSheet({
-    formType: 'rosterShiftSave',
-    station,
-    roster,
-    updatedAt: new Date().toISOString()
-  });
+  const date=document.getElementById('shiftDate').value;
+  const shiftName=document.getElementById('shiftName').value;
+  const startTime=document.getElementById('startTime').value;
+  const finishTime=document.getElementById('finishTime').value;
+  const staffName=document.getElementById('shiftStaff').value;
+  const role=document.getElementById('shiftRole').value;
+  const notes=document.getElementById('shiftNotes').value.trim();
+  if(!date||!staffName||!startTime||!finishTime){showStatus(T().fillRequired,'warn');return}
+  const item={id:editingShiftId||makeId(),station,date,shiftName,startTime,finishTime,staffName,role,notes,updatedAt:new Date().toISOString()};
+  if(editingShiftId){roster=roster.map(r=>r.id===editingShiftId?item:r)}else{roster.push(item)}
+  clearShiftForm();renderAll();
+  saveToSheet({formType:'rosterShiftSave',station,roster,updatedAt:new Date().toISOString()});
 }
 
 function editShift(id){
-  const r = roster.find(x => x.id === id);
-  if(!r) return;
-
-  editingShiftId = id;
-
-  document.getElementById('shiftDate').value = r.date;
-  document.getElementById('shiftName').value = r.shiftName;
-  document.getElementById('startTime').value = r.startTime;
-  document.getElementById('finishTime').value = r.finishTime;
-  document.getElementById('shiftStaff').value = r.staffName;
-  document.getElementById('shiftRole').value = r.role;
-  document.getElementById('shiftNotes').value = r.notes || '';
-
+  const r=roster.find(x=>x.id===id);if(!r)return;
+  editingShiftId=id;
+  document.getElementById('shiftDate').value=r.date;
+  document.getElementById('shiftName').value=r.shiftName;
+  document.getElementById('startTime').value=r.startTime;
+  document.getElementById('finishTime').value=r.finishTime;
+  document.getElementById('shiftStaff').value=r.staffName;
+  document.getElementById('shiftRole').value=r.role;
+  document.getElementById('shiftNotes').value=r.notes||'';
   document.getElementById('adminPanel').scrollIntoView({behavior:'smooth'});
 }
 
 function removeShift(id){
-  if(!confirm(T().removeConfirm)) return;
-
-  roster = roster.filter(r => r.id !== id);
+  if(!confirm(T().removeConfirm))return;
+  roster=roster.filter(r=>r.id!==id);
   renderAll();
-
-  saveToSheet({
-    formType: 'rosterShiftSave',
-    station,
-    roster,
-    updatedAt: new Date().toISOString()
-  });
+  saveToSheet({formType:'rosterShiftSave',station,roster,updatedAt:new Date().toISOString()});
 }
 
 function clearShiftForm(){
-  editingShiftId = '';
-  document.getElementById('shiftDate').value = '';
-  document.getElementById('startTime').value = '';
-  document.getElementById('finishTime').value = '';
-  document.getElementById('shiftNotes').value = '';
+  editingShiftId='';
+  document.getElementById('shiftDate').value='';
+  document.getElementById('startTime').value='';
+  document.getElementById('finishTime').value='';
+  document.getElementById('shiftNotes').value='';
 }
 
 function renderAll(){
-  renderRoster();
-  renderStaff();
-  renderStaffSelect();
-  document.getElementById('adminPanel').classList.toggle('show', isManager());
+  renderRoster();renderStaff();renderStaffSelect();
+  document.getElementById('adminPanel').classList.toggle('show',isManager());
 }
 
 function renderStaff(){
-  const box = document.getElementById('staffList');
-  if(!box) return;
-
-  if(staff.length === 0){
-    box.innerHTML = `<div class="empty">${T().noStaff}</div>`;
-    return;
-  }
-
-  box.innerHTML = staff.map(s => `
+  const box=document.getElementById('staffList');if(!box)return;
+  if(staff.length===0){box.innerHTML=`<div class="empty">${T().noStaff}</div>`;return}
+  box.innerHTML=staff.map(s=>`
     <div class="staff-item">
-      <div>
-        <div class="staff-item-name">${escapeHtml(s.name)}</div>
-        <div class="staff-item-meta">${escapeHtml(s.role || '')} ${s.phone ? ' · ' + escapeHtml(s.phone) : ''}</div>
-      </div>
+      <div><div class="staff-item-name">${escapeHtml(s.name)}</div><div class="staff-item-meta">${escapeHtml(s.role||'')}${s.phone?' · '+escapeHtml(s.phone):''}</div></div>
       <button class="small-btn danger" onclick="removeStaff('${s.id}')">${T().remove}</button>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
 
 function renderStaffSelect(){
-  const sel = document.getElementById('shiftStaff');
-  if(!sel) return;
-
-  sel.innerHTML = `<option value="">—</option>` + staff.map(s => `
-    <option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>
-  `).join('');
+  const sel=document.getElementById('shiftStaff');if(!sel)return;
+  sel.innerHTML=`<option value="">—</option>`+staff.map(s=>`<option value="${escapeHtml(s.name)}">${escapeHtml(s.name)}</option>`).join('');
 }
 
 function renderRoster(){
-  const weekStart = getWeekStart(new Date(), weekOffset);
-  const days = [];
-
-  for(let i=0;i<7;i++){
-    const d = new Date(weekStart);
-    d.setDate(weekStart.getDate() + i);
-    days.push(d);
-  }
-
-  const weekText = `${T().weekStarting}: ${formatDate(days[0])}`;
-  document.getElementById('pageSub').textContent = `${weekText} · ${station || ''}`;
-
-  const html = days.map(day => {
-    const dateKey = toDateKey(day);
-    const items = roster
-      .filter(r => r.date === dateKey)
-      .sort((a,b) => (a.startTime || '').localeCompare(b.startTime || ''));
-
-    return `
-      <div class="day-card">
-        <div class="day-header">
-          <div class="day-name">${formatDayName(day)}</div>
-          <div class="day-date">${formatDate(day)}</div>
-        </div>
-
-        <div class="shift-list">
-          ${
-            items.length
-            ? items.map(item => shiftHtml(item)).join('')
-            : `<div class="empty">${T().noRoster}</div>`
-          }
-        </div>
-      </div>
-    `;
+  const weekStart=getWeekStart(new Date(),weekOffset);
+  const days=[];
+  for(let i=0;i<7;i++){const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);days.push(d)}
+  document.getElementById('pageSub').textContent=`${T().weekStarting}: ${formatDate(days[0])} · ${station||''}`;
+  document.getElementById('rosterView').innerHTML=days.map(day=>{
+    const dateKey=toDateKey(day);
+    const items=roster.filter(r=>r.date===dateKey).sort((a,b)=>(a.startTime||'').localeCompare(b.startTime||''));
+    return `<div class="day-card"><div class="day-header"><div class="day-name">${formatDayName(day)}</div><div class="day-date">${formatDate(day)}</div></div><div class="shift-list">${items.length?items.map(item=>shiftHtml(item)).join(''):`<div class="empty">${T().noRoster}</div>`}</div></div>`;
   }).join('');
-
-  document.getElementById('rosterView').innerHTML = html;
 }
 
 function shiftHtml(item){
-  const managerBtns = isManager()
-    ? `
-      <div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-        <button class="small-btn" onclick="editShift('${item.id}')">${T().edit}</button>
-        <button class="small-btn danger" onclick="removeShift('${item.id}')">${T().remove}</button>
-      </div>
-    `
-    : '';
-
-  return `
-    <div class="shift-card">
-      <div class="shift-top">
-        <div>
-          <div class="shift-name">${escapeHtml(item.shiftName)}</div>
-          <div class="shift-time">${escapeHtml(item.startTime)} - ${escapeHtml(item.finishTime)}</div>
-        </div>
-        ${managerBtns}
-      </div>
-
-      <div class="staff-name">${escapeHtml(item.staffName)}</div>
-      <div class="role">${escapeHtml(item.role || '')}</div>
-
-      ${item.notes ? `<div class="shift-notes">${escapeHtml(item.notes)}</div>` : ''}
-    </div>
-  `;
+  const managerBtns=isManager()?`<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><button class="small-btn" onclick="editShift('${item.id}')">${T().edit}</button><button class="small-btn danger" onclick="removeShift('${item.id}')">${T().remove}</button></div>`:'';
+  return `<div class="shift-card"><div class="shift-top"><div><div class="shift-name">${escapeHtml(item.shiftName)}</div><div class="shift-time">${escapeHtml(item.startTime)} - ${escapeHtml(item.finishTime)}</div></div>${managerBtns}</div><div class="staff-name">${escapeHtml(item.staffName)}</div><div class="role">${escapeHtml(item.role||'')}</div>${item.notes?`<div class="shift-notes">${escapeHtml(item.notes)}</div>`:''}</div>`;
 }
 
-function changeWeek(delta){
-  weekOffset += delta;
-  renderRoster();
+function changeWeek(delta){weekOffset+=delta;renderRoster()}
+function goThisWeek(){weekOffset=0;renderRoster()}
+
+function getWeekStart(date,offset){
+  const d=new Date(date);const day=d.getDay();const diff=day===0?-6:1-day;
+  d.setDate(d.getDate()+diff+offset*7);d.setHours(0,0,0,0);return d;
 }
 
-function goThisWeek(){
-  weekOffset = 0;
-  renderRoster();
-}
-
-function getWeekStart(date, offset){
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  d.setDate(d.getDate() + diff + offset * 7);
-  d.setHours(0,0,0,0);
-  return d;
-}
-
-function toDateKey(d){
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2,'0');
-  const day = String(d.getDate()).padStart(2,'0');
-  return `${y}-${m}-${day}`;
-}
-
-function formatDate(d){
-  return d.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-AU', {
-    month:'short',
-    day:'numeric',
-    year:'numeric'
-  });
-}
-
-function formatDayName(d){
-  return d.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-AU', {
-    weekday:'long'
-  });
-}
-
-function makeId(){
-  return 'id_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
-}
-
-function showStatus(msg, type){
-  const box = document.getElementById('statusBox');
-  box.innerHTML = `<div class="alert ${type === 'ok' ? 'ok' : 'warn'}">${escapeHtml(msg)}</div>`;
-
-  setTimeout(() => {
-    box.innerHTML = '';
-  }, 3500);
-}
-
-function showLoading(msg){
-  document.getElementById('loadingText').textContent = msg;
-  document.getElementById('loading').classList.add('show');
-}
-
-function hideLoading(){
-  document.getElementById('loading').classList.remove('show');
-}
-
-function escapeHtml(str){
-  return String(str || '')
-    .replace(/&/g,'&amp;')
-    .replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;');
-}
+function toDateKey(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function formatDate(d){return d.toLocaleDateString(lang==='zh'?'zh-CN':'en-AU',{month:'short',day:'numeric',year:'numeric'})}
+function formatDayName(d){return d.toLocaleDateString(lang==='zh'?'zh-CN':'en-AU',{weekday:'long'})}
+function makeId(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
+function showStatus(msg,type){document.getElementById('statusBox').innerHTML=`<div class="alert ${type==='ok'?'ok':'warn'}">${escapeHtml(msg)}</div>`;setTimeout(()=>{document.getElementById('statusBox').innerHTML=''},3500)}
+function showLoading(msg){document.getElementById('loadingText').textContent=msg;document.getElementById('loading').classList.add('show')}
+function hideLoading(){document.getElementById('loading').classList.remove('show')}
+function escapeHtml(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 async function init(){
   if(!station){
     document.getElementById('noStation').classList.add('show');
-    document.getElementById('stationBar').style.display = 'none';
+    document.getElementById('stationBar').style.display='none';
     return;
   }
-
   await loadFromSheet();
   applyLang();
 }
 
-document.querySelectorAll('.lang-btn').forEach(b=>{
-  b.classList.toggle('active',
-    (lang === 'en' && b.textContent === 'EN') ||
-    (lang === 'zh' && b.textContent === '中文')
-  );
-});
-
+document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文')));
 init();
 </script>
 
