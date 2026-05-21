@@ -59,7 +59,7 @@
 </div>
 <script>
 let station=localStorage.getItem('ap_station')||'';let lang=localStorage.getItem('ap_lang')||'en';const openedAt=new Date();
-const SHEET_URL='';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
 function openKey(){return 'ap_open_maintenance_'+station;}
 function getOpenJob(){try{return JSON.parse(localStorage.getItem(openKey())||'null')}catch(e){return null}}
 function saveOpenJob(j){localStorage.setItem(openKey(),JSON.stringify(j));}
