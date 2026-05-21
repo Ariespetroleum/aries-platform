@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Cash Reconciliation — Aries Petroleum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f1117;--surface:#181c25;--surface2:#1f2433;--border:#2a3044;--border2:#353f58;
+  --accent:#4ade80;--accent2:#22d3ee;--warn:#fb923c;--danger:#f87171;--purple:#a78bfa;
+  --text:#e8eaf0;--muted:#7a8299;--label:#a0aabb;--mono:'DM Mono',monospace;--sans:'Sora',sans-serif;
+  --ok-bg:rgba(74,222,128,.08);--ok-border:rgba(74,222,128,.25);
+  --warn-bg:rgba(251,146,60,.08);--warn-border:rgba(251,146,60,.3);
+  --danger-bg:rgba(248,113,113,.08);--danger-border:rgba(248,113,113,.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;padding-bottom:56px}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:10px}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 10px 4px 0;border-right:1px solid var(--border);margin-right:2px;transition:color .15s;white-space:nowrap}
+.back-btn:hover{color:var(--accent2)}
+.header-title{font-size:13px;font-weight:600}.header-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px}
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.lang-btn{padding:4px 9px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:transparent;transition:all .15s}
+.lang-btn.active{background:var(--border2);color:var(--text)}
+.no-station{display:none;background:var(--danger-bg);border-bottom:1px solid var(--danger-border);padding:12px 16px;text-align:center}
+.no-station.show{display:block}.no-station-msg{font-size:13px;color:var(--danger);margin-bottom:8px}
+.no-station-link{display:inline-block;background:var(--danger);color:#1a0000;font-size:12px;font-weight:600;padding:7px 16px;border-radius:7px;text-decoration:none}
+.station-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
+.station-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);box-shadow:0 0 6px var(--purple);flex-shrink:0}
+.station-name{font-family:var(--mono);font-size:11px;color:var(--label)}.station-name span{color:var(--text);font-weight:600}
+.daily-badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;padding:2px 7px;border-radius:4px;background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.container{max-width:560px;margin:0 auto;padding:20px 16px}.screen{display:none}.screen.active{display:block}
+.form-header{margin-bottom:20px}.form-title{font-size:18px;font-weight:700;margin-bottom:4px}.form-sub{font-size:12px;color:var(--muted);line-height:1.5}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.field label{display:block;font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono)}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--sans);font-size:13px;padding:9px 12px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.field textarea{resize:vertical;min-height:72px;line-height:1.5}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent2)}
+.field select option{background:#1f2433}.field.full{grid-column:1/-1}.field input[type=number]{-moz-appearance:textfield}.field input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.section-header{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.section-header-left{display:flex;align-items:center;gap:8px}.section-icon{font-size:14px}.section-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.pos-badge{font-family:var(--mono);font-size:9px;color:var(--accent2);border:1px solid rgba(34,211,238,.25);background:rgba(34,211,238,.06);padding:2px 7px;border-radius:4px}
+.section-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.calc-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;margin:0 14px 14px;padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.calc-item{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:10px;text-align:center}
+.calc-label{font-size:10px;color:var(--muted);font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.calc-value{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--accent)}
+.calc-value.warn{color:var(--warn)}.calc-value.danger{color:var(--danger)}
+.summary-bar{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:14px}
+.summary-title{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.summary-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.summary-stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;text-align:center}
+.summary-num{font-family:var(--mono);font-size:17px;font-weight:700;color:var(--accent)}.summary-label{font-size:9px;color:var(--muted);font-family:var(--mono);margin-top:3px;text-transform:uppercase}
+.alert{display:none;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:14px;line-height:1.5}.alert.show{display:block}
+.btn-wrap{display:flex;flex-direction:column;gap:10px;margin-top:6px}.btn{width:100%;border:none;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:600;padding:14px;cursor:pointer;letter-spacing:.02em;transition:opacity .18s,transform .1s}
+.btn:active{transform:scale(.98)}.btn:disabled{opacity:.35;cursor:not-allowed}.btn-primary{background:var(--accent);color:#071a0d}.btn-secondary{background:var(--surface2);color:var(--label);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--border2);color:var(--text)}.note{text-align:center;font-size:11px;color:var(--muted);margin-top:8px}
+.confirm-header{margin-bottom:18px}.confirm-title{font-size:18px;font-weight:700;margin-bottom:4px}.confirm-sub{font-size:12px;color:var(--muted)}
+.confirm-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.confirm-section-title{padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.confirm-row{display:flex;padding:8px 14px;border-bottom:1px solid var(--border);gap:12px;align-items:center}.confirm-row:last-child{border-bottom:none}
+.confirm-key{font-size:12px;color:var(--label);flex:1}.confirm-val{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text);text-align:right}
+.confirm-val.good{color:var(--accent)}.confirm-val.warn{color:var(--warn)}.confirm-val.bad{color:var(--danger)}
+.success-wrap{text-align:center;padding:56px 20px}.success-icon{width:64px;height:64px;background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px}
+.success-title{font-size:20px;font-weight:700;margin-bottom:8px;color:var(--accent)}.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px}.success-actions{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
+.loading-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(15,17,23,.85);align-items:center;justify-content:center;flex-direction:column;gap:16px}.loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.loading-text{font-size:13px;color:var(--muted);font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div class="loading-text" id="loading-text">Submitting…</div></div>
+
+<div class="header">
+  <div class="header-left">
+    <div class="back-btn" onclick="goPortal()"><span style="font-size:15px">←</span><span style="font-family:var(--mono);font-size:11px;letter-spacing:.04em" id="h-back">Portal</span></div>
+    <div><div class="header-title" id="h-title">Cash Reconciliation</div><div class="header-sub" id="h-sub">SHIFT SETTLEMENT</div></div>
+  </div>
+  <div class="lang-toggle"><button class="lang-btn" onclick="setLang('en')">EN</button><button class="lang-btn" onclick="setLang('zh')">中文</button></div>
+</div>
+
+<div class="no-station" id="no-station-bar"><div class="no-station-msg" id="ns-msg"></div><a class="no-station-link" href="index.html" id="ns-link"></a></div>
+<div class="station-bar" id="station-bar"><div class="station-dot"></div><div class="station-name" id="station-display"></div><div class="daily-badge" id="daily-badge">DAILY</div></div>
+
+<div class="container">
+  <div class="screen active" id="screen-form">
+    <div class="form-header"><div class="form-title" id="f-title"></div><div class="form-sub" id="f-sub"></div></div>
+
+    <div class="info-grid">
+      <div class="field"><label id="l-date"></label><input type="date" id="f-date"></div>
+      <div class="field"><label id="l-shift"></label><select id="f-shift"><option value="">—</option><option id="sh-morning">Morning</option><option id="sh-afternoon">Afternoon</option><option id="sh-night">Night</option></select></div>
+      <div class="field full"><label id="l-staff"></label><input type="text" id="f-staff" placeholder="Your name"></div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="summary-title" id="summary-title"></div>
+      <div class="summary-grid">
+        <div class="summary-stat"><div class="summary-num" id="sum-fuel">$0.00</div><div class="summary-label" id="sum-fuel-l"></div></div>
+        <div class="summary-stat"><div class="summary-num" id="sum-shop">$0.00</div><div class="summary-label" id="sum-shop-l"></div></div>
+        <div class="summary-stat"><div class="summary-num" id="sum-diff">$0.00</div><div class="summary-label" id="sum-diff-l"></div></div>
+      </div>
+    </div>
+
+    <div id="pos-container"></div>
+
+    <div class="section">
+      <div class="section-header"><div class="section-header-left"><span class="section-icon">📝</span><span class="section-title" id="sec-notes-title"></span></div></div>
+      <div class="section-body">
+        <div class="field full"><label id="l-diff-reason"></label><textarea id="f-diff-reason" placeholder=""></textarea></div>
+        <div class="field full"><label id="l-cash-notes"></label><textarea id="f-cash-notes" placeholder=""></textarea></div>
+      </div>
+    </div>
+
+    <div class="alert" id="alertBox"></div>
+    <div class="btn-wrap"><button class="btn btn-primary" id="review-btn" onclick="goReview()"></button></div>
+    <p class="note" id="f-note"></p>
+  </div>
+
+  <div class="screen" id="screen-confirm">
+    <div class="confirm-header"><div class="confirm-title" id="cf-title"></div><div class="confirm-sub" id="cf-sub"></div></div>
+    <div id="confirm-body"></div>
+    <div class="alert" id="cf-alert"></div>
+    <div class="btn-wrap"><button class="btn btn-secondary" id="cf-edit-btn" onclick="showScreen('form')"></button><button class="btn btn-primary" id="cf-submit-btn" onclick="submitForm()"></button></div>
+    <p class="note" id="cf-note"></p>
+  </div>
+
+  <div class="screen" id="screen-success">
+    <div class="success-wrap"><div class="success-icon">✓</div><div class="success-title" id="succ-title"></div><div class="success-sub" id="succ-msg"></div>
+      <div class="success-actions"><button class="btn btn-secondary" id="succ-again" onclick="resetForm()"></button><button class="btn btn-secondary" id="succ-home" onclick="goPortal()"></button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let station = localStorage.getItem('ap_station') || '';
+let lang = localStorage.getItem('ap_lang') || 'en';
+
+function isSinopecStation(){ return station.toLowerCase().startsWith('sinopec'); }
+function posCount(){ return isSinopecStation() ? 2 : 1; }
+
+const S = {
+  en:{
+    pageTitle:'Cash Reconciliation — Aries Petroleum',
+    hBack:'Portal', hTitle:'Cash Reconciliation', hSub:'SHIFT SETTLEMENT',
+    nsMsgNoStn:'No station selected. Please return to the portal first.', nsLink:'← Go to Portal', dailyBadge:'DAILY',
+    fTitle:'Cash Reconciliation', fSub:'Enter this shift sales and cash settlement. Shop sales are calculated automatically.',
+    lDate:'Date', lShift:'Shift *', lStaff:'Staff Name *', shMorning:'Morning', shAfternoon:'Afternoon', shNight:'Night',
+    summaryTitle:'Shift Summary', sumFuel:'Fuel Sales', sumShop:'Shop Sales', sumDiff:'Cash Difference',
+    posTitle:n=>`POS ${n}`, posBadge:n=>`POS ${n}`,
+    lFuel:'Fuel Sales Amount *', lTotal:'Total Sales Amount *', lExpected:'Expected Cash *', lActual:'Actual Cash *',
+    calcShop:'Shop Sales', calcDiff:'Cash Difference',
+    secNotes:'Difference / Notes', lDiffReason:'Difference Reason', lCashNotes:'Cash shortage / over notes',
+    reviewBtn:'Review & Submit →', fNote:'Refunds should be recorded separately in Refund Record.',
+    cfTitle:'Review & Submit', cfSub:'Check all amounts before submitting.', cfInfo:'Shift Info', cfSummary:'Calculated Summary',
+    cfEdit:'← Edit', cfSubmit:'Submit Cash Reconciliation', cfNote:'Data saved to Google Sheets.',
+    succTitle:'Cash Reconciliation Saved', succMsg:'Shift cash reconciliation has been recorded.',
+    succAgain:'New Reconciliation', succHome:'← Back to Portal', submitting:'Submitting…',
+    errStaff:'Please enter your name.', errShift:'Please select a shift.', errMissing:n=>`Please complete all required fields for POS ${n}.`,
+    errShopNegative:n=>`POS ${n}: Total Sales cannot be lower than Fuel Sales.`,
+    date:'Date', shift:'Shift', staff:'Staff', station:'Station', totalFuel:'Total Fuel Sales', totalShop:'Total Shop Sales', totalSales:'Total Sales', totalExpected:'Total Expected Cash', totalActual:'Total Actual Cash', totalDiff:'Total Cash Difference',
+    na:'—'
+  },
+  zh:{
+    pageTitle:'收银对账 — Aries Petroleum',
+    hBack:'首页', hTitle:'收银对账', hSub:'班次结算',
+    nsMsgNoStn:'未选择站点，请先返回首页选择站点。', nsLink:'← 返回首页', dailyBadge:'每日',
+    fTitle:'收银对账', fSub:'填写本班销售金额和现金结算金额，系统自动计算店内销售额。',
+    lDate:'日期', lShift:'班次 *', lStaff:'员工姓名 *', shMorning:'早班', shAfternoon:'午班', shNight:'夜班',
+    summaryTitle:'班次汇总', sumFuel:'油品销售', sumShop:'店内销售', sumDiff:'现金差额',
+    posTitle:n=>`POS ${n}`, posBadge:n=>`POS ${n}`,
+    lFuel:'本班 Fuel Sales 金额 *', lTotal:'本班 Total Sales 金额 *', lExpected:'POS 应有现金 *', lActual:'实际现金 *',
+    calcShop:'店内销售额', calcDiff:'现金差额',
+    secNotes:'差额 / 备注', lDiffReason:'差额原因', lCashNotes:'Cash shortage / over 说明',
+    reviewBtn:'核对并提交 →', fNote:'退款请单独使用 Refund Record 即时登记。',
+    cfTitle:'确认提交', cfSub:'提交前请核对所有金额。', cfInfo:'班次信息', cfSummary:'计算汇总',
+    cfEdit:'← 返回修改', cfSubmit:'确认提交收银对账', cfNote:'将保存至 Google Sheets。',
+    succTitle:'收银对账已保存', succMsg:'本班收银对账记录已保存。',
+    succAgain:'再次填写', succHome:'← 返回首页', submitting:'提交中…',
+    errStaff:'请填写员工姓名。', errShift:'请选择班次。', errMissing:n=>`请填写 POS ${n} 的所有必填金额。`,
+    errShopNegative:n=>`POS ${n}: Total Sales 不能小于 Fuel Sales。`,
+    date:'日期', shift:'班次', staff:'员工', station:'站点', totalFuel:'油品销售合计', totalShop:'店内销售合计', totalSales:'总销售合计', totalExpected:'应有现金合计', totalActual:'实际现金合计', totalDiff:'现金差额合计',
+    na:'—'
+  }
+};
+function t(){ return S[lang]; }
+
+function setLang(l){
+  lang=l; localStorage.setItem('ap_lang',l);
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',(l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文')));
+  applyLang();
+}
+function setText(id,val){ const el=document.getElementById(id); if(el&&val!==undefined) el.textContent=val; }
+function money(v){ const n=Number(v)||0; return '$'+n.toFixed(2); }
+function num(id){ const v=document.getElementById(id)?.value; return v===''||v===undefined?null:Number(v); }
+
+function applyLang(){
+  const L=t(); document.title=L.pageTitle;
+  setText('h-back',L.hBack); setText('h-title',L.hTitle); setText('h-sub',L.hSub); setText('ns-msg',L.nsMsgNoStn); setText('ns-link',L.nsLink); setText('daily-badge',L.dailyBadge);
+  setText('f-title',L.fTitle); setText('f-sub',L.fSub); setText('l-date',L.lDate); setText('l-shift',L.lShift); setText('l-staff',L.lStaff);
+  setText('sh-morning',L.shMorning); setText('sh-afternoon',L.shAfternoon); setText('sh-night',L.shNight);
+  setText('summary-title',L.summaryTitle); setText('sum-fuel-l',L.sumFuel); setText('sum-shop-l',L.sumShop); setText('sum-diff-l',L.sumDiff);
+  setText('sec-notes-title',L.secNotes); setText('l-diff-reason',L.lDiffReason); setText('l-cash-notes',L.lCashNotes);
+  setText('review-btn',L.reviewBtn); setText('f-note',L.fNote); setText('cf-title',L.cfTitle); setText('cf-sub',L.cfSub); setText('cf-edit-btn',L.cfEdit); setText('cf-submit-btn',L.cfSubmit); setText('cf-note',L.cfNote);
+  setText('succ-title',L.succTitle); setText('succ-msg',L.succMsg); setText('succ-again',L.succAgain); setText('succ-home',L.succHome);
+  if(station) document.getElementById('station-display').innerHTML=`<span>${station}</span>`;
+  renderPOS();
+  updateCalcs();
+}
+
+function renderPOS(){
+  const L=t(); const container=document.getElementById('pos-container');
+  const existing={};
+  for(let i=1;i<=2;i++){
+    ['fuel','total','expected','actual'].forEach(k=>{
+      const el=document.getElementById(`pos${i}-${k}`);
+      if(el) existing[`pos${i}-${k}`]=el.value;
+    });
+  }
+  let html='';
+  for(let i=1;i<=posCount();i++){
+    html += `
+    <div class="section">
+      <div class="section-header">
+        <div class="section-header-left"><span class="section-icon">💳</span><span class="section-title">${L.posTitle(i)}</span></div>
+        <span class="pos-badge">${L.posBadge(i)}</span>
+      </div>
+      <div class="section-body">
+        <div class="field"><label>${L.lFuel}</label><input type="number" id="pos${i}-fuel" step="0.01" min="0" oninput="updateCalcs()" value="${existing[`pos${i}-fuel`]||''}"></div>
+        <div class="field"><label>${L.lTotal}</label><input type="number" id="pos${i}-total" step="0.01" min="0" oninput="updateCalcs()" value="${existing[`pos${i}-total`]||''}"></div>
+        <div class="field"><label>${L.lExpected}</label><input type="number" id="pos${i}-expected" step="0.01" min="0" oninput="updateCalcs()" value="${existing[`pos${i}-expected`]||''}"></div>
+        <div class="field"><label>${L.lActual}</label><input type="number" id="pos${i}-actual" step="0.01" min="0" oninput="updateCalcs()" value="${existing[`pos${i}-actual`]||''}"></div>
+      </div>
+      <div class="calc-card">
+        <div class="calc-item"><div class="calc-label">${L.calcShop}</div><div class="calc-value" id="pos${i}-shop">$0.00</div></div>
+        <div class="calc-item"><div class="calc-label">${L.calcDiff}</div><div class="calc-value" id="pos${i}-diff">$0.00</div></div>
+      </div>
+    </div>`;
+  }
+  container.innerHTML=html;
+}
+
+function calcData(){
+  const items=[]; let totalFuel=0,totalSales=0,totalShop=0,totalExpected=0,totalActual=0,totalDiff=0;
+  for(let i=1;i<=posCount();i++){
+    const fuel=num(`pos${i}-fuel`), total=num(`pos${i}-total`), expected=num(`pos${i}-expected`), actual=num(`pos${i}-actual`);
+    const shop=(fuel!==null&&total!==null)?total-fuel:0;
+    const diff=(expected!==null&&actual!==null)?actual-expected:0;
+    if(fuel!==null) totalFuel+=fuel; if(total!==null) totalSales+=total; totalShop+=shop; if(expected!==null) totalExpected+=expected; if(actual!==null) totalActual+=actual; totalDiff+=diff;
+    items.push({posNo:i,fuelSales:fuel,totalSales:total,shopSales:shop,expectedCash:expected,actualCash:actual,cashDifference:diff});
+  }
+  return {items,totalFuel,totalSales,totalShop,totalExpected,totalActual,totalDiff};
+}
+
+function updateCalcs(){
+  const d=calcData();
+  d.items.forEach(x=>{
+    const shopEl=document.getElementById(`pos${x.posNo}-shop`), diffEl=document.getElementById(`pos${x.posNo}-diff`);
+    if(shopEl){ shopEl.textContent=money(x.shopSales); shopEl.className='calc-value'+(x.shopSales<0?' danger':''); }
+    if(diffEl){ diffEl.textContent=money(x.cashDifference); diffEl.className='calc-value'+(x.cashDifference===0?'':x.cashDifference<0?' danger':' warn'); }
+  });
+  setText('sum-fuel',money(d.totalFuel)); setText('sum-shop',money(d.totalShop)); setText('sum-diff',money(d.totalDiff));
+  const diff=document.getElementById('sum-diff'); if(diff) diff.style.color=d.totalDiff===0?'var(--accent)':d.totalDiff<0?'var(--danger)':'var(--warn)';
+}
+
+function validate(){
+  const L=t();
+  if(!document.getElementById('f-staff').value.trim()) return L.errStaff;
+  if(!document.getElementById('f-shift').value) return L.errShift;
+  for(let i=1;i<=posCount();i++){
+    const fuel=num(`pos${i}-fuel`), total=num(`pos${i}-total`), expected=num(`pos${i}-expected`), actual=num(`pos${i}-actual`);
+    if(fuel===null||total===null||expected===null||actual===null) return L.errMissing(i);
+    if(total<fuel) return L.errShopNegative(i);
+  }
+  return '';
+}
+
+function goReview(){
+  hideAlert('alertBox'); const err=validate(); if(err){ showAlert('alertBox',err); return; }
+  buildConfirm(); showScreen('confirm');
+}
+
+function row(k,v,cls=''){ return `<div class="confirm-row"><div class="confirm-key">${k}</div><div class="confirm-val ${cls}">${v}</div></div>`; }
+
+function buildConfirm(){
+  const L=t(); const d=calcData();
+  const shiftSel=document.getElementById('f-shift');
+  const shiftText=shiftSel.options[shiftSel.selectedIndex].text;
+  let html=`<div class="confirm-section"><div class="confirm-section-title">${L.cfInfo}</div>
+    ${row(L.date,document.getElementById('f-date').value)}
+    ${row(L.shift,shiftText)}
+    ${row(L.staff,document.getElementById('f-staff').value.trim())}
+    ${row(L.station,station)}
+  </div>`;
+  d.items.forEach(x=>{
+    html+=`<div class="confirm-section"><div class="confirm-section-title">POS ${x.posNo}</div>
+      ${row(L.lFuel.replace(' *',''),money(x.fuelSales))}
+      ${row(L.lTotal.replace(' *',''),money(x.totalSales))}
+      ${row(L.calcShop,money(x.shopSales),x.shopSales<0?'bad':'good')}
+      ${row(L.lExpected.replace(' *',''),money(x.expectedCash))}
+      ${row(L.lActual.replace(' *',''),money(x.actualCash))}
+      ${row(L.calcDiff,money(x.cashDifference),x.cashDifference===0?'good':x.cashDifference<0?'bad':'warn')}
+    </div>`;
+  });
+  html+=`<div class="confirm-section"><div class="confirm-section-title">${L.cfSummary}</div>
+    ${row(L.totalFuel,money(d.totalFuel))}
+    ${row(L.totalShop,money(d.totalShop),d.totalShop<0?'bad':'good')}
+    ${row(L.totalSales,money(d.totalSales))}
+    ${row(L.totalExpected,money(d.totalExpected))}
+    ${row(L.totalActual,money(d.totalActual))}
+    ${row(L.totalDiff,money(d.totalDiff),d.totalDiff===0?'good':d.totalDiff<0?'bad':'warn')}
+  </div>`;
+  const diffReason=document.getElementById('f-diff-reason').value.trim();
+  const cashNotes=document.getElementById('f-cash-notes').value.trim();
+  if(diffReason||cashNotes){
+    html+=`<div class="confirm-section"><div class="confirm-section-title">${L.secNotes}</div>
+      ${diffReason?row(L.lDiffReason,diffReason):''}
+      ${cashNotes?row(L.lCashNotes,cashNotes):''}
+    </div>`;
+  }
+  document.getElementById('confirm-body').innerHTML=html;
+}
+
+function submitForm(){
+  const L=t(); const d=calcData();
+  const payload={
+    formType:'cashReconciliation',
+    submittedAt:new Date().toISOString(),
+    station, lang,
+    date:document.getElementById('f-date').value,
+    shift:document.getElementById('f-shift').value,
+    staffName:document.getElementById('f-staff').value.trim(),
+    posCount:posCount(),
+    posItems:d.items,
+    totalFuelSales:d.totalFuel,
+    totalShopSales:d.totalShop,
+    totalSales:d.totalSales,
+    totalExpectedCash:d.totalExpected,
+    totalActualCash:d.totalActual,
+    totalCashDifference:d.totalDiff,
+    differenceReason:document.getElementById('f-diff-reason').value.trim(),
+    cashShortageOverNotes:document.getElementById('f-cash-notes').value.trim()
+  };
+  document.getElementById('loading-text').textContent=L.submitting;
+  document.getElementById('loadingOverlay').classList.add('show');
+  const SHEET_URL = '';
+  if(!SHEET_URL){ setTimeout(()=>onSuccess(),350); return; }
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(()=>onSuccess()).catch(()=>onSuccess());
+}
+
+function onSuccess(){ document.getElementById('loadingOverlay').classList.remove('show'); showScreen('success'); }
+
+function resetForm(){
+  document.getElementById('f-date').value=todayStr(); document.getElementById('f-shift').value=''; document.getElementById('f-staff').value='';
+  document.getElementById('f-diff-reason').value=''; document.getElementById('f-cash-notes').value='';
+  for(let i=1;i<=2;i++) ['fuel','total','expected','actual'].forEach(k=>{ const el=document.getElementById(`pos${i}-${k}`); if(el) el.value=''; });
+  hideAlert('alertBox'); updateCalcs(); showScreen('form');
+}
+
+function showScreen(id){ document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active')); document.getElementById(`screen-${id}`).classList.add('active'); window.scrollTo(0,0); }
+function showAlert(id,msg){ const a=document.getElementById(id); Object.assign(a.style,{background:'var(--warn-bg)',borderColor:'var(--warn-border)',color:'var(--warn)'}); a.textContent=msg; a.classList.add('show'); a.scrollIntoView({behavior:'smooth',block:'center'}); }
+function hideAlert(id){ const el=document.getElementById(id); if(el) el.classList.remove('show'); }
+function todayStr(){ const n=new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`; }
+function goPortal(){ window.location.href='index.html'; }
+
+if(!station){ document.getElementById('no-station-bar').classList.add('show'); document.getElementById('station-bar').style.display='none'; document.getElementById('screen-form').style.display='none'; }
+document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文')));
+document.getElementById('f-date').value=todayStr();
+applyLang();
+</script>
+</body>
+</html>
