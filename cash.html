@@ -343,7 +343,7 @@ function submitForm(){
   };
   document.getElementById('loading-text').textContent=L.submitting;
   document.getElementById('loadingOverlay').classList.add('show');
-  const SHEET_URL = '';
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
   if(!SHEET_URL){ setTimeout(()=>onSuccess(),350); return; }
   fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
     .then(()=>onSuccess()).catch(()=>onSuccess());
