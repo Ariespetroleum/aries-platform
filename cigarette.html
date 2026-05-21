@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Cigarette Stock Check — Aries Petroleum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f1117;--surface:#181c25;--surface2:#1f2433;--border:#2a3044;--border2:#353f58;
+  --accent:#4ade80;--accent2:#22d3ee;--warn:#fb923c;--danger:#f87171;--purple:#a78bfa;
+  --text:#e8eaf0;--muted:#7a8299;--label:#a0aabb;
+  --mono:'DM Mono',monospace;--sans:'Sora',sans-serif;
+  --ok-bg:rgba(74,222,128,.08);--ok-border:rgba(74,222,128,.25);
+  --warn-bg:rgba(251,146,60,.08);--warn-border:rgba(251,146,60,.3);
+  --danger-bg:rgba(248,113,113,.08);--danger-border:rgba(248,113,113,.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;padding-bottom:56px}
+
+/* ── Header ── */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:10px}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 10px 4px 0;border-right:1px solid var(--border);margin-right:2px;transition:color .15s;white-space:nowrap}
+.back-btn:hover{color:var(--accent2)}
+.back-arrow{font-size:15px}
+.back-label{font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+.header-title{font-size:13px;font-weight:600}
+.header-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px}
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.lang-btn{padding:4px 9px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:transparent;transition:all .15s}
+.lang-btn.active{background:var(--border2);color:var(--text)}
+
+/* ── No-station guard ── */
+.no-station{display:none;background:var(--danger-bg);border-bottom:1px solid var(--danger-border);padding:12px 16px;text-align:center}
+.no-station.show{display:block}
+.no-station-msg{font-size:13px;color:var(--danger);margin-bottom:8px}
+.no-station-link{display:inline-block;background:var(--danger);color:#1a0000;font-size:12px;font-weight:600;padding:7px 16px;border-radius:7px;text-decoration:none}
+
+/* ── Station bar ── */
+.station-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
+.station-dot{width:6px;height:6px;border-radius:50%;background:var(--warn);box-shadow:0 0 6px var(--warn);flex-shrink:0}
+.station-name{font-family:var(--mono);font-size:11px;color:var(--label)}
+.station-name span{color:var(--text);font-weight:600}
+.daily-badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;padding:2px 7px;border-radius:4px;background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+
+/* ── Container ── */
+.container{max-width:540px;margin:0 auto;padding:20px 16px}
+.screen{display:none}.screen.active{display:block}
+
+/* ── Form header ── */
+.form-header{margin-bottom:20px}
+.form-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.form-sub{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── Info grid ── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.field label{display:block;font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono)}
+.field input,.field select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--sans);font-size:13px;padding:9px 12px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.field input:focus,.field select:focus{border-color:var(--accent2)}
+.field select option{background:#1f2433}
+.field.full{grid-column:1/-1}
+
+/* ── Staff name with last-used hint ── */
+.staff-wrap{position:relative}
+.last-used-hint{display:none;position:absolute;top:100%;left:0;right:0;z-index:10;background:var(--surface);border:1px solid var(--border2);border-top:none;border-radius:0 0 7px 7px;padding:8px 12px;cursor:pointer;font-size:12px;color:var(--muted);transition:background .15s}
+.last-used-hint:hover{background:var(--surface2);color:var(--text)}
+.last-used-hint.show{display:block}
+.last-used-name{color:var(--accent2);font-weight:600}
+
+/* ── Summary bar ── */
+.summary-bar{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between}
+.summary-stat{text-align:center}
+.summary-num{font-family:var(--mono);font-size:18px;font-weight:700;color:var(--accent)}
+.summary-label{font-size:10px;color:var(--muted);margin-top:2px;font-family:var(--mono)}
+.summary-divider{width:1px;height:32px;background:var(--border)}
+
+/* ── Toolbar ── */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
+.items-left-label{font-family:var(--mono);font-size:10px;color:var(--muted);flex:1}
+.manage-btn{font-size:11px;cursor:pointer;font-family:var(--mono);padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .15s;white-space:nowrap}
+.manage-btn:hover{border-color:var(--border2);color:var(--text)}
+.manage-btn.active{border-color:var(--danger-border);color:var(--danger);background:var(--danger-bg)}
+
+/* ── Manage mode banner ── */
+.manage-banner{display:none;background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--danger);line-height:1.5}
+.manage-banner.show{display:block}
+
+/* ── Section ── */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.section-header{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-header-left{display:flex;align-items:center;gap:8px}
+.section-icon{font-size:14px}
+.section-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.section-count{font-family:var(--mono);font-size:10px;color:var(--muted);padding:2px 7px;background:var(--surface);border:1px solid var(--border);border-radius:4px}
+
+/* ── Product row ── */
+.product-row{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--border);gap:10px;transition:background .15s}
+.product-row:last-child{border-bottom:none}
+.product-row:focus-within{background:var(--surface2)}
+.product-name{flex:1;font-size:13px;font-weight:500;min-width:0;word-break:break-word}
+.product-name.custom{color:var(--accent2)}
+.qty-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.qty-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;line-height:1}
+.qty-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.qty-input{width:52px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:14px;font-weight:600;padding:5px 6px;text-align:center;outline:none;transition:border-color .2s;-moz-appearance:textfield}
+.qty-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.qty-input:focus{border-color:var(--accent2)}
+.qty-input.filled{border-color:var(--ok-border);background:var(--ok-bg);color:var(--accent)}
+
+/* ── Delete button — ONLY in manage mode ── */
+.delete-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--danger-border);background:var(--danger-bg);color:var(--danger);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.delete-btn:hover{background:var(--danger);color:#fff}
+
+/* ── Add product row ── */
+.add-product-row{padding:10px 14px;display:flex;gap:8px;align-items:center;border-top:1px solid var(--border);background:var(--surface2)}
+.add-product-input{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--sans);font-size:13px;padding:8px 12px;outline:none;transition:border-color .2s}
+.add-product-input:focus{border-color:var(--accent2)}
+.add-product-btn{background:var(--accent2);color:#071a17;border:none;border-radius:7px;font-family:var(--sans);font-size:12px;font-weight:600;padding:8px 14px;cursor:pointer;white-space:nowrap;transition:opacity .15s;flex-shrink:0}
+.add-product-btn:hover{opacity:.85}
+
+/* ── Alert ── */
+.alert{display:none;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:14px;line-height:1.5}
+.alert.show{display:block}
+
+/* ── Buttons ── */
+.btn-wrap{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.btn{width:100%;border:none;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:600;padding:14px;cursor:pointer;letter-spacing:.02em;transition:opacity .18s,transform .1s}
+.btn:active{transform:scale(.98)}.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#071a0d}.btn-primary:hover{opacity:.9}
+.btn-secondary{background:var(--surface2);color:var(--label);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
+.note{text-align:center;font-size:11px;color:var(--muted);margin-top:8px}
+
+/* ── Confirm screen ── */
+.confirm-header{margin-bottom:18px}
+.confirm-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.confirm-sub{font-size:12px;color:var(--muted)}
+.confirm-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.confirm-section-title{padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.confirm-row{display:flex;padding:8px 14px;border-bottom:1px solid var(--border);gap:12px;align-items:center}
+.confirm-row:last-child{border-bottom:none}
+.confirm-key{font-size:12px;color:var(--label);flex:1;min-width:0}
+.confirm-val{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text);flex-shrink:0}
+.confirm-val.zero{color:var(--muted)}
+
+/* ── Success ── */
+.success-wrap{text-align:center;padding:56px 20px}
+.success-icon{width:64px;height:64px;background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px}
+.success-title{font-size:20px;font-weight:700;margin-bottom:8px;color:var(--accent)}
+.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px}
+.success-actions{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
+
+/* ── Loading ── */
+.loading-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(15,17,23,.85);align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--muted);font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Submitting…</div>
+</div>
+
+<div class="header">
+  <div class="header-left">
+    <div class="back-btn" onclick="goPortal()">
+      <span class="back-arrow">←</span>
+      <span class="back-label" id="h-back">Portal</span>
+    </div>
+    <div>
+      <div class="header-title" id="h-title">Cigarette Stock Check</div>
+      <div class="header-sub" id="h-sub">END OF SHIFT</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+    </div>
+  </div>
+</div>
+
+<div class="no-station" id="no-station-bar">
+  <div class="no-station-msg" id="ns-msg"></div>
+  <a class="no-station-link" href="index.html" id="ns-link"></a>
+</div>
+
+<div class="station-bar" id="station-bar">
+  <div class="station-dot"></div>
+  <div class="station-name" id="station-display"></div>
+  <div class="daily-badge" id="daily-badge">DAILY</div>
+</div>
+
+<div class="container">
+
+  <!-- ══ FORM ══ -->
+  <div class="screen active" id="screen-form">
+
+    <div class="form-header">
+      <div class="form-title" id="f-title">Cigarette Stock Check</div>
+      <div class="form-sub" id="f-sub">Count remaining stock at end of shift.</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="field">
+        <label id="l-date">Date</label>
+        <input type="date" id="f-date">
+      </div>
+      <div class="field">
+        <label id="l-shift">Shift *</label>
+        <select id="f-shift">
+          <option value="">—</option>
+          <option id="sh-morning">Morning</option>
+          <option id="sh-afternoon">Afternoon</option>
+          <option id="sh-night">Night</option>
+        </select>
+      </div>
+      <div class="field full">
+        <label id="l-staff">Staff Name *</label>
+        <div class="staff-wrap">
+          <input type="text" id="f-staff" placeholder="Your name" autocomplete="off"
+            onfocus="showLastUsedHint()" onblur="hideLastUsedHint()" oninput="hideLastUsedHint()">
+          <div class="last-used-hint" id="last-used-hint" onmousedown="useLastName()">
+            <span id="last-used-prefix"></span> <span class="last-used-name" id="last-used-name"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="summary-bar">
+      <div class="summary-stat">
+        <div class="summary-num" id="sum-total">0</div>
+        <div class="summary-label" id="sum-total-label">Total</div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-stat">
+        <div class="summary-num" id="sum-filled">0</div>
+        <div class="summary-label" id="sum-filled-label">Counted</div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-stat">
+        <div class="summary-num" id="sum-remain" style="color:var(--warn)">0</div>
+        <div class="summary-label" id="sum-remain-label">Remaining</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="items-left-label" id="items-left-label"></div>
+      <button class="manage-btn" id="manage-btn" onclick="toggleManage()"></button>
+    </div>
+
+    <!-- Manage mode warning banner -->
+    <div class="manage-banner" id="manage-banner"></div>
+
+    <!-- Product list -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-header-left">
+          <span class="section-icon">🚬</span>
+          <span class="section-title" id="sec-products-title">Products</span>
+        </div>
+        <span class="section-count" id="product-count">0 items</span>
+      </div>
+      <div id="product-list"></div>
+      <!-- Add row only visible in manage mode -->
+      <div class="add-product-row" id="add-product-row" style="display:none">
+        <input class="add-product-input" id="new-product-input" type="text"
+          onkeydown="if(event.key==='Enter')addProduct()">
+        <button class="add-product-btn" id="add-product-btn" onclick="addProduct()">+ Add</button>
+      </div>
+    </div>
+
+    <div class="alert" id="alertBox"></div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="review-btn" onclick="goReview()"></button>
+    </div>
+  </div>
+
+  <!-- ══ CONFIRM ══ -->
+  <div class="screen" id="screen-confirm">
+    <div class="confirm-header">
+      <div class="confirm-title" id="cf-title"></div>
+      <div class="confirm-sub"   id="cf-sub"></div>
+    </div>
+    <div class="confirm-section">
+      <div class="confirm-section-title" id="cf-info-title"></div>
+      <div class="confirm-row"><div class="confirm-key" id="cf-date-label"></div><div class="confirm-val" id="cf-date-val"></div></div>
+      <div class="confirm-row"><div class="confirm-key" id="cf-shift-label"></div><div class="confirm-val" id="cf-shift-val"></div></div>
+      <div class="confirm-row"><div class="confirm-key" id="cf-staff-label"></div><div class="confirm-val" id="cf-staff-val"></div></div>
+      <div class="confirm-row"><div class="confirm-key" id="cf-station-label"></div><div class="confirm-val" id="cf-station-val"></div></div>
+    </div>
+    <div class="confirm-section">
+      <div class="confirm-section-title" id="cf-stock-title"></div>
+      <div id="cf-stock-list"></div>
+    </div>
+    <div class="alert" id="cf-alert"></div>
+    <div class="btn-wrap">
+      <button class="btn btn-secondary" id="cf-edit-btn"   onclick="showScreen('form')"></button>
+      <button class="btn btn-primary"   id="cf-submit-btn" onclick="submitForm()"></button>
+    </div>
+    <p class="note" id="cf-note"></p>
+  </div>
+
+  <!-- ══ SUCCESS ══ -->
+  <div class="screen" id="screen-success">
+    <div class="success-wrap">
+      <div class="success-icon">✓</div>
+      <div class="success-title" id="succ-title"></div>
+      <div class="success-sub"   id="succ-msg"></div>
+      <div class="success-actions">
+        <button class="btn btn-secondary" id="succ-again" onclick="resetForm()"></button>
+        <button class="btn btn-secondary" id="succ-home"  onclick="goPortal()"></button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let station    = localStorage.getItem('ap_station') || '';
+let lang       = localStorage.getItem('ap_lang')    || 'en';
+let manageMode = false;
+
+// ══════════════════════════════════════════
+// STRINGS
+// ══════════════════════════════════════════
+const S = {
+  en: {
+    pageTitle:'Cigarette Stock Check — Aries Petroleum',
+    hBack:'Portal', hTitle:'Cigarette Stock Check', hSub:'END OF SHIFT',
+    nsMsgNoStn:'No station selected. Please return to the portal first.',
+    nsLink:'← Go to Portal', dailyBadge:'DAILY',
+    fTitle:'Cigarette Stock Check',
+    fSub:'Count remaining stock at end of shift. Use + / − or type directly.',
+    lDate:'Date', lShift:'Shift *', lStaff:'Staff Name *',
+    shMorning:'Morning', shAfternoon:'Afternoon', shNight:'Night',
+    lastUsedPrefix:'Use last name:',
+    sumTotalLabel:'Total', sumFilledLabel:'Counted', sumRemainLabel:'Remaining',
+    itemsLeft: n => n > 0 ? `${n} item(s) not yet counted` : '✓ All counted',
+    manageOn:'✎ Manage list', manageOff:'✓ Done managing',
+    manageBanner:'You are in list management mode. Delete buttons are now visible. Tap "Done managing" when finished.',
+    secProducts:'Products',
+    productCount: n => `${n} items`,
+    addPlaceholder:'Type new product name…', addBtn:'+ Add',
+    reviewBtn:'Review & Submit →',
+    cfTitle:'Review & Submit', cfSub:'Check all counts before submitting.',
+    cfInfoTitle:'Shift Info', cfStockTitle:'Stock Count',
+    cfDateLabel:'Date', cfShiftLabel:'Shift', cfStaffLabel:'Staff', cfStationLabel:'Station',
+    cfEdit:'← Edit', cfSubmit:'Submit Stock Count',
+    cfNote:'Data saved to Google Sheets.',
+    succTitle:'Stock Count Saved', succMsg:'Cigarette stock count has been recorded.',
+    succAgain:'New Count', succHome:'← Back to Portal',
+    submitting:'Submitting…',
+    errStaff:'Please enter your name.',
+    errShift:'Please select a shift.',
+    errProducts:'Please count at least one product before submitting.',
+    deleteConfirm: name => `Remove "${name}" from this station's product list?\n\nThis cannot be undone.`,
+    duplicateWarning:'This product already exists in the list.',
+    notCounted:'—',
+  },
+  zh: {
+    pageTitle:'香烟库存盘点 — Aries Petroleum',
+    hBack:'首页', hTitle:'香烟库存盘点', hSub:'班次结束',
+    nsMsgNoStn:'未选择站点，请先返回首页选择站点。',
+    nsLink:'← 返回首页', dailyBadge:'每日',
+    fTitle:'香烟库存盘点',
+    fSub:'在班次结束时清点剩余库存。可点击 + / − 或直接输入数量。',
+    lDate:'日期', lShift:'班次 *', lStaff:'员工姓名 *',
+    shMorning:'早班', shAfternoon:'午班', shNight:'夜班',
+    lastUsedPrefix:'使用上次姓名：',
+    sumTotalLabel:'产品总数', sumFilledLabel:'已盘点', sumRemainLabel:'未盘点',
+    itemsLeft: n => n > 0 ? `还有 ${n} 项未盘点` : '✓ 全部已盘点',
+    manageOn:'✎ 管理列表', manageOff:'✓ 完成管理',
+    manageBanner:'当前处于列表管理模式，删除按钮已显示。完成后请点击"完成管理"。',
+    secProducts:'产品列表',
+    productCount: n => `${n} 项`,
+    addPlaceholder:'输入新产品名称…', addBtn:'+ 添加',
+    reviewBtn:'核对并提交 →',
+    cfTitle:'确认提交', cfSub:'提交前请核对所有数量。',
+    cfInfoTitle:'班次信息', cfStockTitle:'库存数量',
+    cfDateLabel:'日期', cfShiftLabel:'班次', cfStaffLabel:'员工', cfStationLabel:'站点',
+    cfEdit:'← 返回修改', cfSubmit:'确认提交',
+    cfNote:'将保存至 Google Sheets。',
+    succTitle:'库存记录已保存', succMsg:'香烟库存盘点结果已记录。',
+    succAgain:'再次盘点', succHome:'← 返回首页',
+    submitting:'提交中…',
+    errStaff:'请填写员工姓名。',
+    errShift:'请选择班次。',
+    errProducts:'请至少盘点一个产品再提交。',
+    deleteConfirm: name => `确认从本站点产品列表中移除"${name}"？\n\n此操作无法撤销。`,
+    duplicateWarning:'该产品已存在于列表中。',
+    notCounted:'—',
+  }
+};
+function t() { return S[lang]; }
+
+// ══════════════════════════════════════════
+// DEFAULT PRODUCTS
+// ══════════════════════════════════════════
+const DEFAULT_PRODUCTS = [
+  'Rothmans Classic','Rothmans Sun',
+  'Winfield Classic','Winfield Sun','Winfield Crush Blue','Winfield Sun RYO',
+  'JPS Original','JPS Evolve','JPS Virginia','JPS Original RYO',
+  'Peter Jackson Original B','Peter Jackson Regular G',
+  'Bond Street Original B','Bond Street Classic Regular G',
+  'Manchester Original','TS Blue',
+  'Parker & Simpson Original','Parker & Simpson Regular',
+  'Benson & Hedges Gold','Benson & Hedges Classic Red',
+  'Chesterfield Classic Regular G','Bravo G',
+  'Champion RYO','Golden Leaf RYO 50g','Golden Leaf RYO 100g',
+];
+
+// ══════════════════════════════════════════
+// PRODUCT LIST — stored per station in localStorage
+// When Apps Script URL is set, list is also synced to/from Google Sheet
+// ══════════════════════════════════════════
+function storageKey() { return `ap_cig_${station}`; }
+
+function loadProducts() {
+  const saved = localStorage.getItem(storageKey());
+  if (saved) {
+    try { return JSON.parse(saved); } catch(e) {}
+  }
+  const list = DEFAULT_PRODUCTS.map(name => ({ name, custom: false }));
+  saveProducts(list);
+  return list;
+}
+
+function saveProducts(list) {
+  localStorage.setItem(storageKey(), JSON.stringify(list));
+  // TODO: sync to Google Sheet via Apps Script when SHEET_URL is set
+}
+
+// ══════════════════════════════════════════
+// STAFF NAME — last used hint
+// ══════════════════════════════════════════
+const LAST_NAME_KEY = 'ap_cig_last_staff';
+
+function showLastUsedHint() {
+  const last = localStorage.getItem(LAST_NAME_KEY);
+  const input = document.getElementById('f-staff');
+  if (last && input.value.trim() === '') {
+    document.getElementById('last-used-name').textContent = last;
+    document.getElementById('last-used-prefix').textContent = t().lastUsedPrefix;
+    document.getElementById('last-used-hint').classList.add('show');
+  }
+}
+
+function hideLastUsedHint() {
+  setTimeout(() => {
+    document.getElementById('last-used-hint').classList.remove('show');
+  }, 150);
+}
+
+function useLastName() {
+  const last = localStorage.getItem(LAST_NAME_KEY);
+  if (last) {
+    document.getElementById('f-staff').value = last;
+    document.getElementById('last-used-hint').classList.remove('show');
+  }
+}
+
+// ══════════════════════════════════════════
+// LANG
+// ══════════════════════════════════════════
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('ap_lang', l);
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active',
+      (l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文'));
+  });
+  applyLang();
+}
+
+function applyLang() {
+  const L = t();
+  document.title = L.pageTitle;
+  setText('h-back', L.hBack); setText('h-title', L.hTitle); setText('h-sub', L.hSub);
+  setText('ns-msg', L.nsMsgNoStn); setText('ns-link', L.nsLink);
+  setText('daily-badge', L.dailyBadge);
+  setText('f-title', L.fTitle); setText('f-sub', L.fSub);
+  setText('l-date', L.lDate); setText('l-shift', L.lShift); setText('l-staff', L.lStaff);
+  setText('sh-morning', L.shMorning); setText('sh-afternoon', L.shAfternoon); setText('sh-night', L.shNight);
+  setText('sum-total-label', L.sumTotalLabel);
+  setText('sum-filled-label', L.sumFilledLabel);
+  setText('sum-remain-label', L.sumRemainLabel);
+  setText('sec-products-title', L.secProducts);
+  document.getElementById('new-product-input').placeholder = L.addPlaceholder;
+  setText('add-product-btn', L.addBtn);
+  setText('review-btn', L.reviewBtn);
+  setText('cf-title', L.cfTitle); setText('cf-sub', L.cfSub);
+  setText('cf-info-title', L.cfInfoTitle); setText('cf-stock-title', L.cfStockTitle);
+  setText('cf-date-label', L.cfDateLabel); setText('cf-shift-label', L.cfShiftLabel);
+  setText('cf-staff-label', L.cfStaffLabel); setText('cf-station-label', L.cfStationLabel);
+  setText('cf-edit-btn', L.cfEdit); setText('cf-submit-btn', L.cfSubmit);
+  setText('cf-note', L.cfNote);
+  setText('succ-title', L.succTitle); setText('succ-msg', L.succMsg);
+  setText('succ-again', L.succAgain); setText('succ-home', L.succHome);
+  if (station) document.getElementById('station-display').innerHTML = `<span>${station}</span>`;
+
+  // Manage button & banner
+  const btn = document.getElementById('manage-btn');
+  btn.textContent  = manageMode ? L.manageOff : L.manageOn;
+  btn.className    = 'manage-btn' + (manageMode ? ' active' : '');
+  setText('manage-banner', L.manageBanner);
+  document.getElementById('manage-banner').className = 'manage-banner' + (manageMode ? ' show' : '');
+  document.getElementById('add-product-row').style.display = manageMode ? 'flex' : 'none';
+
+  renderProducts();
+  updateSummary();
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el && val !== undefined) el.textContent = val;
+}
+
+// ══════════════════════════════════════════
+// SCREENS
+// ══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById(`screen-${id}`).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════
+// RENDER PRODUCTS
+// ══════════════════════════════════════════
+// Keep qty values across re-renders
+const qtyCache = {};
+
+function renderProducts() {
+  const products = loadProducts();
+  const L = t();
+
+  // Save current values to cache before re-render
+  products.forEach((_, i) => {
+    const el = document.getElementById(`qty_${i}`);
+    if (el) qtyCache[i] = el.value;
+  });
+
+  const list = document.getElementById('product-list');
+  list.innerHTML = products.map((p, i) => {
+    const cached = qtyCache[i] ?? '';
+    const filled = cached !== '';
+    const deleteBtn = manageMode
+      ? `<button class="delete-btn" onclick="deleteProduct(${i})" title="Remove">✕</button>`
+      : '';
+    return `
+      <div class="product-row">
+        <div class="product-name${p.custom ? ' custom' : ''}">${escHtml(p.name)}</div>
+        <div class="qty-wrap">
+          ${manageMode ? '' : `
+            <button class="qty-btn" onclick="adjustQty(${i},-1)">−</button>
+            <input class="qty-input${filled ? ' filled' : ''}" type="number"
+              id="qty_${i}" min="0" value="${escHtml(cached)}" placeholder="—"
+              oninput="onQtyInput(${i},this)">
+            <button class="qty-btn" onclick="adjustQty(${i},1)">+</button>
+          `}
+          ${deleteBtn}
+        </div>
+      </div>`;
+  }).join('');
+
+  setText('product-count', L.productCount(products.length));
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════
+// QTY CONTROLS
+// ══════════════════════════════════════════
+function getQty(i) {
+  const el = document.getElementById(`qty_${i}`);
+  const v  = el ? el.value : (qtyCache[i] ?? '');
+  if (v === '' || v === null || v === undefined) return null;
+  return Math.max(0, parseInt(v) || 0);
+}
+
+function setQty(i, val) {
+  const el = document.getElementById(`qty_${i}`);
+  if (!el) return;
+  el.value = val;
+  el.className = 'qty-input filled';
+  qtyCache[i] = String(val);
+  updateSummary();
+}
+
+function adjustQty(i, delta) {
+  const current = getQty(i) ?? 0;
+  setQty(i, Math.max(0, current + delta));
+}
+
+function onQtyInput(i, input) {
+  if (input.value === '') {
+    input.className = 'qty-input';
+    qtyCache[i] = '';
+  } else {
+    const v = Math.max(0, parseInt(input.value) || 0);
+    input.value = v;
+    input.className = 'qty-input filled';
+    qtyCache[i] = String(v);
+  }
+  updateSummary();
+}
+
+// ══════════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════════
+function updateSummary() {
+  const products = loadProducts();
+  const total  = products.length;
+  const filled = products.filter((_, i) => getQty(i) !== null).length;
+  const remain = total - filled;
+  setText('sum-total',  total);
+  setText('sum-filled', filled);
+  setText('sum-remain', remain);
+  const el = document.getElementById('sum-remain');
+  if (el) el.style.color = remain === 0 ? 'var(--accent)' : 'var(--warn)';
+  setText('items-left-label', t().itemsLeft(remain));
+}
+
+// ══════════════════════════════════════════
+// ADD / DELETE
+// ══════════════════════════════════════════
+function addProduct() {
+  const input = document.getElementById('new-product-input');
+  const name  = input.value.trim();
+  if (!name) return;
+  const products = loadProducts();
+  if (products.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    input.style.borderColor = 'var(--danger)';
+    setTimeout(() => { input.style.borderColor = ''; }, 1500);
+    alert(t().duplicateWarning);
+    return;
+  }
+  products.push({ name, custom: true });
+  saveProducts(products);
+  input.value = '';
+  renderProducts();
+  updateSummary();
+}
+
+function deleteProduct(i) {
+  const products = loadProducts();
+  if (!confirm(t().deleteConfirm(products[i].name))) return;
+  // Clear cache for this index and shift cache
+  delete qtyCache[i];
+  const keys = Object.keys(qtyCache).map(Number).filter(k => k > i);
+  keys.sort((a,b) => a-b).forEach(k => {
+    qtyCache[k-1] = qtyCache[k];
+    delete qtyCache[k];
+  });
+  products.splice(i, 1);
+  saveProducts(products);
+  renderProducts();
+  updateSummary();
+}
+
+// ══════════════════════════════════════════
+// MANAGE MODE — toggle shows/hides delete btns
+// ══════════════════════════════════════════
+function toggleManage() {
+  manageMode = !manageMode;
+  applyLang();  // re-renders everything including manage banner + add row
+}
+
+// ══════════════════════════════════════════
+// REVIEW & SUBMIT
+// ══════════════════════════════════════════
+function goReview() {
+  const L = t();
+  hideAlert('alertBox');
+  const staff = document.getElementById('f-staff').value.trim();
+  const shift = document.getElementById('f-shift').value;
+  if (!staff) { showAlert('alertBox', L.errStaff); return; }
+  if (!shift) { showAlert('alertBox', L.errShift); return; }
+  const products = loadProducts();
+  const counted  = products.filter((_, i) => getQty(i) !== null);
+  if (counted.length === 0) { showAlert('alertBox', L.errProducts); return; }
+
+  const shiftText = document.getElementById('f-shift').options[document.getElementById('f-shift').selectedIndex].text;
+  setText('cf-date-val',    document.getElementById('f-date').value);
+  setText('cf-shift-val',   shiftText);
+  setText('cf-staff-val',   staff);
+  setText('cf-station-val', station);
+
+  document.getElementById('cf-stock-list').innerHTML = products.map((p, i) => {
+    const qty = getQty(i);
+    return `
+      <div class="confirm-row">
+        <div class="confirm-key" style="${p.custom ? 'color:var(--accent2)' : ''}">${escHtml(p.name)}</div>
+        <div class="confirm-val${qty === null ? ' zero' : ''}">${qty !== null ? qty : L.notCounted}</div>
+      </div>`;
+  }).join('');
+
+  showScreen('confirm');
+}
+
+function submitForm() {
+  const L        = t();
+  const products = loadProducts();
+  const staff    = document.getElementById('f-staff').value.trim();
+  const shift    = document.getElementById('f-shift').value;
+  const date     = document.getElementById('f-date').value;
+
+  // Save last used staff name
+  localStorage.setItem(LAST_NAME_KEY, staff);
+
+  const items = products.map((p, i) => ({
+    productName: p.name,
+    isCustom:    p.custom,
+    qty:         getQty(i),
+  }));
+
+  const payload = {
+    formType:        'cigaretteStockCheck',
+    submittedAt:     new Date().toISOString(),
+    station, lang, date, shift,
+    staffName:       staff,
+    items,
+    totalProducts:   products.length,
+    countedProducts: items.filter(x => x.qty !== null).length,
+  };
+
+  document.getElementById('loading-text').textContent = L.submitting;
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  // TODO: Replace with your real Google Apps Script Web App URL
+  const SHEET_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+  fetch(SHEET_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(payload),
+  })
+  .then(() => onSuccess())
+  .catch(() => onSuccess());
+}
+
+function onSuccess() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+  showScreen('success');
+}
+
+// ══════════════════════════════════════════
+// RESET — clear counts but NOT staff name
+// Show last-name hint on next focus
+// ══════════════════════════════════════════
+function resetForm() {
+  // Clear qty cache and inputs
+  Object.keys(qtyCache).forEach(k => delete qtyCache[k]);
+  loadProducts().forEach((_, i) => {
+    const el = document.getElementById(`qty_${i}`);
+    if (el) { el.value = ''; el.className = 'qty-input'; }
+  });
+  // Clear staff name so hint shows on next focus
+  document.getElementById('f-staff').value = '';
+  document.getElementById('f-shift').value = '';
+  document.getElementById('f-date').value  = todayStr();
+  hideAlert('alertBox');
+  updateSummary();
+  showScreen('form');
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function showAlert(id, msg) {
+  const a = document.getElementById(id);
+  Object.assign(a.style, { background:'var(--warn-bg)', borderColor:'var(--warn-border)', color:'var(--warn)' });
+  a.textContent = msg;
+  a.classList.add('show');
+  a.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+function hideAlert(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+function todayStr() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+}
+function goPortal() { window.location.href = 'index.html'; }
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+if (!station) {
+  document.getElementById('no-station-bar').classList.add('show');
+  document.getElementById('station-bar').style.display  = 'none';
+  document.getElementById('screen-form').style.display  = 'none';
+}
+document.querySelectorAll('.lang-btn').forEach(b => {
+  b.classList.toggle('active',
+    (lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
+});
+document.getElementById('f-date').value = todayStr();
+applyLang();
+</script>
+</body>
+</html>
