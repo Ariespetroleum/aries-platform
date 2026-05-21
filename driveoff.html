@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Drive Off Report — Aries Petroleum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f1117;--surface:#181c25;--surface2:#1f2433;--border:#2a3044;--border2:#353f58;
+  --accent:#4ade80;--accent2:#22d3ee;--warn:#fb923c;--danger:#f87171;--purple:#a78bfa;
+  --text:#e8eaf0;--muted:#7a8299;--label:#a0aabb;
+  --mono:'DM Mono',monospace;--sans:'Sora',sans-serif;
+  --danger-bg:rgba(248,113,113,.08);--danger-border:rgba(248,113,113,.3);
+  --warn-bg:rgba(251,146,60,.08);--warn-border:rgba(251,146,60,.3);
+  --ok-bg:rgba(74,222,128,.08);--ok-border:rgba(74,222,128,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;padding-bottom:56px}
+
+/* ── Header ── */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:10px}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 10px 4px 0;border-right:1px solid var(--border);margin-right:2px;transition:color .15s;white-space:nowrap}
+.back-btn:hover{color:var(--accent2)}
+.back-arrow{font-size:15px}
+.back-label{font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+.header-title{font-size:13px;font-weight:600}
+.header-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px}
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.lang-btn{padding:4px 9px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:transparent;transition:all .15s}
+.lang-btn.active{background:var(--border2);color:var(--text)}
+
+/* ── No-station guard ── */
+.no-station{display:none;background:var(--danger-bg);border-bottom:1px solid var(--danger-border);padding:12px 16px;text-align:center}
+.no-station.show{display:block}
+.no-station-msg{font-size:13px;color:var(--danger);margin-bottom:8px}
+.no-station-link{display:inline-block;background:var(--danger);color:#1a0000;font-size:12px;font-weight:600;padding:7px 16px;border-radius:7px;text-decoration:none}
+
+/* ── Station bar ── */
+.station-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
+.station-dot{width:6px;height:6px;border-radius:50%;background:var(--danger);box-shadow:0 0 6px var(--danger);flex-shrink:0}
+.station-name{font-family:var(--mono);font-size:11px;color:var(--label)}
+.station-name span{color:var(--text);font-weight:600}
+.incident-badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;padding:2px 7px;border-radius:4px;background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+
+/* ── Container ── */
+.container{max-width:540px;margin:0 auto;padding:20px 16px}
+
+/* ── Screen management ── */
+.screen{display:none}.screen.active{display:block}
+
+/* ── Form header ── */
+.form-header{margin-bottom:22px}
+.form-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.form-sub{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ── Section ── */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.section-header{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.section-icon{font-size:14px}
+.section-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.section-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.section-body.single{grid-template-columns:1fr}
+
+/* ── Field ── */
+.field{}
+.field.full{grid-column:1/-1}
+.field label{display:block;font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono)}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;
+  color:var(--text);font-family:var(--sans);font-size:13px;padding:9px 12px;
+  outline:none;transition:border-color .2s;-webkit-appearance:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent2)}
+.field select option{background:#1f2433}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5}
+.field input[type=number]{-moz-appearance:textfield}
+.field input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+.field input[style*="uppercase"]{text-transform:uppercase}
+
+/* ── Checkbox / radio rows ── */
+.check-list{padding:4px 0}
+.check-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.check-row:last-child{border-bottom:none}
+.check-row:hover{background:var(--surface2)}
+.check-row input[type=checkbox],.check-row input[type=radio]{
+  width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:var(--accent2)
+}
+.check-row-text{font-size:13px}
+.check-row-sub{font-size:11px;color:var(--muted);margin-top:1px}
+
+/* ── Alert ── */
+.alert{display:none;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:14px;line-height:1.5}
+.alert.show{display:block}
+
+/* ── Buttons ── */
+.btn-wrap{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.btn{width:100%;border:none;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:600;padding:14px;cursor:pointer;letter-spacing:.02em;transition:opacity .18s,transform .1s}
+.btn:active{transform:scale(.98)}.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#071a0d}.btn-primary:hover{opacity:.9}
+.btn-danger{background:var(--danger);color:#1a0000}.btn-danger:hover{opacity:.9}
+.btn-secondary{background:var(--surface2);color:var(--label);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
+.note{text-align:center;font-size:11px;color:var(--muted);margin-top:8px}
+
+/* ── Confirm screen ── */
+.confirm-header{margin-bottom:18px}
+.confirm-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.confirm-sub{font-size:12px;color:var(--muted)}
+.confirm-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.confirm-section-title{padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.confirm-row{display:flex;padding:9px 14px;border-bottom:1px solid var(--border);gap:12px}
+.confirm-row:last-child{border-bottom:none}
+.confirm-key{font-size:11px;color:var(--muted);font-family:var(--mono);width:40%;flex-shrink:0;padding-top:1px;letter-spacing:.03em}
+.confirm-val{font-size:13px;font-weight:500;flex:1;word-break:break-word}
+.confirm-val.danger{color:var(--danger)}
+
+/* ── Success ── */
+.success-wrap{text-align:center;padding:56px 20px}
+.success-icon{width:64px;height:64px;background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px}
+.success-title{font-size:20px;font-weight:700;margin-bottom:8px;color:var(--accent)}
+.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px}
+.success-actions{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
+
+/* ── Loading overlay ── */
+.loading-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(15,17,23,.8);align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--muted);font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Submitting…</div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="back-btn" onclick="goPortal()">
+      <span class="back-arrow">←</span>
+      <span class="back-label" id="h-back">Portal</span>
+    </div>
+    <div>
+      <div class="header-title" id="h-title">Drive Off Report</div>
+      <div class="header-sub"   id="h-sub">INCIDENT REPORT</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+    </div>
+  </div>
+</div>
+
+<!-- No-station guard -->
+<div class="no-station" id="no-station-bar">
+  <div class="no-station-msg" id="ns-msg"></div>
+  <a class="no-station-link" href="index.html" id="ns-link"></a>
+</div>
+
+<!-- Station bar -->
+<div class="station-bar" id="station-bar">
+  <div class="station-dot"></div>
+  <div class="station-name" id="station-display"></div>
+  <div class="incident-badge" id="incident-badge">INCIDENT</div>
+</div>
+
+<!-- Container -->
+<div class="container">
+
+  <!-- ══ SCREEN: FORM ══ -->
+  <div class="screen active" id="screen-form">
+    <div class="form-header">
+      <div class="form-title" id="f-title"></div>
+      <div class="form-sub"   id="f-sub"></div>
+    </div>
+
+    <!-- Section 1: Basic details -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">📋</span>
+        <span class="section-title" id="sec1-title"></span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label id="l-date"></label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="field">
+          <label id="l-time"></label>
+          <input type="time" id="f-time">
+        </div>
+        <div class="field">
+          <label id="l-pump"></label>
+          <input type="number" id="f-pump" placeholder="e.g. 3" min="1" max="20">
+        </div>
+        <div class="field">
+          <label id="l-fueltype"></label>
+          <select id="f-fueltype">
+            <option value="">—</option>
+            <option>91 Unleaded</option>
+            <option>95 Unleaded</option>
+            <option>98 Unleaded</option>
+            <option>E10</option>
+            <option>Diesel</option>
+            <option>LPG</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-litres"></label>
+          <input type="number" id="f-litres" placeholder="e.g. 45.2" step="0.1" min="0">
+        </div>
+        <div class="field">
+          <label id="l-amount"></label>
+          <input type="number" id="f-amount" placeholder="e.g. 82.50" step="0.01" min="0">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 2: Vehicle -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🚗</span>
+        <span class="section-title" id="sec2-title"></span>
+      </div>
+      <div class="section-body">
+        <div class="field full">
+          <label id="l-plate"></label>
+          <input type="text" id="f-plate" placeholder="e.g. ABC 123" oninput="this.value=this.value.toUpperCase()">
+        </div>
+        <div class="field">
+          <label id="l-state"></label>
+          <select id="f-state">
+            <option value="">—</option>
+            <option>VIC</option><option>NSW</option><option>QLD</option>
+            <option>WA</option><option>SA</option><option>TAS</option><option>NT</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-vtype"></label>
+          <select id="f-vtype">
+            <option value="">—</option>
+            <option id="vt-sedan"></option>
+            <option id="vt-suv"></option>
+            <option id="vt-ute"></option>
+            <option id="vt-van"></option>
+            <option id="vt-truck"></option>
+            <option id="vt-moto"></option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-colour"></label>
+          <input type="text" id="f-colour" placeholder="e.g. Silver">
+        </div>
+        <div class="field">
+          <label id="l-make"></label>
+          <input type="text" id="f-make" placeholder="e.g. Toyota Camry">
+        </div>
+        <div class="field full">
+          <label id="l-direction"></label>
+          <input type="text" id="f-direction" placeholder="e.g. Northbound on High St">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 3: Driver -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">👤</span>
+        <span class="section-title" id="sec3-title"></span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label id="l-gender"></label>
+          <select id="f-gender">
+            <option value="">—</option>
+            <option id="g-male"></option>
+            <option id="g-female"></option>
+            <option id="g-unknown"></option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-age"></label>
+          <select id="f-age">
+            <option value="">—</option>
+            <option>&lt;18</option><option>18–25</option><option>25–40</option>
+            <option>40–60</option><option>60+</option>
+            <option id="a-unknown"></option>
+          </select>
+        </div>
+        <div class="field full">
+          <label id="l-appearance"></label>
+          <textarea id="f-appearance" rows="2" placeholder="e.g. Blue hoodie, dark jeans"></textarea>
+        </div>
+        <div class="field full">
+          <label id="l-passengers"></label>
+          <select id="f-passengers">
+            <option value="">—</option>
+            <option id="p-yes"></option>
+            <option id="p-no"></option>
+            <option id="p-unknown"></option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Evidence -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">📹</span>
+        <span class="section-title" id="sec4-title"></span>
+      </div>
+      <div class="check-list">
+        <label class="check-row">
+          <input type="checkbox" id="ev-cctv">
+          <div><div class="check-row-text" id="ev-cctv-l"></div></div>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="ev-pos">
+          <div><div class="check-row-text" id="ev-pos-l"></div></div>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="ev-plate">
+          <div><div class="check-row-text" id="ev-plate-l"></div></div>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" id="ev-staff">
+          <div><div class="check-row-text" id="ev-staff-l"></div></div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Section 5: Driver enter / attempt -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🏪</span>
+        <span class="section-title" id="sec5-title"></span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label id="l-entered"></label>
+          <select id="f-entered">
+            <option value="">—</option>
+            <option id="entered-yes"></option>
+            <option id="entered-no"></option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-attempted"></label>
+          <select id="f-attempted">
+            <option value="">—</option>
+            <option id="attempted-yes"></option>
+            <option id="attempted-no"></option>
+          </select>
+        </div>
+        <div class="field full">
+          <label id="l-conversation"></label>
+          <textarea id="f-conversation" rows="2" placeholder="e.g. Said they forgot wallet, would come back"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 6: Police -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🚔</span>
+        <span class="section-title" id="sec6-title"></span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label id="l-police"></label>
+          <select id="f-police">
+            <option value="">—</option>
+            <option id="pol-yes"></option>
+            <option id="pol-no"></option>
+            <option id="pol-notyet"></option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-policeref"></label>
+          <input type="text" id="f-policeref" placeholder="Optional">
+        </div>
+        <div class="field">
+          <label id="l-policedate"></label>
+          <input type="date" id="f-policedate">
+        </div>
+        <div class="field">
+          <label id="l-policeofficer"></label>
+          <input type="text" id="f-policeofficer" placeholder="Optional">
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 7: Staff -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">👔</span>
+        <span class="section-title" id="sec7-title"></span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label id="l-staff"></label>
+          <input type="text" id="f-staff" placeholder="Your name">
+        </div>
+        <div class="field">
+          <label id="l-shift"></label>
+          <select id="f-shift">
+            <option value="">—</option>
+            <option id="sh-morning"></option>
+            <option id="sh-afternoon"></option>
+            <option id="sh-night"></option>
+          </select>
+        </div>
+        <div class="field full">
+          <label id="l-notes"></label>
+          <textarea id="f-notes" rows="2" placeholder="Any additional details…"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert" id="alertBox"></div>
+
+    <div class="btn-wrap">
+      <button class="btn btn-danger" id="review-btn" onclick="goReview()"></button>
+    </div>
+
+  </div><!-- /screen-form -->
+
+  <!-- ══ SCREEN: CONFIRM ══ -->
+  <div class="screen" id="screen-confirm">
+    <div class="confirm-header">
+      <div class="confirm-title" id="cf-title"></div>
+      <div class="confirm-sub"   id="cf-sub"></div>
+    </div>
+    <div id="confirm-body"></div>
+    <div class="alert" id="cf-alert"></div>
+    <div class="btn-wrap">
+      <button class="btn btn-secondary" id="cf-edit-btn"    onclick="showScreen('form')"></button>
+      <button class="btn btn-danger"    id="cf-submit-btn"  onclick="submitReport()"></button>
+    </div>
+    <p class="note" id="cf-note"></p>
+  </div>
+
+  <!-- ══ SCREEN: SUCCESS ══ -->
+  <div class="screen" id="screen-success">
+    <div class="success-wrap">
+      <div class="success-icon">✓</div>
+      <div class="success-title" id="succ-title"></div>
+      <div class="success-sub"   id="succ-msg"></div>
+      <div class="success-actions">
+        <button class="btn btn-secondary" id="succ-another" onclick="resetForm()"></button>
+        <button class="btn btn-secondary" id="succ-home"    onclick="goPortal()"></button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ══════════════════════════════════════════
+// STATE FROM localStorage
+// ══════════════════════════════════════════
+let station = localStorage.getItem('ap_station') || '';
+let lang    = localStorage.getItem('ap_lang')    || 'en';
+
+// ══════════════════════════════════════════
+// STRINGS
+// ══════════════════════════════════════════
+const S = {
+  en: {
+    pageTitle: 'Drive Off Report — Aries Petroleum',
+    hBack: 'Portal', hTitle: 'Drive Off Report', hSub: 'INCIDENT REPORT',
+    nsMsgNoStn: 'No station selected. Please return to the portal first.',
+    nsLink: '← Go to Portal',
+    incidentBadge: 'INCIDENT',
+    fTitle: 'Drive Off Report',
+    fSub: 'Record all available details. Required fields are marked with *.',
+    sec1: 'Incident Details',
+    sec2: 'Vehicle Details',
+    sec3: 'Driver (if observed)',
+    sec4: 'Evidence Collected',
+    sec5: 'Store Interaction',
+    sec6: 'Police Report',
+    sec7: 'Staff Details',
+    lDate:'Date *', lTime:'Time *', lPump:'Pump No. *', lFuelType:'Fuel Type',
+    lLitres:'Litres Dispensed', lAmount:'Amount Lost (AUD $) *',
+    lPlate:'Licence Plate *', lState:'State', lVtype:'Vehicle Type',
+    lColour:'Colour', lMake:'Make / Model', lDirection:'Direction of Travel',
+    lGender:'Gender', lAge:'Approx. Age', lAppearance:'Appearance / Clothing',
+    lPassengers:'Passengers',
+    evCCTV:'CCTV footage available',
+    evPOS:'POS transaction record',
+    evPlate:'Partial plate observed',
+    evStaff:'Staff statement completed',
+    lEntered:'Driver entered store?', lAttempted:'Attempted to pay?',
+    lConversation:'Any conversation / excuses',
+    lPolice:'Reported to police?', lPoliceRef:'Police reference no.',
+    lPoliceDate:'Date reported', lPoliceOfficer:'Officer name',
+    lStaff:'Your name *', lShift:'Shift', lNotes:'Additional notes',
+    vtSedan:'Sedan', vtSUV:'SUV', vtUte:'Ute', vtVan:'Van', vtTruck:'Truck', vtMoto:'Motorcycle',
+    gMale:'Male', gFemale:'Female', gUnknown:'Unknown',
+    aUnknown:'Unknown',
+    pYes:'Yes', pNo:'No', pUnknown:'Unknown',
+    entYes:'Yes', entNo:'No',
+    attYes:'Yes', attNo:'No',
+    polYes:'Yes', polNo:'No', polNotYet:'Not yet',
+    shMorning:'Morning', shAfternoon:'Afternoon', shNight:'Night',
+    reviewBtn: 'Review & Submit →',
+    cfTitle: 'Confirm Report',
+    cfSub: 'Please check all details before submitting.',
+    cfEdit: '← Edit',
+    cfSubmit: 'Submit Report',
+    cfNote: 'This will be saved to Google Sheets.',
+    succTitle: 'Report Submitted',
+    succMsg: 'Drive-off incident has been recorded.',
+    succAnother: 'New Report',
+    succHome: '← Back to Portal',
+    errStaff: 'Please enter your name.',
+    errPlate: 'Please enter the licence plate number.',
+    errPump: 'Please enter the pump number.',
+    errAmount: 'Please enter the amount lost.',
+    errDate: 'Please select the incident date.',
+    errTime: 'Please enter the incident time.',
+    submitting: 'Submitting…',
+    yes: 'Yes', no: 'No', unknown: 'Unknown', na: '—',
+  },
+  zh: {
+    pageTitle: 'Drive Off 报告 — Aries Petroleum',
+    hBack: '首页', hTitle: 'Drive Off 报告', hSub: '事故报告',
+    nsMsgNoStn: '未选择站点，请先返回首页选择站点。',
+    nsLink: '← 返回首页',
+    incidentBadge: '事故',
+    fTitle: 'Drive Off 登记',
+    fSub: '请尽量填写所有可获取的信息，必填项标有 *。',
+    sec1: '事故基本信息',
+    sec2: '车辆信息',
+    sec3: '司机信息（如可观察）',
+    sec4: '证据记录',
+    sec5: '店内互动',
+    sec6: '警察报案',
+    sec7: '员工信息',
+    lDate:'日期 *', lTime:'时间 *', lPump:'加油枪号 *', lFuelType:'燃油类型',
+    lLitres:'加油升数', lAmount:'损失金额（AUD $）*',
+    lPlate:'车牌号 *', lState:'州', lVtype:'车辆类型',
+    lColour:'颜色', lMake:'品牌/型号', lDirection:'离开方向',
+    lGender:'性别', lAge:'估计年龄', lAppearance:'外貌/衣着',
+    lPassengers:'是否有乘客',
+    evCCTV:'CCTV 录像可用',
+    evPOS:'POS 交易记录',
+    evPlate:'部分车牌已记录',
+    evStaff:'员工陈述已完成',
+    lEntered:'司机是否进店？', lAttempted:'是否尝试付款？',
+    lConversation:'对话/借口记录',
+    lPolice:'是否已报警？', lPoliceRef:'警察案件编号',
+    lPoliceDate:'报案日期', lPoliceOfficer:'接案警员姓名',
+    lStaff:'员工姓名 *', lShift:'班次', lNotes:'备注',
+    vtSedan:'轿车', vtSUV:'SUV', vtUte:'皮卡', vtVan:'面包车', vtTruck:'货车', vtMoto:'摩托车',
+    gMale:'男', gFemale:'女', gUnknown:'不明',
+    aUnknown:'不明',
+    pYes:'有', pNo:'无', pUnknown:'不明',
+    entYes:'是', entNo:'否',
+    attYes:'是', attNo:'否',
+    polYes:'是', polNo:'否', polNotYet:'尚未',
+    shMorning:'早班', shAfternoon:'午班', shNight:'夜班',
+    reviewBtn: '核对并提交 →',
+    cfTitle: '确认报告',
+    cfSub: '提交前请核对所有信息。',
+    cfEdit: '← 返回修改',
+    cfSubmit: '确认提交',
+    cfNote: '将保存至 Google Sheets。',
+    succTitle: '报告已提交',
+    succMsg: 'Drive Off 事故已记录在案。',
+    succAnother: '新建报告',
+    succHome: '← 返回首页',
+    errStaff: '请填写员工姓名。',
+    errPlate: '请填写车牌号。',
+    errPump: '请填写加油枪号。',
+    errAmount: '请填写损失金额。',
+    errDate: '请选择事故日期。',
+    errTime: '请填写事故时间。',
+    submitting: '提交中…',
+    yes: '是', no: '否', unknown: '不明', na: '—',
+  }
+};
+
+function s() { return S[lang]; }
+
+// ══════════════════════════════════════════
+// LANG
+// ══════════════════════════════════════════
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('ap_lang', l);
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active',
+      (l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文'));
+  });
+  applyLang();
+}
+
+function applyLang() {
+  const L = s();
+  document.title = L.pageTitle;
+
+  setText('h-back', L.hBack);
+  setText('h-title', L.hTitle);
+  setText('h-sub', L.hSub);
+  setText('ns-msg', L.nsMsgNoStn);
+  setText('ns-link', L.nsLink);
+  setText('incident-badge', L.incidentBadge);
+  setText('f-title', L.fTitle);
+  setText('f-sub', L.fSub);
+
+  // Section titles
+  setText('sec1-title', L.sec1);
+  setText('sec2-title', L.sec2);
+  setText('sec3-title', L.sec3);
+  setText('sec4-title', L.sec4);
+  setText('sec5-title', L.sec5);
+  setText('sec6-title', L.sec6);
+  setText('sec7-title', L.sec7);
+
+  // Labels
+  ['date','time','pump','fueltype','litres','amount',
+   'plate','state','vtype','colour','make','direction',
+   'gender','age','appearance','passengers',
+   'entered','attempted','conversation',
+   'police','policeref','policedate','policeofficer',
+   'staff','shift','notes'
+  ].forEach(k => setText(`l-${k}`, L[`l${k.charAt(0).toUpperCase()+k.slice(1)}`]));
+
+  // Evidence checkboxes
+  setText('ev-cctv-l',  L.evCCTV);
+  setText('ev-pos-l',   L.evPOS);
+  setText('ev-plate-l', L.evPlate);
+  setText('ev-staff-l', L.evStaff);
+
+  // Select options
+  setText('vt-sedan', L.vtSedan); setText('vt-suv', L.vtSUV);
+  setText('vt-ute',   L.vtUte);   setText('vt-van', L.vtVan);
+  setText('vt-truck', L.vtTruck); setText('vt-moto', L.vtMoto);
+  setText('g-male', L.gMale); setText('g-female', L.gFemale); setText('g-unknown', L.gUnknown);
+  setText('a-unknown', L.aUnknown);
+  setText('p-yes', L.pYes); setText('p-no', L.pNo); setText('p-unknown', L.pUnknown);
+  setText('entered-yes', L.entYes); setText('entered-no', L.entNo);
+  setText('attempted-yes', L.attYes); setText('attempted-no', L.attNo);
+  setText('pol-yes', L.polYes); setText('pol-no', L.polNo); setText('pol-notyet', L.polNotYet);
+  setText('sh-morning', L.shMorning); setText('sh-afternoon', L.shAfternoon); setText('sh-night', L.shNight);
+
+  // Buttons
+  setText('review-btn',  L.reviewBtn);
+  setText('cf-title',    L.cfTitle);
+  setText('cf-sub',      L.cfSub);
+  setText('cf-edit-btn', L.cfEdit);
+  setText('cf-submit-btn', L.cfSubmit);
+  setText('cf-note',     L.cfNote);
+  setText('succ-title',  L.succTitle);
+  setText('succ-msg',    L.succMsg);
+  setText('succ-another',L.succAnother);
+  setText('succ-home',   L.succHome);
+
+  // Station display
+  if (station) {
+    document.getElementById('station-display').innerHTML = `<span>${station}</span>`;
+  }
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el && val !== undefined) el.textContent = val;
+}
+
+// ══════════════════════════════════════════
+// SCREENS
+// ══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById(`screen-${id}`).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════════
+// VALIDATION & REVIEW
+// ══════════════════════════════════════════
+function val(id) { return document.getElementById(id).value.trim(); }
+function checked(id) { return document.getElementById(id).checked; }
+
+function goReview() {
+  const L = s();
+  hideAlert('alertBox');
+
+  if (!val('f-date'))   { showAlert('alertBox', L.errDate);   return; }
+  if (!val('f-time'))   { showAlert('alertBox', L.errTime);   return; }
+  if (!val('f-pump'))   { showAlert('alertBox', L.errPump);   return; }
+  if (!val('f-amount')) { showAlert('alertBox', L.errAmount); return; }
+  if (!val('f-plate'))  { showAlert('alertBox', L.errPlate);  return; }
+  if (!val('f-staff'))  { showAlert('alertBox', L.errStaff);  return; }
+
+  buildConfirmPage();
+  showScreen('confirm');
+}
+
+function buildConfirmPage() {
+  const L   = s();
+  const yn  = (v) => v==='' ? L.na : v;
+
+  const sections = [
+    {
+      title: L.sec1,
+      rows: [
+        [L.lDate,     val('f-date')],
+        [L.lTime,     val('f-time')],
+        [L.lPump,     val('f-pump')],
+        [L.lFuelType, yn(val('f-fueltype'))],
+        [L.lLitres,   val('f-litres') ? val('f-litres') + ' L' : L.na],
+        [L.lAmount,   val('f-amount') ? '$ ' + val('f-amount') : L.na],
+      ]
+    },
+    {
+      title: L.sec2,
+      rows: [
+        [L.lPlate,     val('f-plate') + (val('f-state') ? ' (' + val('f-state') + ')' : '')],
+        [L.lVtype,     yn(val('f-vtype'))],
+        [L.lColour,    yn(val('f-colour'))],
+        [L.lMake,      yn(val('f-make'))],
+        [L.lDirection, yn(val('f-direction'))],
+      ]
+    },
+    {
+      title: L.sec3,
+      rows: [
+        [L.lGender,     yn(val('f-gender'))],
+        [L.lAge,        yn(val('f-age'))],
+        [L.lPassengers, yn(val('f-passengers'))],
+        [L.lAppearance, val('f-appearance') || L.na],
+      ]
+    },
+    {
+      title: L.sec4,
+      rows: [
+        [L.evCCTV,  checked('ev-cctv')  ? L.yes : L.no],
+        [L.evPOS,   checked('ev-pos')   ? L.yes : L.no],
+        [L.evPlate, checked('ev-plate') ? L.yes : L.no],
+        [L.evStaff, checked('ev-staff') ? L.yes : L.no],
+      ]
+    },
+    {
+      title: L.sec5,
+      rows: [
+        [L.lEntered,      yn(val('f-entered'))],
+        [L.lAttempted,    yn(val('f-attempted'))],
+        [L.lConversation, val('f-conversation') || L.na],
+      ]
+    },
+    {
+      title: L.sec6,
+      rows: [
+        [L.lPolice,       yn(val('f-police'))],
+        [L.lPoliceRef,    val('f-policeref')    || L.na],
+        [L.lPoliceDate,   val('f-policedate')   || L.na],
+        [L.lPoliceOfficer,val('f-policeofficer')|| L.na],
+      ]
+    },
+    {
+      title: L.sec7,
+      rows: [
+        [L.lStaff, val('f-staff')],
+        [L.lShift, yn(val('f-shift'))],
+        [L.lNotes, val('f-notes') || L.na],
+      ]
+    },
+  ];
+
+  document.getElementById('confirm-body').innerHTML = sections.map(sec => `
+    <div class="confirm-section">
+      <div class="confirm-section-title">${sec.title}</div>
+      ${sec.rows.map(([k, v]) => `
+        <div class="confirm-row">
+          <div class="confirm-key">${k.replace(' *','')}</div>
+          <div class="confirm-val">${v}</div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+function submitReport() {
+  const L = s();
+
+  const row = {
+    formType:     'driveOffReport',
+    submittedAt:  new Date().toISOString(),
+    station,
+    lang,
+    date:         val('f-date'),
+    time:         val('f-time'),
+    pump:         val('f-pump'),
+    fuelType:     val('f-fueltype'),
+    litres:       val('f-litres'),
+    amountLost:   val('f-amount'),
+    plate:        val('f-plate'),
+    state:        val('f-state'),
+    vehicleType:  val('f-vtype'),
+    colour:       val('f-colour'),
+    make:         val('f-make'),
+    direction:    val('f-direction'),
+    gender:       val('f-gender'),
+    age:          val('f-age'),
+    appearance:   val('f-appearance'),
+    passengers:   val('f-passengers'),
+    cctv:         checked('ev-cctv'),
+    posRecord:    checked('ev-pos'),
+    partialPlate: checked('ev-plate'),
+    staffStatement:checked('ev-staff'),
+    driverEntered:val('f-entered'),
+    attempted:    val('f-attempted'),
+    conversation: val('f-conversation'),
+    policeReported:val('f-police'),
+    policeRef:    val('f-policeref'),
+    policeDate:   val('f-policedate'),
+    policeOfficer:val('f-policeofficer'),
+    staffName:    val('f-staff'),
+    shift:        val('f-shift'),
+    notes:        val('f-notes'),
+  };
+
+  // Show loading
+  document.getElementById('loading-text').textContent = L.submitting;
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  // TODO: Replace with your real Google Apps Script Web App URL
+  const SHEET_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+  fetch(SHEET_URL, {
+    method:  'POST',
+    mode:    'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(row),
+  })
+  .then(() => onSuccess())
+  .catch(() => onSuccess());   // no-cors: treat as ok for now
+}
+
+function onSuccess() {
+  document.getElementById('loadingOverlay').classList.remove('show');
+  showScreen('success');
+}
+
+// ══════════════════════════════════════════
+// RESET
+// ══════════════════════════════════════════
+function resetForm() {
+  ['f-date','f-time','f-pump','f-litres','f-amount','f-plate',
+   'f-colour','f-make','f-direction','f-appearance','f-policeref',
+   'f-policedate','f-policeofficer','f-staff','f-notes','f-conversation']
+    .forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+
+  ['f-fueltype','f-state','f-vtype','f-gender','f-age',
+   'f-passengers','f-entered','f-attempted','f-police','f-shift']
+    .forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+
+  ['ev-cctv','ev-pos','ev-plate','ev-staff']
+    .forEach(id => { const el=document.getElementById(id); if(el) el.checked=false; });
+
+  // Reset date to today
+  document.getElementById('f-date').value = todayStr();
+
+  hideAlert('alertBox');
+  showScreen('form');
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function showAlert(id, msg) {
+  const a = document.getElementById(id);
+  Object.assign(a.style, { background:'var(--warn-bg)', borderColor:'var(--warn-border)', color:'var(--warn)' });
+  a.textContent = msg;
+  a.classList.add('show');
+  a.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function hideAlert(id) {
+  document.getElementById(id).classList.remove('show');
+}
+
+function todayStr() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+}
+
+function goPortal() { window.location.href = 'index.html'; }
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+// No-station guard
+if (!station) {
+  document.getElementById('no-station-bar').classList.add('show');
+  document.getElementById('station-bar').style.display = 'none';
+  document.getElementById('screen-form').style.display = 'none';
+} else {
+  document.getElementById('no-station-bar').classList.remove('show');
+}
+
+// Lang buttons
+document.querySelectorAll('.lang-btn').forEach(b => {
+  b.classList.toggle('active',
+    (lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
+});
+
+// Set today's date
+document.getElementById('f-date').value = todayStr();
+
+applyLang();
+</script>
+</body>
+</html>
