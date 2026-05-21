@@ -460,12 +460,12 @@ body {
     <!-- Incident -->
     <div class="section-label" id="m-label-incident"></div>
     <div class="menu-grid">
-      <div class="menu-card" onclick="go('driveoff.html')">
-        <div class="card-stripe stripe-red"></div>
+      <div class="menu-card" onclick="go('refund.html')">
+        <div class="card-stripe stripe-orange"></div>
         <span class="card-badge badge-incident" id="b-i1"></span>
-        <span class="card-icon">🚗</span>
-        <div class="card-title" id="c-do-t"></div>
-        <div class="card-sub"   id="c-do-s"></div>
+        <span class="card-icon">↩️</span>
+        <div class="card-title" id="c-refund-t"></div>
+        <div class="card-sub"   id="c-refund-s"></div>
       </div>
       <div class="menu-card" onclick="go('unpaid-fuel.html')">
         <div class="card-stripe stripe-red"></div>
@@ -473,6 +473,13 @@ body {
         <span class="card-icon">⛽</span>
         <div class="card-title" id="c-uf-t"></div>
         <div class="card-sub"   id="c-uf-s"></div>
+      </div>
+      <div class="menu-card" onclick="go('driveoff.html')">
+        <div class="card-stripe stripe-red"></div>
+        <span class="card-badge badge-incident" id="b-i3"></span>
+        <span class="card-icon">🚗</span>
+        <div class="card-title" id="c-do-t"></div>
+        <div class="card-sub"   id="c-do-s"></div>
       </div>
     </div>
 
@@ -536,8 +543,9 @@ const STRINGS = {
       cig:    { t:'Cigarette Stock',       s:'End of shift count'          },
       news:   { t:'Newspaper Returns',     s:'Daily return record'         },
       cash:   { t:'Cash Reconciliation',   s:'Shift end settlement'        },
-      do:     { t:'Drive Off',             s:'Unpaid fuel — no ID left'    },
+      refund:{ t:'Refund Record',         s:'Refund reason & receipt photo' },
       uf:     { t:'Unpaid Fuel',           s:'Customer left details'       },
+      do:     { t:'Drive Off',             s:'Unpaid fuel — no ID left'    },
       roster: { t:'Timesheet & Roster',    s:'Staff hours and scheduling'  },
     },
     footer: 'ARIES PETROLEUM · STAFF PORTAL',
@@ -564,8 +572,9 @@ const STRINGS = {
       cig:    { t:'香烟库存盘点',   s:'班次结束时填写'       },
       news:   { t:'报纸退货记录',   s:'每日退回登记'         },
       cash:   { t:'收银对账',       s:'班次结算'             },
-      do:     { t:'Drive Off 登记', s:'逃单——无客户信息'    },
+      refund:{ t:'退款登记',       s:'退款原因与小票照片'   },
       uf:     { t:'欠款燃油登记',   s:'客户留下了信息'       },
+      do:     { t:'Drive Off 登记', s:'逃单——无客户信息'    },
       roster: { t:'工时表 & 排班',  s:'员工工时与排班管理'   },
     },
     footer: 'ARIES PETROLEUM · 员工端',
@@ -632,7 +641,7 @@ function applyLang() {
   document.getElementById('m-label-incident').textContent = s.mLabelIncident;
   document.getElementById('m-label-mgr').textContent      = s.mLabelMgr;
   ['b-d1','b-d2','b-d3','b-d4'].forEach(id => document.getElementById(id).textContent = s.bDaily);
-  ['b-i1','b-i2'].forEach(id => document.getElementById(id).textContent = s.bIncident);
+  ['b-i1','b-i2','b-i3'].forEach(id => document.getElementById(id).textContent = s.bIncident);
   document.getElementById('b-m1').textContent = s.bMgr;
 
   const hour = new Date().getHours();
@@ -648,10 +657,10 @@ function applyLang() {
 
   const c = s.cards;
   [['c-temp-t','temp'],['c-cig-t','cig'],['c-news-t','news'],['c-cash-t','cash'],
-   ['c-do-t','do'],['c-uf-t','uf'],['c-roster-t','roster']
+   ['c-refund-t','refund'],['c-uf-t','uf'],['c-do-t','do'],['c-roster-t','roster']
   ].forEach(([id,k]) => document.getElementById(id).textContent = c[k].t);
   [['c-temp-s','temp'],['c-cig-s','cig'],['c-news-s','news'],['c-cash-s','cash'],
-   ['c-do-s','do'],['c-uf-s','uf'],['c-roster-s','roster']
+   ['c-refund-s','refund'],['c-uf-s','uf'],['c-do-s','do'],['c-roster-s','roster']
   ].forEach(([id,k]) => document.getElementById(id).textContent = c[k].s);
 
   document.getElementById('footer-txt').textContent = s.footer;
