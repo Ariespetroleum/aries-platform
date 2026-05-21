@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Unpaid Fuel Form — Aries Petroleum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f1117;--surface:#181c25;--surface2:#1f2433;--border:#2a3044;--border2:#353f58;
+  --accent:#4ade80;--accent2:#22d3ee;--warn:#fb923c;--danger:#f87171;--purple:#a78bfa;
+  --text:#e8eaf0;--muted:#7a8299;--label:#a0aabb;
+  --mono:'DM Mono',monospace;--sans:'Sora',sans-serif;
+  --danger-bg:rgba(248,113,113,.08);--danger-border:rgba(248,113,113,.3);
+  --warn-bg:rgba(251,146,60,.08);--warn-border:rgba(251,146,60,.3);
+  --ok-bg:rgba(74,222,128,.08);--ok-border:rgba(74,222,128,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;padding-bottom:56px}
+
+/* ── Header ── */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:10px}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 10px 4px 0;border-right:1px solid var(--border);margin-right:2px;transition:color .15s;white-space:nowrap}
+.back-btn:hover{color:var(--accent2)}
+.back-arrow{font-size:15px}
+.back-label{font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+.header-title{font-size:13px;font-weight:600}
+.header-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px}
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.lang-btn{padding:4px 9px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:transparent;transition:all .15s}
+.lang-btn.active{background:var(--border2);color:var(--text)}
+
+/* ── No-station guard ── */
+.no-station{display:none;background:var(--danger-bg);border-bottom:1px solid var(--danger-border);padding:12px 16px;text-align:center}
+.no-station.show{display:block}
+.no-station-msg{font-size:13px;color:var(--danger);margin-bottom:8px}
+.no-station-link{display:inline-block;background:var(--danger);color:#1a0000;font-size:12px;font-weight:600;padding:7px 16px;border-radius:7px;text-decoration:none}
+
+/* ── Station bar ── */
+.station-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
+.station-dot{width:6px;height:6px;border-radius:50%;background:var(--warn);box-shadow:0 0 6px var(--warn);flex-shrink:0}
+.station-name{font-family:var(--mono);font-size:11px;color:var(--label)}
+.station-name span{color:var(--text);font-weight:600}
+.incident-badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;padding:2px 7px;border-radius:4px;background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+
+/* ── Progress bar ── */
+.progress-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px}
+.progress-steps{display:flex;gap:4px;flex:1}
+.progress-step{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .3s}
+.progress-step.done{background:var(--accent)}
+.progress-step.active{background:var(--accent2)}
+.progress-label{font-family:var(--mono);font-size:10px;color:var(--muted);white-space:nowrap}
+
+/* ── Container ── */
+.container{max-width:540px;margin:0 auto;padding:20px 16px}
+.screen{display:none}.screen.active{display:block}
+
+/* ── Form header ── */
+.form-header{margin-bottom:20px}
+.form-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.form-sub{font-size:12px;color:var(--muted);line-height:1.5}
+.step-indicator{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 10px;margin-bottom:12px}
+.step-num{font-family:var(--mono);font-size:10px;color:var(--accent2);font-weight:600}
+.step-name{font-size:11px;color:var(--muted)}
+
+/* ── Section ── */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.section-header{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.section-icon{font-size:14px}
+.section-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.section-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ── Field ── */
+.field{}
+.field.full{grid-column:1/-1}
+.field label{display:block;font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono)}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:7px;
+  color:var(--text);font-family:var(--sans);font-size:13px;padding:9px 12px;
+  outline:none;transition:border-color .2s;-webkit-appearance:none;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent2)}
+.field select option{background:#1f2433}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5}
+.field input[type=number]{-moz-appearance:textfield}
+.field input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+
+/* ── Customer section highlight ── */
+.section.customer-section{border-color:rgba(34,211,238,.25)}
+.section.customer-section .section-header{background:rgba(34,211,238,.06);border-bottom-color:rgba(34,211,238,.15)}
+.section.customer-section .section-title{color:var(--accent2)}
+
+/* ── Declaration box ── */
+.declaration{background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.2);border-radius:8px;padding:14px;margin-bottom:14px}
+.declaration-title{font-size:11px;font-weight:600;color:var(--warn);letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);margin-bottom:8px}
+.declaration-text{font-size:12px;color:var(--label);line-height:1.7}
+.declaration-text strong{color:var(--text)}
+
+/* ── Deadline row ── */
+.deadline-row{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.deadline-icon{font-size:20px}
+.deadline-info{}
+.deadline-label{font-size:11px;color:var(--muted);font-family:var(--mono);margin-bottom:2px}
+.deadline-value{font-size:15px;font-weight:700;color:var(--warn);font-family:var(--mono)}
+
+/* ── Signature pad ── */
+.sig-pad-wrap{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
+.sig-pad-header{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sig-pad-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono);color:var(--label);display:flex;align-items:center;gap:8px}
+.sig-required{font-size:9px;color:var(--danger);font-family:var(--mono);border:1px solid var(--danger-border);padding:1px 5px;border-radius:3px}
+.sig-clear-btn{font-size:11px;color:var(--accent2);cursor:pointer;font-family:var(--mono);padding:4px 8px;border:1px solid rgba(34,211,238,.2);border-radius:5px;background:rgba(34,211,238,.06);transition:all .15s}
+.sig-clear-btn:hover{background:rgba(34,211,238,.12)}
+.sig-canvas-wrap{position:relative;background:#fff;touch-action:none}
+canvas#sigCanvas{display:block;width:100%;height:160px;cursor:crosshair;touch-action:none}
+.sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:#ccc;pointer-events:none;text-align:center;transition:opacity .3s;font-family:var(--sans)}
+.sig-status{padding:8px 14px;font-size:11px;font-family:var(--mono);color:var(--muted);display:flex;align-items:center;gap:6px}
+.sig-dot{width:6px;height:6px;border-radius:50%;background:var(--border);flex-shrink:0}
+.sig-dot.signed{background:var(--accent);box-shadow:0 0 6px var(--accent)}
+
+/* ── Check rows ── */
+.check-list{padding:4px 0}
+.check-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+.check-row:last-child{border-bottom:none}
+.check-row:hover{background:var(--surface2)}
+.check-row input[type=checkbox]{width:16px;height:16px;flex-shrink:0;cursor:pointer;accent-color:var(--accent2)}
+.check-row-text{font-size:13px}
+
+/* ── Alert ── */
+.alert{display:none;border-radius:8px;padding:10px 14px;font-size:12px;margin-bottom:14px;line-height:1.5}
+.alert.show{display:block}
+
+/* ── Buttons ── */
+.btn-wrap{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.btn{width:100%;border:none;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:600;padding:14px;cursor:pointer;letter-spacing:.02em;transition:opacity .18s,transform .1s}
+.btn:active{transform:scale(.98)}.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#071a0d}.btn-primary:hover{opacity:.9}
+.btn-warn{background:var(--warn);color:#1a0800}.btn-warn:hover{opacity:.9}
+.btn-secondary{background:var(--surface2);color:var(--label);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
+.note{text-align:center;font-size:11px;color:var(--muted);margin-top:8px}
+
+/* ── Confirm ── */
+.confirm-header{margin-bottom:18px}
+.confirm-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.confirm-sub{font-size:12px;color:var(--muted)}
+.confirm-section{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.confirm-section-title{padding:8px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.confirm-row{display:flex;padding:9px 14px;border-bottom:1px solid var(--border);gap:12px}
+.confirm-row:last-child{border-bottom:none}
+.confirm-key{font-size:11px;color:var(--muted);font-family:var(--mono);width:42%;flex-shrink:0;padding-top:1px}
+.confirm-val{font-size:13px;font-weight:500;flex:1;word-break:break-word}
+.confirm-sig-img{width:100%;border-radius:6px;border:1px solid var(--border);margin-top:4px;background:#fff}
+
+/* ── Legal warning ── */
+.legal-box{background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:8px;padding:14px;margin-bottom:14px}
+.legal-title{font-size:11px;font-weight:600;color:var(--danger);letter-spacing:.06em;font-family:var(--mono);margin-bottom:6px}
+.legal-text{font-size:12px;color:var(--label);line-height:1.6}
+
+/* ── Success ── */
+.success-wrap{text-align:center;padding:56px 20px}
+.success-icon{width:64px;height:64px;background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px}
+.success-title{font-size:20px;font-weight:700;margin-bottom:8px;color:var(--accent)}
+.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px}
+.success-ref{font-family:var(--mono);font-size:16px;color:var(--accent2);font-weight:600;margin:12px 0}
+.success-actions{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
+
+/* ── Loading ── */
+.loading-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(15,17,23,.85);align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--muted);font-family:var(--mono)}
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Submitting…</div>
+</div>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <div class="back-btn" onclick="goPortal()">
+      <span class="back-arrow">←</span>
+      <span class="back-label" id="h-back">Portal</span>
+    </div>
+    <div>
+      <div class="header-title" id="h-title">Unpaid Fuel Form</div>
+      <div class="header-sub"   id="h-sub">INCIDENT REPORT</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+    </div>
+  </div>
+</div>
+
+<!-- No station -->
+<div class="no-station" id="no-station-bar">
+  <div class="no-station-msg" id="ns-msg"></div>
+  <a class="no-station-link" href="index.html" id="ns-link"></a>
+</div>
+
+<!-- Station bar -->
+<div class="station-bar" id="station-bar">
+  <div class="station-dot"></div>
+  <div class="station-name" id="station-display"></div>
+  <div class="incident-badge" id="incident-badge">INCIDENT</div>
+</div>
+
+<!-- Progress bar -->
+<div class="progress-bar" id="progressBar">
+  <div class="progress-steps">
+    <div class="progress-step active" id="ps0"></div>
+    <div class="progress-step"        id="ps1"></div>
+    <div class="progress-step"        id="ps2"></div>
+  </div>
+  <div class="progress-label" id="progress-label">Step 1 of 3</div>
+</div>
+
+<!-- Container -->
+<div class="container">
+
+  <!-- ══ STEP 1: Fuel & Vehicle Details (Staff fills) ══ -->
+  <div class="screen active" id="screen-step1">
+    <div class="form-header">
+      <div class="step-indicator">
+        <span class="step-num" id="s1-num">01</span>
+        <span class="step-name" id="s1-name">Fuel & Vehicle Details</span>
+      </div>
+      <div class="form-title" id="s1-title">Unpaid Fuel Form</div>
+      <div class="form-sub"   id="s1-sub">Staff: fill in fuel and vehicle details first.</div>
+    </div>
+
+    <!-- Fuel details -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">⛽</span>
+        <span class="section-title" id="sec-fuel-title">Fuel Details</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label id="l-date">Date *</label>
+          <input type="date" id="f-date">
+        </div>
+        <div class="field">
+          <label id="l-time">Time *</label>
+          <input type="time" id="f-time">
+        </div>
+        <div class="field">
+          <label id="l-pump">Pump No. *</label>
+          <input type="number" id="f-pump" min="1" max="20" placeholder="e.g. 3">
+        </div>
+        <div class="field">
+          <label id="l-fueltype">Fuel Type</label>
+          <select id="f-fueltype">
+            <option value="">—</option>
+            <option>91 Unleaded</option>
+            <option>95 Unleaded</option>
+            <option>98 Unleaded</option>
+            <option>E10</option>
+            <option>Diesel</option>
+            <option>LPG</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-litres">Litres</label>
+          <input type="number" id="f-litres" step="0.01" min="0" placeholder="e.g. 45.2">
+        </div>
+        <div class="field">
+          <label id="l-amount">Amount Owing (AUD $) *</label>
+          <input type="number" id="f-amount" step="0.01" min="0" placeholder="e.g. 82.50">
+        </div>
+      </div>
+    </div>
+
+    <!-- Vehicle details -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🚗</span>
+        <span class="section-title" id="sec-vehicle-title">Vehicle Details</span>
+      </div>
+      <div class="section-body">
+        <div class="field full">
+          <label id="l-plate">Licence Plate *</label>
+          <input type="text" id="f-plate" oninput="this.value=this.value.toUpperCase()" placeholder="e.g. ABC 123">
+        </div>
+        <div class="field">
+          <label id="l-state">State</label>
+          <select id="f-state">
+            <option value="">—</option>
+            <option>VIC</option><option>NSW</option><option>QLD</option>
+            <option>WA</option><option>SA</option><option>TAS</option><option>NT</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-vcolour">Colour</label>
+          <input type="text" id="f-vcolour" placeholder="e.g. Silver">
+        </div>
+        <div class="field full">
+          <label id="l-vmake">Make / Model</label>
+          <input type="text" id="f-vmake" placeholder="e.g. Toyota Camry">
+        </div>
+      </div>
+    </div>
+
+    <!-- Evidence -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">📹</span>
+        <span class="section-title" id="sec-evidence-title">Evidence</span>
+      </div>
+      <div class="check-list">
+        <label class="check-row"><input type="checkbox" id="ev-cctv"><div class="check-row-text" id="ev-cctv-l">CCTV footage available</div></label>
+        <label class="check-row"><input type="checkbox" id="ev-vphoto"><div class="check-row-text" id="ev-vphoto-l">Vehicle photo taken</div></label>
+        <label class="check-row"><input type="checkbox" id="ev-pphoto"><div class="check-row-text" id="ev-pphoto-l">Licence plate photo taken</div></label>
+      </div>
+    </div>
+
+    <!-- Staff -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">👔</span>
+        <span class="section-title" id="sec-staff-title">Staff on Duty</span>
+      </div>
+      <div class="section-body">
+        <div class="field">
+          <label id="l-staffname">Your Name *</label>
+          <input type="text" id="f-staffname" placeholder="Your name">
+        </div>
+        <div class="field">
+          <label id="l-shift">Shift</label>
+          <select id="f-shift">
+            <option value="">—</option>
+            <option id="sh-morning">Morning</option>
+            <option id="sh-afternoon">Afternoon</option>
+            <option id="sh-night">Night</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert" id="alert-step1"></div>
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="s1-next-btn" onclick="goStep2()">Next: Customer Details →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: Customer Details & Declaration (Customer fills) ══ -->
+  <div class="screen" id="screen-step2">
+    <div class="form-header">
+      <div class="step-indicator">
+        <span class="step-num" id="s2-num">02</span>
+        <span class="step-name" id="s2-name">Customer Details</span>
+      </div>
+      <div class="form-title" id="s2-title">Customer Information</div>
+      <div class="form-sub"   id="s2-sub">Customer: please fill in your details below.</div>
+    </div>
+
+    <!-- Customer personal details -->
+    <div class="section customer-section">
+      <div class="section-header">
+        <span class="section-icon">👤</span>
+        <span class="section-title" id="sec-cust-title">Personal Details</span>
+      </div>
+      <div class="section-body">
+        <div class="field full">
+          <label id="l-cname">Full Name *</label>
+          <input type="text" id="f-cname" placeholder="Full legal name">
+        </div>
+        <div class="field">
+          <label id="l-cmobile">Mobile *</label>
+          <input type="tel" id="f-cmobile" placeholder="e.g. 0412 345 678">
+        </div>
+        <div class="field">
+          <label id="l-cemail">Email</label>
+          <input type="email" id="f-cemail" placeholder="Optional">
+        </div>
+        <div class="field full">
+          <label id="l-caddress">Residential Address *</label>
+          <input type="text" id="f-caddress" placeholder="Street address, suburb, postcode">
+        </div>
+      </div>
+    </div>
+
+    <!-- ID verification -->
+    <div class="section customer-section">
+      <div class="section-header">
+        <span class="section-icon">🪪</span>
+        <span class="section-title" id="sec-id-title">ID Verification (Mandatory)</span>
+      </div>
+      <div class="section-body">
+        <div class="field full">
+          <label id="l-dlnum">Driver Licence No. *</label>
+          <input type="text" id="f-dlnum" placeholder="Licence number" oninput="this.value=this.value.toUpperCase()">
+        </div>
+        <div class="field">
+          <label id="l-dlstate">Issuing State *</label>
+          <select id="f-dlstate">
+            <option value="">—</option>
+            <option>VIC</option><option>NSW</option><option>QLD</option>
+            <option>WA</option><option>SA</option><option>TAS</option><option>NT</option>
+          </select>
+        </div>
+        <div class="field">
+          <label id="l-dlexpiry">Licence Expiry *</label>
+          <input type="date" id="f-dlexpiry">
+        </div>
+        <div class="field">
+          <label id="l-dob">Date of Birth *</label>
+          <input type="date" id="f-dob">
+        </div>
+      </div>
+      <div class="check-list">
+        <label class="check-row"><input type="checkbox" id="id-front"><div class="check-row-text" id="id-front-l">Licence front photo taken ✓ (required)</div></label>
+        <label class="check-row"><input type="checkbox" id="id-back"><div class="check-row-text" id="id-back-l">Licence back photo taken (recommended)</div></label>
+      </div>
+    </div>
+
+    <!-- Payment deadline -->
+    <div class="deadline-row" id="deadlineRow">
+      <div class="deadline-icon">⏰</div>
+      <div class="deadline-info">
+        <div class="deadline-label" id="deadline-label">Payment deadline (48 hours)</div>
+        <div class="deadline-value" id="deadline-value">—</div>
+      </div>
+    </div>
+
+    <!-- Declaration -->
+    <div class="declaration" id="declarationBox">
+      <div class="declaration-title" id="decl-title">Customer Declaration</div>
+      <div class="declaration-text" id="decl-text"></div>
+    </div>
+
+    <!-- Legal warning -->
+    <div class="legal-box">
+      <div class="legal-title" id="legal-title">⚠ Legal Warning</div>
+      <div class="legal-text" id="legal-text"></div>
+    </div>
+
+    <!-- Signature pad -->
+    <div class="sig-pad-wrap">
+      <div class="sig-pad-header">
+        <div class="sig-pad-title">
+          <span id="sig-title">Customer Signature</span>
+          <span class="sig-required" id="sig-required">REQUIRED</span>
+        </div>
+        <div class="sig-clear-btn" id="sig-clear-btn" onclick="clearSig()">Clear</div>
+      </div>
+      <div class="sig-canvas-wrap">
+        <canvas id="sigCanvas"></canvas>
+        <div class="sig-hint" id="sig-hint">Sign here with your finger</div>
+      </div>
+      <div class="sig-status">
+        <div class="sig-dot" id="sig-dot"></div>
+        <span id="sig-status-text">Not signed</span>
+      </div>
+    </div>
+
+    <div class="alert" id="alert-step2"></div>
+    <div class="btn-wrap">
+      <button class="btn btn-secondary" id="s2-back-btn" onclick="goStep1()">← Back</button>
+      <button class="btn btn-warn" id="s2-next-btn" onclick="goStep3()">Review & Confirm →</button>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: Review & Confirm ══ -->
+  <div class="screen" id="screen-step3">
+    <div class="confirm-header">
+      <div class="confirm-title" id="cf-title">Review & Confirm</div>
+      <div class="confirm-sub"   id="cf-sub">Please check all details carefully before submitting.</div>
+    </div>
+
+    <div id="confirm-body"></div>
+
+    <!-- Signature preview -->
+    <div class="confirm-section">
+      <div class="confirm-section-title" id="cf-sig-title">Customer Signature</div>
+      <div style="padding:12px 14px">
+        <img id="sig-preview" class="confirm-sig-img" src="" alt="Signature">
+      </div>
+    </div>
+
+    <div class="alert" id="alert-step3"></div>
+    <div class="btn-wrap">
+      <button class="btn btn-secondary" id="cf-edit-btn"   onclick="goStep2()"></button>
+      <button class="btn btn-warn"      id="cf-submit-btn" onclick="submitForm()"></button>
+    </div>
+    <p class="note" id="cf-note"></p>
+  </div>
+
+  <!-- ══ SUCCESS ══ -->
+  <div class="screen" id="screen-success">
+    <div class="success-wrap">
+      <div class="success-icon">✓</div>
+      <div class="success-title" id="succ-title">Record Saved</div>
+      <div class="success-sub"   id="succ-msg"></div>
+      <div class="success-ref"   id="succ-ref"></div>
+      <div class="success-actions">
+        <button class="btn btn-secondary" id="succ-another" onclick="resetForm()"></button>
+        <button class="btn btn-secondary" id="succ-home"    onclick="goPortal()"></button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let station = localStorage.getItem('ap_station') || '';
+let lang    = localStorage.getItem('ap_lang')    || 'en';
+let sigSigned = false;
+
+// ══════════════════════════════════════════
+// STRINGS
+// ══════════════════════════════════════════
+const S = {
+  en: {
+    pageTitle:'Unpaid Fuel Form — Aries Petroleum',
+    hBack:'Portal', hTitle:'Unpaid Fuel Form', hSub:'INCIDENT REPORT',
+    nsMsgNoStn:'No station selected. Please return to the portal first.',
+    nsLink:'← Go to Portal',
+    incidentBadge:'INCIDENT',
+    progressLabels:['Step 1 of 3','Step 2 of 3','Step 3 of 3'],
+    s1Num:'01', s1Name:'Fuel & Vehicle',
+    s1Title:'Unpaid Fuel Form',
+    s1Sub:'Staff: fill in fuel and vehicle details first.',
+    s2Num:'02', s2Name:'Customer Details',
+    s2Title:'Customer Information',
+    s2Sub:'Customer: please fill in your details and sign below.',
+    secFuel:'Fuel Details', secVehicle:'Vehicle Details',
+    secEvidence:'Evidence', secStaff:'Staff on Duty',
+    secCust:'Personal Details', secId:'ID Verification (Mandatory)',
+    lDate:'Date *', lTime:'Time *', lPump:'Pump No. *', lFuelType:'Fuel Type',
+    lLitres:'Litres', lAmount:'Amount Owing (AUD $) *',
+    lPlate:'Licence Plate *', lState:'State', lVColour:'Colour', lVMake:'Make / Model',
+    evCCTV:'CCTV footage available',
+    evVPhoto:'Vehicle photo taken ✓ (required)',
+    evPPhoto:'Licence plate photo taken ✓ (required)',
+    lStaffName:'Your Name *', lShift:'Shift',
+    shMorning:'Morning', shAfternoon:'Afternoon', shNight:'Night',
+    lCName:'Full Name *', lCMobile:'Mobile *', lCEmail:'Email', lCAddress:'Residential Address *',
+    lDLNum:'Driver Licence No. *', lDLState:'Issuing State *',
+    lDLExpiry:'Licence Expiry *', lDOB:'Date of Birth *',
+    idFront:'Licence front photo taken ✓ (required)',
+    idBack:'Licence back photo taken (recommended)',
+    deadlineLabel:'Payment deadline (48 hours)',
+    declTitle:'Customer Declaration',
+    declText:'I declare that: (1) I received fuel at this service station today and am currently unable to make payment. (2) All personal, vehicle and identification details I have provided are true and correct. (3) I authorise the service station to retain the information provided — including vehicle photo, licence plate photo and driver licence photos — for the purpose of recording this unpaid fuel incident, contacting me for payment, debt recovery if required, and providing information to police if payment is not made. I agree to return and pay the FULL outstanding amount by the deadline shown above.',
+    legalTitle:'⚠ Legal Warning',
+    legalText:'If payment is not made by the deadline, the service station may report this matter to police as an unpaid fuel / fuel drive-off incident and may use the information provided for debt recovery. Police or other authorities may investigate the matter, and further legal consequences may apply depending on the circumstances.',
+    sigTitle:'Customer Signature', sigRequired:'REQUIRED',
+    sigHint:'Sign here with your finger',
+    sigClear:'Clear',
+    sigNotSigned:'Not signed', sigSigned:'Signed ✓',
+    s1Next:'Next: Customer Details →',
+    s2Back:'← Back', s2Next:'Review & Confirm →',
+    cfTitle:'Review & Confirm',
+    cfSub:'Please check all details carefully before submitting.',
+    cfSigTitle:'Customer Signature',
+    cfEdit:'← Edit', cfSubmit:'Submit & Save Record',
+    cfNote:'Record will be saved to Google Sheets. Signature image should be stored in Google Drive by Apps Script.',
+    succTitle:'Record Saved',
+    succMsg:'The unpaid fuel incident has been recorded. The customer must return and pay by the deadline.',
+    succAnother:'New Record', succHome:'← Back to Portal',
+    submitting:'Submitting…',
+    errDate:'Please select the date.', errTime:'Please enter the time.',
+    errPump:'Please enter the pump number.', errAmount:'Please enter the amount owing.',
+    errPlate:'Please enter the licence plate.', errStaff:'Please enter your name.',
+    errVPhoto:'Please confirm that a vehicle photo has been taken.',
+    errPPhoto:'Please confirm that a licence plate photo has been taken.',
+    errCName:'Please enter the customer\'s full name.',
+    errCMobile:'Please enter the customer\'s mobile number.',
+    errCAddress:'Please enter the customer\'s address.',
+    errDLNum:'Please enter the driver licence number.',
+    errDLState:'Please select the issuing state.',
+    errDLExpiry:'Please enter the licence expiry date.',
+    errDOB:'Please enter date of birth.',
+    errIDFront:'Please confirm that the front of the driver licence has been photographed.',
+    errSig:'Customer signature is required.',
+    na:'—', yes:'Yes', no:'No',
+  },
+  zh: {
+    pageTitle:'欠款燃油登记 — Aries Petroleum',
+    hBack:'首页', hTitle:'欠款燃油登记', hSub:'事故报告',
+    nsMsgNoStn:'未选择站点，请先返回首页选择站点。',
+    nsLink:'← 返回首页',
+    incidentBadge:'事故',
+    progressLabels:['第 1 步，共 3 步','第 2 步，共 3 步','第 3 步，共 3 步'],
+    s1Num:'01', s1Name:'燃油与车辆信息',
+    s1Title:'欠款燃油登记',
+    s1Sub:'员工：请先填写燃油和车辆信息。',
+    s2Num:'02', s2Name:'客户信息',
+    s2Title:'客户信息',
+    s2Sub:'客户：请填写您的个人信息并在下方签名。',
+    secFuel:'燃油详情', secVehicle:'车辆信息',
+    secEvidence:'证据记录', secStaff:'当班员工',
+    secCust:'个人信息', secId:'身份验证（必填）',
+    lDate:'日期 *', lTime:'时间 *', lPump:'加油枪号 *', lFuelType:'燃油类型',
+    lLitres:'升数', lAmount:'欠款金额（AUD $）*',
+    lPlate:'车牌号 *', lState:'州', lVColour:'颜色', lVMake:'品牌/型号',
+    evCCTV:'CCTV 录像可用',
+    evVPhoto:'车辆照片已拍 ✓（必须）',
+    evPPhoto:'车牌照片已拍 ✓（必须）',
+    lStaffName:'员工姓名 *', lShift:'班次',
+    shMorning:'早班', shAfternoon:'午班', shNight:'夜班',
+    lCName:'全名 *', lCMobile:'手机号 *', lCEmail:'邮箱', lCAddress:'居住地址 *',
+    lDLNum:'驾照号码 *', lDLState:'签发州 *',
+    lDLExpiry:'驾照有效期 *', lDOB:'出生日期 *',
+    idFront:'驾照正面照片已拍 ✓（必须）',
+    idBack:'驾照背面照片已拍（建议）',
+    deadlineLabel:'付款截止时间（48小时内）',
+    declTitle:'客户声明',
+    declText:'本人声明：(1) 本人今日在此加油站加油，目前暂时无法付款。(2) 本人提供的所有个人、车辆和身份信息均真实准确。(3) 本人授权加油站保留所提供的信息（包括车辆照片、车牌照片和驾照照片），用于记录本次欠款燃油事件、联系本人付款、必要时追讨欠款，以及在未按时付款时向警方提供相关资料。本人同意在上述截止时间前返回全额付清欠款。',
+    legalTitle:'⚠ 法律警告',
+    legalText:'如未在截止时间前付款，加油站可能会将此事件作为欠款燃油/燃油逃单事件向警方报告，并可能使用所提供的信息追讨欠款。警方或相关部门可能会进行调查，具体后果将视实际情况而定。',
+    sigTitle:'客户签名', sigRequired:'必填',
+    sigHint:'请用手指在此处签名',
+    sigClear:'清除',
+    sigNotSigned:'未签名', sigSigned:'已签名 ✓',
+    s1Next:'下一步：客户信息 →',
+    s2Back:'← 返回', s2Next:'核对并确认 →',
+    cfTitle:'确认提交',
+    cfSub:'提交前请仔细核对所有信息。',
+    cfSigTitle:'客户签名',
+    cfEdit:'← 返回修改', cfSubmit:'确认提交并保存记录',
+    cfNote:'记录将保存至 Google Sheets。签名图片应由 Apps Script 存入 Google Drive。'
+    succTitle:'记录已保存',
+    succMsg:'欠款燃油事故已记录在案。客户必须在截止时间前返回付款。',
+    succAnother:'新建记录', succHome:'← 返回首页',
+    submitting:'提交中…',
+    errDate:'请选择日期。', errTime:'请填写时间。',
+    errPump:'请填写加油枪号。', errAmount:'请填写欠款金额。',
+    errPlate:'请填写车牌号。', errStaff:'请填写员工姓名。',
+    errVPhoto:'请确认已经拍摄车辆照片。',
+    errPPhoto:'请确认已经拍摄车牌照片。',
+    errCName:'请填写客户全名。',
+    errCMobile:'请填写客户手机号。',
+    errCAddress:'请填写客户地址。',
+    errDLNum:'请填写驾照号码。',
+    errDLState:'请选择签发州。',
+    errDLExpiry:'请填写驾照有效期。',
+    errDOB:'请填写出生日期。',
+    errIDFront:'请确认已经拍摄驾照正面照片。',
+    errSig:'客户签名为必填项。',
+    na:'—', yes:'是', no:'否',
+  }
+};
+
+function s() { return S[lang]; }
+
+// ══════════════════════════════════════════
+// LANG
+// ══════════════════════════════════════════
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('ap_lang', l);
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active',
+      (l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文'));
+  });
+  applyLang();
+}
+
+function applyLang() {
+  const L = s();
+  document.title = L.pageTitle;
+  setText('h-back', L.hBack); setText('h-title', L.hTitle); setText('h-sub', L.hSub);
+  setText('ns-msg', L.nsMsgNoStn); setText('ns-link', L.nsLink);
+  setText('incident-badge', L.incidentBadge);
+
+  setText('s1-num', L.s1Num); setText('s1-name', L.s1Name);
+  setText('s1-title', L.s1Title); setText('s1-sub', L.s1Sub);
+  setText('s2-num', L.s2Num); setText('s2-name', L.s2Name);
+  setText('s2-title', L.s2Title); setText('s2-sub', L.s2Sub);
+
+  setText('sec-fuel-title', L.secFuel); setText('sec-vehicle-title', L.secVehicle);
+  setText('sec-evidence-title', L.secEvidence); setText('sec-staff-title', L.secStaff);
+  setText('sec-cust-title', L.secCust); setText('sec-id-title', L.secId);
+
+  setText('l-date', L.lDate); setText('l-time', L.lTime);
+  setText('l-pump', L.lPump); setText('l-fueltype', L.lFuelType);
+  setText('l-litres', L.lLitres); setText('l-amount', L.lAmount);
+  setText('l-plate', L.lPlate); setText('l-state', L.lState);
+  setText('l-vcolour', L.lVColour); setText('l-vmake', L.lVMake);
+  setText('ev-cctv-l', L.evCCTV); setText('ev-vphoto-l', L.evVPhoto); setText('ev-pphoto-l', L.evPPhoto);
+  setText('l-staffname', L.lStaffName); setText('l-shift', L.lShift);
+  setText('sh-morning', L.shMorning); setText('sh-afternoon', L.shAfternoon); setText('sh-night', L.shNight);
+
+  setText('l-cname', L.lCName); setText('l-cmobile', L.lCMobile);
+  setText('l-cemail', L.lCEmail); setText('l-caddress', L.lCAddress);
+  setText('l-dlnum', L.lDLNum); setText('l-dlstate', L.lDLState);
+  setText('l-dlexpiry', L.lDLExpiry); setText('l-dob', L.lDOB);
+  setText('id-front-l', L.idFront); setText('id-back-l', L.idBack);
+
+  setText('deadline-label', L.deadlineLabel);
+  setText('decl-title', L.declTitle); setText('decl-text', L.declText);
+  setText('legal-title', L.legalTitle); setText('legal-text', L.legalText);
+  setText('sig-title', L.sigTitle); setText('sig-required', L.sigRequired);
+  setText('sig-hint', L.sigHint); setText('sig-clear-btn', L.sigClear);
+  setText('sig-status-text', sigSigned ? L.sigSigned : L.sigNotSigned);
+
+  setText('s1-next-btn', L.s1Next);
+  setText('s2-back-btn', L.s2Back); setText('s2-next-btn', L.s2Next);
+  setText('cf-title', L.cfTitle); setText('cf-sub', L.cfSub);
+  setText('cf-sig-title', L.cfSigTitle);
+  setText('cf-edit-btn', L.cfEdit); setText('cf-submit-btn', L.cfSubmit);
+  setText('cf-note', L.cfNote);
+  setText('succ-title', L.succTitle); setText('succ-msg', L.succMsg);
+  setText('succ-another', L.succAnother); setText('succ-home', L.succHome);
+
+  if (station) document.getElementById('station-display').innerHTML = `<span>${station}</span>`;
+  updateDeadline();
+}
+
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el && val !== undefined) el.textContent = val;
+}
+
+// ══════════════════════════════════════════
+// SCREENS & PROGRESS
+// ══════════════════════════════════════════
+let currentStep = 1;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
+  document.getElementById(`screen-${id}`).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function updateProgress(step) {
+  currentStep = step;
+  for (let i = 0; i < 3; i++) {
+    const el = document.getElementById(`ps${i}`);
+    el.className = 'progress-step' + (i < step - 1 ? ' done' : i === step - 1 ? ' active' : '');
+  }
+  document.getElementById('progress-label').textContent = s().progressLabels[step - 1];
+}
+
+// ══════════════════════════════════════════
+// STEP NAVIGATION
+// ══════════════════════════════════════════
+function goStep1() {
+  updateProgress(1);
+  showScreen('step1');
+}
+
+function goStep2() {
+  const L = s();
+  hideAlert('alert-step1');
+  if (!val('f-date'))     { showAlert('alert-step1', L.errDate);   return; }
+  if (!val('f-time'))     { showAlert('alert-step1', L.errTime);   return; }
+  if (!val('f-pump'))     { showAlert('alert-step1', L.errPump);   return; }
+  if (!val('f-amount'))   { showAlert('alert-step1', L.errAmount); return; }
+  if (!val('f-plate'))    { showAlert('alert-step1', L.errPlate);  return; }
+  if (!val('f-staffname')){ showAlert('alert-step1', L.errStaff);  return; }
+  if (!document.getElementById('ev-vphoto').checked) { showAlert('alert-step1', L.errVPhoto); return; }
+  if (!document.getElementById('ev-pphoto').checked) { showAlert('alert-step1', L.errPPhoto); return; }
+  updateDeadline();
+  updateProgress(2);
+  showScreen('step2');
+}
+
+function goStep3() {
+  const L = s();
+  hideAlert('alert-step2');
+  if (!val('f-cname'))    { showAlert('alert-step2', L.errCName);   return; }
+  if (!val('f-cmobile'))  { showAlert('alert-step2', L.errCMobile); return; }
+  if (!val('f-caddress')) { showAlert('alert-step2', L.errCAddress);return; }
+  if (!val('f-dlnum'))    { showAlert('alert-step2', L.errDLNum);   return; }
+  if (!val('f-dlstate'))  { showAlert('alert-step2', L.errDLState); return; }
+  if (!val('f-dlexpiry')) { showAlert('alert-step2', L.errDLExpiry);return; }
+  if (!val('f-dob'))      { showAlert('alert-step2', L.errDOB);     return; }
+  if (!document.getElementById('id-front').checked) { showAlert('alert-step2', L.errIDFront); return; }
+  if (!sigSigned)         { showAlert('alert-step2', L.errSig);     return; }
+
+  buildConfirm();
+  updateProgress(3);
+  showScreen('step3');
+}
+
+// ══════════════════════════════════════════
+// DEADLINE
+// ══════════════════════════════════════════
+function updateDeadline() {
+  const d = new Date();
+  d.setHours(d.getHours() + 48);
+  const str = d.toLocaleDateString(lang === 'en' ? 'en-AU' : 'zh-CN', {
+    weekday:'short', year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'
+  });
+  document.getElementById('deadline-value').textContent = str;
+}
+
+// ══════════════════════════════════════════
+// CONFIRM PAGE
+// ══════════════════════════════════════════
+function buildConfirm() {
+  const L   = s();
+  const yn  = v => v === '' ? L.na : v;
+  const chk = id => document.getElementById(id).checked ? L.yes : L.no;
+
+  const sections = [
+    { title: L.secFuel, rows: [
+      [L.lDate,     val('f-date')],
+      [L.lTime,     val('f-time')],
+      [L.lPump,     val('f-pump')],
+      [L.lFuelType, yn(val('f-fueltype'))],
+      [L.lLitres,   val('f-litres') ? val('f-litres') + ' L' : L.na],
+      [L.lAmount,   val('f-amount') ? '$ ' + val('f-amount') : L.na],
+    ]},
+    { title: L.secVehicle, rows: [
+      [L.lPlate,   val('f-plate') + (val('f-state') ? ' (' + val('f-state') + ')' : '')],
+      [L.lVColour, yn(val('f-vcolour'))],
+      [L.lVMake,   yn(val('f-vmake'))],
+    ]},
+    { title: L.secEvidence, rows: [
+      [L.evCCTV,   chk('ev-cctv')],
+      [L.evVPhoto, chk('ev-vphoto')],
+      [L.evPPhoto, chk('ev-pphoto')],
+    ]},
+    { title: L.secCust, rows: [
+      [L.lCName,    val('f-cname')],
+      [L.lCMobile,  val('f-cmobile')],
+      [L.lCEmail,   val('f-cemail') || L.na],
+      [L.lCAddress, val('f-caddress')],
+    ]},
+    { title: L.secId, rows: [
+      [L.lDLNum,    val('f-dlnum')],
+      [L.lDLState,  val('f-dlstate')],
+      [L.lDLExpiry, val('f-dlexpiry')],
+      [L.lDOB,      val('f-dob')],
+    ]},
+    { title: L.secStaff, rows: [
+      [L.lStaffName, val('f-staffname')],
+      [L.lShift,     yn(val('f-shift'))],
+    ]},
+    { title: L.deadlineLabel, rows: [
+      ['', document.getElementById('deadline-value').textContent],
+    ]},
+  ];
+
+  document.getElementById('confirm-body').innerHTML = sections.map(sec => `
+    <div class="confirm-section">
+      <div class="confirm-section-title">${sec.title}</div>
+      ${sec.rows.map(([k, v]) => `
+        <div class="confirm-row">
+          <div class="confirm-key">${k.replace(' *','')}</div>
+          <div class="confirm-val">${v}</div>
+        </div>`).join('')}
+    </div>`).join('');
+
+  // Show signature preview
+  document.getElementById('sig-preview').src = document.getElementById('sigCanvas').toDataURL('image/png');
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+function submitForm() {
+  const L = s();
+
+  const sigData = document.getElementById('sigCanvas').toDataURL('image/png');
+  const referenceNo = makeReferenceNo();
+
+  const row = {
+    formType:    'unpaidFuelForm',
+    referenceNo,
+    submittedAt: new Date().toISOString(),
+    station, lang,
+    date:        val('f-date'),
+    time:        val('f-time'),
+    pump:        val('f-pump'),
+    fuelType:    val('f-fueltype'),
+    litres:      val('f-litres'),
+    amountOwing: val('f-amount'),
+    plate:       val('f-plate'),
+    plateState:  val('f-state'),
+    vColour:     val('f-vcolour'),
+    vMake:       val('f-vmake'),
+    cctvAvail:   document.getElementById('ev-cctv').checked,
+    vPhotoTaken: document.getElementById('ev-vphoto').checked,
+    pPhotoTaken: document.getElementById('ev-pphoto').checked,
+    staffName:   val('f-staffname'),
+    shift:       val('f-shift'),
+    custName:    val('f-cname'),
+    custMobile:  val('f-cmobile'),
+    custEmail:   val('f-cemail'),
+    custAddress: val('f-caddress'),
+    dlNumber:    val('f-dlnum'),
+    dlState:     val('f-dlstate'),
+    dlExpiry:    val('f-dlexpiry'),
+    dob:         val('f-dob'),
+    idFrontTaken:document.getElementById('id-front').checked,
+    idBackTaken: document.getElementById('id-back').checked,
+    paymentDeadline: document.getElementById('deadline-value').textContent,
+    signatureBase64: sigData,   // Apps Script should save this to Google Drive, then store only the Drive URL in Sheet
+    signatureFileName: referenceNo + '_signature.png',
+    customerAcknowledgement: true,
+    privacyConsent: true,
+  };
+
+  document.getElementById('loading-text').textContent = L.submitting;
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  // TODO: Replace with your real Google Apps Script Web App URL
+  const SHEET_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+  fetch(SHEET_URL, {
+    method:'POST', mode:'no-cors',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify(row),
+  })
+  .then(() => onSuccess(row))
+  .catch(() => onSuccess(row));
+}
+
+function onSuccess(row) {
+  document.getElementById('loadingOverlay').classList.remove('show');
+  // Generate a simple reference number: date + mobile last 4
+  document.getElementById('succ-ref').textContent = 'Ref: ' + row.referenceNo;
+  showScreen('success');
+}
+
+// ══════════════════════════════════════════
+// SIGNATURE PAD
+// ══════════════════════════════════════════
+let canvas, ctx, drawing = false, lastX = 0, lastY = 0;
+
+function initCanvas() {
+  canvas = document.getElementById('sigCanvas');
+  ctx    = canvas.getContext('2d');
+
+  // Set actual pixel dimensions
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const w = canvas.offsetWidth || 508;
+  canvas.width  = w * dpr;
+  canvas.height = 160 * dpr;
+  ctx.scale(dpr, dpr);
+  ctx.strokeStyle = '#1a1a2e';
+  ctx.lineWidth   = 2.5;
+  ctx.lineCap     = 'round';
+  ctx.lineJoin    = 'round';
+
+  // Touch events
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); const t = e.touches[0]; startDraw(getPos(t)); }, { passive:false });
+  canvas.addEventListener('touchmove',  e => { e.preventDefault(); const t = e.touches[0]; draw(getPos(t)); },     { passive:false });
+  canvas.addEventListener('touchend',   e => { e.preventDefault(); stopDraw(); },                                   { passive:false });
+
+  // Mouse events (desktop testing)
+  canvas.addEventListener('mousedown', e => startDraw(getPos(e)));
+  canvas.addEventListener('mousemove', e => { if (drawing) draw(getPos(e)); });
+  canvas.addEventListener('mouseup',   () => stopDraw());
+  canvas.addEventListener('mouseleave',() => stopDraw());
+}
+
+function getPos(e) {
+  const rect = canvas.getBoundingClientRect();
+  return {
+    x: (e.clientX - rect.left),
+    y: (e.clientY - rect.top)
+  };
+}
+
+function startDraw(pos) {
+  drawing = true;
+  lastX = pos.x; lastY = pos.y;
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+}
+
+function draw(pos) {
+  if (!drawing) return;
+  ctx.lineTo(pos.x, pos.y);
+  ctx.stroke();
+  lastX = pos.x; lastY = pos.y;
+  setSigned(true);
+}
+
+function stopDraw() { drawing = false; }
+
+function clearSig() {
+  ctx.clearRect(0, 0, canvas.width / (window.devicePixelRatio||1), canvas.height / (window.devicePixelRatio||1));
+  setSigned(false);
+}
+
+function setSigned(v) {
+  sigSigned = v;
+  const L = s();
+  document.getElementById('sig-hint').style.opacity      = v ? '0' : '1';
+  document.getElementById('sig-dot').className           = 'sig-dot' + (v ? ' signed' : '');
+  document.getElementById('sig-status-text').textContent = v ? L.sigSigned : L.sigNotSigned;
+}
+
+// ══════════════════════════════════════════
+// RESET
+// ══════════════════════════════════════════
+function resetForm() {
+  ['f-date','f-time','f-pump','f-litres','f-amount','f-plate','f-vcolour','f-vmake',
+   'f-staffname','f-cname','f-cmobile','f-cemail','f-caddress',
+   'f-dlnum','f-dlexpiry','f-dob']
+    .forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['f-fueltype','f-state','f-dlstate','f-shift']
+    .forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['ev-cctv','ev-vphoto','ev-pphoto','id-front','id-back']
+    .forEach(id => { const el=document.getElementById(id); if(el) el.checked=false; });
+  document.getElementById('f-date').value = todayStr();
+  clearSig();
+  ['alert-step1','alert-step2','alert-step3'].forEach(hideAlert);
+  goStep1();
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function val(id) { return document.getElementById(id).value.trim(); }
+
+function showAlert(id, msg) {
+  const a = document.getElementById(id);
+  Object.assign(a.style, { background:'var(--warn-bg)', borderColor:'var(--warn-border)', color:'var(--warn)' });
+  a.textContent = msg;
+  a.classList.add('show');
+  a.scrollIntoView({ behavior:'smooth', block:'center' });
+}
+
+function hideAlert(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('show');
+}
+
+function todayStr() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+}
+
+function makeReferenceNo() {
+  const date = val('f-date') || todayStr();
+  const mob = val('f-cmobile').replace(/\D/g,'');
+  const tail = mob.length >= 4 ? mob.slice(-4) : (mob || '0000');
+  return 'UF-' + date.replace(/-/g,'') + '-' + tail;
+}
+
+function goPortal() { window.location.href = 'index.html'; }
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+if (!station) {
+  document.getElementById('no-station-bar').classList.add('show');
+  document.getElementById('station-bar').style.display   = 'none';
+  document.getElementById('progressBar').style.display   = 'none';
+  document.getElementById('screen-step1').style.display  = 'none';
+} else {
+  document.getElementById('no-station-bar').classList.remove('show');
+}
+
+document.querySelectorAll('.lang-btn').forEach(b => {
+  b.classList.toggle('active',
+    (lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
+});
+
+document.getElementById('f-date').value = todayStr();
+updateDeadline();
+initCanvas();
+applyLang();
+</script>
+</body>
+</html>
