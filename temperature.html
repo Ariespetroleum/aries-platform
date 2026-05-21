@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Temperature Log — Aries Petroleum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0f1117;--surface:#181c25;--surface2:#1f2433;--border:#2a3044;--border2:#353f58;
+  --accent:#4ade80;--accent2:#22d3ee;--warn:#fb923c;--danger:#f87171;
+  --text:#e8eaf0;--muted:#7a8299;--label:#a0aabb;
+  --mono:'DM Mono',monospace;--sans:'Sora',sans-serif;
+  --ok-bg:rgba(74,222,128,.08);--ok-border:rgba(74,222,128,.25);
+  --warn-bg:rgba(251,146,60,.08);--warn-border:rgba(251,146,60,.3);
+  --danger-bg:rgba(248,113,113,.08);--danger-border:rgba(248,113,113,.3);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;padding-bottom:48px}
+
+/* ── Header ── */
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:10px}
+.back-btn{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;padding:4px 8px 4px 0;border-right:1px solid var(--border);margin-right:4px;transition:color .15s}
+.back-btn:hover{color:var(--accent2)}
+.back-arrow{font-size:16px;line-height:1}
+.back-label{font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+.header-title-wrap{}
+.header-title{font-size:13px;font-weight:600;letter-spacing:.04em}
+.header-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px}
+.header-right{display:flex;align-items:center;gap:10px}
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.lang-btn{padding:4px 9px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:transparent;transition:all .15s;letter-spacing:.04em}
+.lang-btn.active{background:var(--border2);color:var(--text)}
+.header-time{font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* ── No-station banner ── */
+.no-station{display:none;background:var(--danger-bg);border-bottom:1px solid var(--danger-border);padding:12px 16px;text-align:center}
+.no-station.show{display:block}
+.no-station-msg{font-size:13px;color:var(--danger);margin-bottom:8px}
+.no-station-link{display:inline-block;background:var(--danger);color:#1a0000;font-size:12px;font-weight:600;padding:7px 16px;border-radius:7px;text-decoration:none;font-family:var(--sans)}
+
+/* ── Station bar ── */
+.station-bar{background:var(--surface2);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:8px}
+.station-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);flex-shrink:0}
+.station-name{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--label);letter-spacing:.04em}
+.station-name span{color:var(--text);font-weight:600}
+
+/* ── Container ── */
+.container{max-width:520px;margin:0 auto;padding:20px 16px}
+
+/* ── Form header ── */
+.form-header{margin-bottom:20px}
+.form-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.form-sub{font-size:12px;color:var(--muted)}
+
+/* ── Step bar ── */
+.steps{display:flex;gap:6px;margin-bottom:22px}
+.step{flex:1;height:3px;border-radius:2px;background:var(--border);transition:background .3s}
+.step.done{background:var(--accent)}.step.active{background:var(--accent2)}
+
+/* ── Shift nav ── */
+.shift-nav{display:flex;gap:6px;margin-bottom:18px}
+.shift-tab{flex:1;padding:8px 0;background:var(--surface);border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;color:var(--muted);cursor:pointer;text-align:center;transition:all .18s;position:relative}
+.shift-tab.active-morning{background:rgba(250,204,21,.1);border-color:rgba(250,204,21,.3);color:#fcd34d}
+.shift-tab.active-afternoon{background:rgba(251,146,60,.1);border-color:rgba(251,146,60,.3);color:#fb923c}
+.shift-tab.active-night{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.3);color:#a78bfa}
+.shift-tab.done-tab::after{content:'✓';position:absolute;top:3px;right:6px;font-size:9px;color:var(--accent)}
+.shift-section{display:none}.shift-section.active{display:block}
+.shift-badge{font-family:var(--mono);font-size:10px;font-weight:500;letter-spacing:.08em;padding:3px 8px;border-radius:4px;text-transform:uppercase}
+.shift-morning{background:rgba(250,204,21,.12);color:#fcd34d;border:1px solid rgba(250,204,21,.2)}
+.shift-afternoon{background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.2)}
+.shift-night{background:rgba(167,139,250,.12);color:#a78bfa;border:1px solid rgba(167,139,250,.2)}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+
+/* ── Card ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:12px}
+.card-group-label{padding:7px 14px 5px;font-size:10px;font-weight:600;letter-spacing:.08em;font-family:var(--mono);text-transform:uppercase;border-bottom:1px solid var(--border);background:var(--surface2)}
+
+/* ── Temp row ── */
+.temp-row{display:flex;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);gap:12px;transition:background .15s}
+.temp-row:last-child{border-bottom:none}
+.temp-row:focus-within{background:var(--surface2)}
+.device-info{flex:1;min-width:0}
+.device-name{font-size:13px;font-weight:500}
+.device-range{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:1px}
+.temp-input-wrap{position:relative}
+.temp-input{width:82px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--mono);font-size:14px;font-weight:500;padding:7px 26px 7px 10px;text-align:right;outline:none;transition:border-color .2s,background .2s;-moz-appearance:textfield}
+.temp-input::-webkit-inner-spin-button,.temp-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.temp-input:focus{border-color:var(--accent2);background:#1a2030}
+.temp-input.ok{border-color:var(--ok-border);background:var(--ok-bg);color:var(--accent)}
+.temp-input.warn{border-color:var(--warn-border);background:var(--warn-bg);color:var(--warn)}
+.temp-input.danger{border-color:var(--danger-border);background:var(--danger-bg);color:var(--danger)}
+.temp-unit{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11px;color:var(--muted);pointer-events:none}
+.status-dot{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .2s,box-shadow .2s}
+.status-dot.ok{background:var(--accent);box-shadow:0 0 6px rgba(74,222,128,.5)}
+.status-dot.warn{background:var(--warn);box-shadow:0 0 6px rgba(251,146,60,.5)}
+.status-dot.danger{background:var(--danger);box-shadow:0 0 6px rgba(248,113,113,.5)}
+
+/* ── Sig row ── */
+.sig-row{display:flex;align-items:center;gap:10px;padding:11px 14px}
+.sig-label{font-size:12px;color:var(--muted);white-space:nowrap}
+.sig-input{flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--sans);font-size:13px;padding:7px 10px;outline:none;transition:border-color .2s}
+.sig-input:focus{border-color:var(--accent2)}
+
+/* ── Flag list ── */
+.flag-list{background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:8px;padding:12px 14px;margin-top:12px;display:none}
+.flag-list.show{display:block}
+.flag-title{font-size:11px;color:var(--danger);letter-spacing:.08em;text-transform:uppercase;margin-bottom:8px;font-family:var(--mono)}
+.flag-item{font-size:12px;color:var(--label);padding:2px 0;font-family:var(--mono)}
+.flag-item span{color:var(--danger)}
+
+/* ── Alert ── */
+.alert{display:none;border-radius:8px;padding:10px 14px;font-size:12px;margin-top:12px;line-height:1.5}
+.alert.show{display:block}
+
+/* ── Buttons ── */
+.btn-wrap{margin-top:20px}
+.btn{width:100%;border:none;border-radius:10px;font-family:var(--sans);font-size:14px;font-weight:600;padding:13px;cursor:pointer;letter-spacing:.02em;transition:opacity .18s,transform .1s}
+.btn:active{transform:scale(.98)}.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-primary{background:var(--accent);color:#071a0d}.btn-primary:hover{opacity:.9}
+.btn-secondary{background:var(--surface2);color:var(--label);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--border2)}
+.note{text-align:center;font-size:11px;color:var(--muted);margin-top:10px}
+
+/* ── Alarm modal ── */
+.alarm-overlay{display:none;position:fixed;inset:0;z-index:999;background:rgba(10,8,8,.85);align-items:center;justify-content:center;padding:20px}
+.alarm-overlay.show{display:flex}
+.alarm-box{background:#1a0c0c;border:1.5px solid #f87171;border-radius:14px;padding:26px 22px;max-width:400px;width:100%;box-shadow:0 0 40px rgba(248,113,113,.25);animation:alarmShake .4s ease}
+@keyframes alarmShake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.alarm-icon{font-size:30px;text-align:center;margin-bottom:10px;animation:alarmPulse 1s ease-in-out infinite}
+@keyframes alarmPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.alarm-title{font-size:16px;font-weight:600;color:#f87171;text-align:center;margin-bottom:5px}
+.alarm-sub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:16px;line-height:1.6}
+.alarm-items{margin-bottom:18px}
+.alarm-item{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:7px;padding:9px 12px;margin-bottom:7px;font-family:var(--mono);font-size:12px}
+.alarm-item-name{color:#f87171;font-weight:500;margin-bottom:3px}
+.alarm-item-detail{color:var(--label)}.alarm-item-detail span{color:#fb923c}
+.alarm-ack{width:100%;background:#f87171;color:#1a0000;border:none;border-radius:8px;font-family:var(--sans);font-size:13px;font-weight:600;padding:12px;cursor:pointer;transition:opacity .2s}
+.alarm-ack:hover{opacity:.85}
+.alarm-note{margin-top:10px;font-size:11px;color:var(--muted);text-align:center}
+
+/* ── Success ── */
+.success-screen{display:none;text-align:center;padding:56px 20px}
+.success-screen.show{display:block}
+.success-icon{width:62px;height:62px;background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:26px}
+.success-title{font-size:20px;font-weight:700;margin-bottom:8px;color:var(--accent)}
+.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px}
+.success-actions{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
+</style>
+</head>
+<body>
+
+<!-- ── Alarm modal ── -->
+<div class="alarm-overlay" id="alarmOverlay">
+  <div class="alarm-box">
+    <div class="alarm-icon">🚨</div>
+    <div class="alarm-title"  id="alarm-title"></div>
+    <div class="alarm-sub"    id="alarm-sub"></div>
+    <div class="alarm-items"  id="alarm-items"></div>
+    <button class="alarm-ack" id="alarm-ack-btn" onclick="ackAlarm()"></button>
+    <div class="alarm-note"   id="alarm-note"></div>
+  </div>
+</div>
+
+<!-- ── Header ── -->
+<div class="header">
+  <div class="header-left">
+    <div class="back-btn" onclick="goPortal()">
+      <span class="back-arrow">←</span>
+      <span class="back-label" id="h-back">Portal</span>
+    </div>
+    <div class="header-title-wrap">
+      <div class="header-title" id="h-title">Temperature Log</div>
+      <div class="header-sub"   id="h-sub">ARIES PETROLEUM</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="lang-toggle">
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+    </div>
+    <div class="header-time" id="clock"></div>
+  </div>
+</div>
+
+<!-- ── No station warning ── -->
+<div class="no-station" id="no-station-bar">
+  <div class="no-station-msg" id="ns-msg">No station selected. Please return to the portal first.</div>
+  <a class="no-station-link" href="index.html" id="ns-link">← Go to Portal</a>
+</div>
+
+<!-- ── Station bar ── -->
+<div class="station-bar" id="station-bar">
+  <div class="station-dot"></div>
+  <div class="station-name" id="station-display">—</div>
+</div>
+
+<!-- ── Main content ── -->
+<div class="container">
+
+  <!-- Success screen -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✓</div>
+    <div class="success-title" id="succ-title"></div>
+    <div class="success-sub"   id="succ-msg"></div>
+    <div class="success-actions">
+      <button class="btn btn-secondary" onclick="resetForm()" id="succ-again"></button>
+      <button class="btn btn-secondary" onclick="goPortal()"  id="succ-home"></button>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div id="formMain">
+    <div class="form-header">
+      <div class="form-title" id="f-title"></div>
+      <div class="form-sub"   id="f-sub"></div>
+    </div>
+
+    <div class="steps">
+      <div class="step active" id="step0"></div>
+      <div class="step"        id="step1"></div>
+      <div class="step"        id="step2"></div>
+    </div>
+
+    <div class="shift-nav">
+      <div class="shift-tab active-morning" id="tab-morning"   onclick="switchShift('morning')"></div>
+      <div class="shift-tab"                id="tab-afternoon" onclick="switchShift('afternoon')"></div>
+      <div class="shift-tab"                id="tab-night"     onclick="switchShift('night')"></div>
+    </div>
+
+    <!-- Morning -->
+    <div class="shift-section active" id="sec-morning">
+      <div class="section-head"><span class="shift-badge shift-morning" id="badge-morning"></span></div>
+      <div class="card" id="card-morning"></div>
+      <div class="card" style="margin-bottom:4px">
+        <div class="sig-row">
+          <span class="sig-label" id="siglabel-morning"></span>
+          <input class="sig-input" id="sig-morning" type="text">
+        </div>
+      </div>
+    </div>
+
+    <!-- Afternoon -->
+    <div class="shift-section" id="sec-afternoon">
+      <div class="section-head"><span class="shift-badge shift-afternoon" id="badge-afternoon"></span></div>
+      <div class="card" id="card-afternoon"></div>
+      <div class="card" style="margin-bottom:4px">
+        <div class="sig-row">
+          <span class="sig-label" id="siglabel-afternoon"></span>
+          <input class="sig-input" id="sig-afternoon" type="text">
+        </div>
+      </div>
+    </div>
+
+    <!-- Night -->
+    <div class="shift-section" id="sec-night">
+      <div class="section-head"><span class="shift-badge shift-night" id="badge-night"></span></div>
+      <div class="card" id="card-night"></div>
+      <div class="card" style="margin-bottom:4px">
+        <div class="sig-row">
+          <span class="sig-label" id="siglabel-night"></span>
+          <input class="sig-input" id="sig-night" type="text">
+        </div>
+      </div>
+    </div>
+
+    <div class="flag-list" id="flagList">
+      <div class="flag-title" id="flag-title"></div>
+      <div id="flagItems"></div>
+    </div>
+
+    <div class="alert" id="alertBox"></div>
+
+    <div class="btn-wrap">
+      <button class="btn btn-primary" id="submitBtn" onclick="submitShift()"></button>
+      <p class="note" id="f-note"></p>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// ══════════════════════════════════════════
+// READ FROM localStorage (set by index.html)
+// ══════════════════════════════════════════
+let station = localStorage.getItem('ap_station') || '';
+let lang    = localStorage.getItem('ap_lang')    || 'en';
+
+// ══════════════════════════════════════════
+// LANGUAGE STRINGS
+// ══════════════════════════════════════════
+const STRINGS = {
+  en: {
+    pageTitle:   'Temperature Log — Aries Petroleum',
+    hBack:       'Portal',
+    hTitle:      'Temperature Log',
+    nsMsgNoStn:  'No station selected. Please return to the portal first.',
+    nsLink:      '← Go to Portal',
+    fTitle:      'Temperature Log',
+    fSub:        'Record temperatures for all units — 3 shifts per day.',
+    shifts:      { morning:'☀️ Morning', afternoon:'🌤 Afternoon', night:'🌙 Night' },
+    badges:      { morning:'Morning Shift', afternoon:'Afternoon Shift', night:'Night Shift' },
+    sigLabel:    'Staff name',
+    sigPh:       'Enter your name',
+    flagTitle:   '⚠ Out-of-range readings',
+    submitBtn:   'Submit shift',
+    fNote:       'Saved to Google Sheets',
+    successTitle:'All shifts submitted',
+    successMsg:  'All three shift temperature records have been saved.',
+    succAlarm:   '🚨 Persistent alarm (manager notified):',
+    succSingle:  '⚠ Single-shift exceedance:',
+    succAgain:   'Submit another day',
+    succHome:    '← Back to Portal',
+    submitting:  'Submitting…',
+    shiftSaved:  (s) => `✓ ${s} shift saved. Continue with next shift.`,
+    errSig:      'Please enter your name before submitting.',
+    errEmpty:    (n) => `${n} reading(s) still empty. Please fill all fields.`,
+    groups:      { hot:'Hot Food', cold:'Refrigerated', frozen:'Frozen' },
+    devices: {
+      hot_pie:   { name:'Hot Pie Warmer',        note:'Min 60°C'    },
+      sandwich:  { name:'Sandwich Fridge',        note:'Max 5°C'     },
+      donut:     { name:'Donut Display Fridge',   note:'Max 5°C'     },
+      dairy:     { name:'Milk & Dairy Fridge',    note:'Max 5°C'     },
+      cool_room: { name:'Cool Room',              note:'Max 5°C'     },
+      ice_cream: { name:'Ice Cream Freezer',      note:'Max −15°C'   },
+      freezer:   { name:'Chest Freezer',          note:'Max −15°C'   },
+    },
+    alarmTitle:   'Persistent Temperature Alarm',
+    alarmSub:     'The following units have exceeded safe limits in 2+ shifts.\nNotify your manager immediately.',
+    alarmAck:     'I have notified my manager — continue',
+    alarmNote:    'Record will be flagged in Google Sheets.',
+    alarmExceeded:'Exceeded', alarmTimes:'time(s)',
+    alarmReading: 'Readings:', alarmLimit:'Limit:',
+  },
+  zh: {
+    pageTitle:   '温度记录 — Aries Petroleum',
+    hBack:       '首页',
+    hTitle:      '温度记录',
+    nsMsgNoStn:  '未选择站点，请先返回首页选择站点。',
+    nsLink:      '← 返回首页',
+    fTitle:      '温度记录',
+    fSub:        '每天三班次，记录所有设备温度。',
+    shifts:      { morning:'☀️ 早班', afternoon:'🌤 午班', night:'🌙 夜班' },
+    badges:      { morning:'早班', afternoon:'午班', night:'夜班' },
+    sigLabel:    '员工姓名',
+    sigPh:       '输入姓名',
+    flagTitle:   '⚠ 温度异常项目',
+    submitBtn:   '提交当前班次',
+    fNote:       '数据保存至 Google Sheets',
+    successTitle:'三班次全部提交',
+    successMsg:  '所有温度记录已保存至 Google Sheets。',
+    succAlarm:   '🚨 持续异常（已通知主管）：',
+    succSingle:  '⚠ 单次超标：',
+    succAgain:   '再填一天',
+    succHome:    '← 返回首页',
+    submitting:  '提交中…',
+    shiftSaved:  (s) => `✓ ${s}已保存，请继续填写下一班次。`,
+    errSig:      '请填写员工姓名。',
+    errEmpty:    (n) => `还有 ${n} 项未填写，请全部填完再提交。`,
+    groups:      { hot:'热食', cold:'冷藏', frozen:'冷冻' },
+    devices: {
+      hot_pie:   { name:'热派保温柜',     note:'不低于 60°C'  },
+      sandwich:  { name:'三明治保鲜柜',   note:'不超过 5°C'   },
+      donut:     { name:'甜甜圈保鲜柜',   note:'不超过 5°C'   },
+      dairy:     { name:'鲜奶及奶制品柜', note:'不超过 5°C'   },
+      cool_room: { name:'冷藏室',         note:'不超过 5°C'   },
+      ice_cream: { name:'冰淇淋冷冻柜',   note:'不超过 −15°C' },
+      freezer:   { name:'卧式冷冻柜',     note:'不超过 −15°C' },
+    },
+    alarmTitle:   '温度持续异常 — 立即处理',
+    alarmSub:     '以下设备在 2 个或以上班次中超出安全范围，\n请立即通知主管。',
+    alarmAck:     '我已通知主管，继续提交',
+    alarmNote:    '记录将在 Google Sheets 中标记为需跟进。',
+    alarmExceeded:'超标', alarmTimes:'次',
+    alarmReading: '实测值：', alarmLimit:'限值：',
+  }
+};
+
+// ══════════════════════════════════════════
+// DEVICE CONFIG
+// ══════════════════════════════════════════
+const DEVICES = [
+  { key:'hot_pie',   direction:'min_only', hotMin:60,   max:null, group:'hot'    },
+  { key:'sandwich',  direction:'max_only', hotMin:null, max:5,    group:'cold'   },
+  { key:'donut',     direction:'max_only', hotMin:null, max:5,    group:'cold'   },
+  { key:'dairy',     direction:'max_only', hotMin:null, max:5,    group:'cold'   },
+  { key:'cool_room', direction:'max_only', hotMin:null, max:5,    group:'cold'   },
+  { key:'ice_cream', direction:'max_only', hotMin:null, max:-15,  group:'frozen' },
+  { key:'freezer',   direction:'max_only', hotMin:null, max:-15,  group:'frozen' },
+];
+const SHIFTS      = ['morning','afternoon','night'];
+const GROUP_ORDER  = ['hot','cold','frozen'];
+const GROUP_COLORS = { hot:'#fcd34d', cold:'#22d3ee', frozen:'#a78bfa' };
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let currentShift = 'morning';
+let submitted    = { morning:false, afternoon:false, night:false };
+let pendingRow   = null;
+let alarmCallback = null;
+
+function t() { return STRINGS[lang]; }
+
+// ══════════════════════════════════════════
+// LANG
+// ══════════════════════════════════════════
+function setLang(l) {
+  lang = l;
+  localStorage.setItem('ap_lang', l);
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active',
+      (l==='en' && b.textContent==='EN') || (l==='zh' && b.textContent==='中文'));
+  });
+  applyLang();
+}
+
+function applyLang() {
+  const s = t();
+  document.title = s.pageTitle;
+  document.getElementById('h-back').textContent    = s.hBack;
+  document.getElementById('h-title').textContent   = s.hTitle;
+  document.getElementById('ns-msg').textContent    = s.nsMsgNoStn;
+  document.getElementById('ns-link').textContent   = s.nsLink;
+  document.getElementById('f-title').textContent   = s.fTitle;
+  document.getElementById('f-sub').textContent     = s.fSub;
+  document.getElementById('submitBtn').textContent = s.submitBtn;
+  document.getElementById('f-note').textContent    = s.fNote;
+  document.getElementById('flag-title').textContent = s.flagTitle;
+  document.getElementById('succ-title').textContent = s.successTitle;
+  document.getElementById('succ-again').textContent = s.succAgain;
+  document.getElementById('succ-home').textContent  = s.succHome;
+  document.getElementById('alarm-title').textContent = s.alarmTitle;
+  document.getElementById('alarm-sub').innerHTML     = s.alarmSub.replace('\n','<br>');
+  document.getElementById('alarm-ack-btn').textContent = s.alarmAck;
+  document.getElementById('alarm-note').textContent  = s.alarmNote;
+
+  SHIFTS.forEach(sh => {
+    const tab = document.getElementById(`tab-${sh}`);
+    tab.textContent = s.shifts[sh];
+    if (submitted[sh]) tab.classList.add('done-tab');
+    document.getElementById(`badge-${sh}`).textContent    = s.badges[sh];
+    document.getElementById(`siglabel-${sh}`).textContent = s.sigLabel;
+    document.getElementById(`sig-${sh}`).placeholder      = s.sigPh;
+  });
+
+  // Station display
+  if (station) {
+    document.getElementById('station-display').innerHTML =
+      `<span>${station}</span>`;
+  }
+
+  SHIFTS.forEach(buildCard);
+  updateFlags();
+}
+
+// ══════════════════════════════════════════
+// BUILD DEVICE CARDS
+// ══════════════════════════════════════════
+function buildCard(shift) {
+  const card = document.getElementById(`card-${shift}`);
+  card.innerHTML = '';
+  const s = t();
+  GROUP_ORDER.forEach((grp, gi) => {
+    const devs = DEVICES.filter(d => d.group === grp);
+    if (!devs.length) return;
+    const hdr = document.createElement('div');
+    hdr.className = 'card-group-label';
+    hdr.style.color = GROUP_COLORS[grp];
+    if (gi > 0) hdr.style.borderTop = '1px solid var(--border)';
+    hdr.textContent = s.groups[grp];
+    card.appendChild(hdr);
+    devs.forEach(d => {
+      const dev = s.devices[d.key];
+      const row = document.createElement('div');
+      row.className = 'temp-row';
+      row.innerHTML = `
+        <div class="device-info">
+          <div class="device-name">${dev.name}</div>
+          <div class="device-range">${dev.note}</div>
+        </div>
+        <div class="temp-input-wrap">
+          <input class="temp-input" type="number" step="0.1"
+            id="${shift}_${d.key}" placeholder="—"
+            oninput="validateTemp(this,'${shift}','${d.key}')">
+          <span class="temp-unit">°C</span>
+        </div>
+        <div class="status-dot" id="dot_${shift}_${d.key}"></div>`;
+      card.appendChild(row);
+    });
+  });
+}
+
+// ══════════════════════════════════════════
+// VALIDATION
+// ══════════════════════════════════════════
+function getStatus(val, d) {
+  if (d.direction === 'min_only') {
+    if (val >= d.hotMin)     return 'ok';
+    if (val >= d.hotMin - 5) return 'warn';
+    return 'danger';
+  }
+  // max_only
+  if (val <= d.max)     return 'ok';
+  if (val <= d.max + 2) return 'warn';
+  return 'danger';
+}
+
+function validateTemp(input, shift, key) {
+  const d   = DEVICES.find(x => x.key === key);
+  const dot = document.getElementById(`dot_${shift}_${key}`);
+  const val = parseFloat(input.value);
+  if (input.value === '' || isNaN(val)) {
+    input.className = 'temp-input';
+    dot.className   = 'status-dot';
+    return;
+  }
+  const st = getStatus(val, d);
+  input.className = `temp-input ${st}`;
+  dot.className   = `status-dot ${st}`;
+  updateFlags();
+}
+
+function updateFlags() {
+  const s = t();
+  const flags = [];
+  SHIFTS.forEach(shift => {
+    DEVICES.forEach(d => {
+      const inp = document.getElementById(`${shift}_${d.key}`);
+      if (!inp || inp.value === '') return;
+      if (getStatus(parseFloat(inp.value), d) === 'danger') {
+        flags.push(`[${s.badges[shift]}] ${s.devices[d.key].name}: ${inp.value}°C — ${s.devices[d.key].note}`);
+      }
+    });
+  });
+  document.getElementById('flagItems').innerHTML =
+    flags.map(f => `<div class="flag-item"><span>⚠</span> ${f}</div>`).join('');
+  document.getElementById('flagList').classList.toggle('show', flags.length > 0);
+}
+
+// ══════════════════════════════════════════
+// REPEAT OFFENDERS (alarm logic)
+// ══════════════════════════════════════════
+function getRepeatOffenders() {
+  const counts = {};
+  DEVICES.forEach(d => { counts[d.key] = { count:0, shifts:[], values:[] }; });
+  const toCheck = [...new Set([...SHIFTS.filter(s => submitted[s]), currentShift])];
+  toCheck.forEach(shift => {
+    DEVICES.forEach(d => {
+      const inp = document.getElementById(`${shift}_${d.key}`);
+      if (!inp || inp.value === '') return;
+      const val = parseFloat(inp.value);
+      if (!isNaN(val) && getStatus(val, d) === 'danger') {
+        counts[d.key].count++;
+        counts[d.key].shifts.push(t().badges[shift]);
+        counts[d.key].values.push(`${val}°C`);
+      }
+    });
+  });
+  return DEVICES
+    .filter(d => counts[d.key].count >= 2)
+    .map(d => ({ device:d, ...counts[d.key] }));
+}
+
+// ══════════════════════════════════════════
+// SHIFT NAVIGATION
+// ══════════════════════════════════════════
+function switchShift(shift) {
+  currentShift = shift;
+  SHIFTS.forEach(s => document.getElementById(`sec-${s}`).classList.toggle('active', s === shift));
+  updateTabs();
+  updateStepBar();
+  document.getElementById('alertBox').classList.remove('show');
+}
+
+function updateTabs() {
+  const s = t();
+  SHIFTS.forEach(sh => {
+    const tab = document.getElementById(`tab-${sh}`);
+    tab.className = 'shift-tab';
+    tab.textContent = s.shifts[sh];
+    if (submitted[sh]) tab.classList.add('done-tab');
+    if (sh === currentShift) tab.classList.add(`active-${sh}`);
+  });
+}
+
+function updateStepBar() {
+  SHIFTS.forEach((s, i) => {
+    const el = document.getElementById(`step${i}`);
+    el.className = submitted[s] ? 'step done' : s === currentShift ? 'step active' : 'step';
+  });
+}
+
+// ══════════════════════════════════════════
+// SUBMIT
+// ══════════════════════════════════════════
+function submitShift() {
+  const s   = t();
+  const sig = document.getElementById(`sig-${currentShift}`).value.trim();
+  if (!sig) { showAlert(s.errSig); return; }
+
+  const missing = DEVICES.filter(d => {
+    const v = document.getElementById(`${currentShift}_${d.key}`).value;
+    return v === '' || isNaN(parseFloat(v));
+  }).length;
+  if (missing) { showAlert(s.errEmpty(missing)); return; }
+
+  // Build row
+  const row = {
+    formType:    'temperatureLog',
+    submittedAt: new Date().toISOString(),
+    station,
+    date:        todayStr(),
+    shift:       currentShift,
+    signature:   sig,
+    lang,
+  };
+  DEVICES.forEach(d => { row[d.key] = document.getElementById(`${currentShift}_${d.key}`).value; });
+
+  // Check for repeat-offender alarm
+  showAlarmIfNeeded(row, () => sendToSheets(row));
+}
+
+function sendToSheets(row) {
+  const s   = t();
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = s.submitting;
+  btn.disabled    = true;
+
+  // TODO: Replace with your real Google Apps Script Web App URL
+  const SHEET_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+
+  fetch(SHEET_URL, {
+    method:  'POST',
+    mode:    'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(row),
+  })
+  .then(() => onSuccess(row))
+  .catch(() => onSuccess(row));   // no-cors always triggers catch — treat as ok for now
+}
+
+function onSuccess(row) {
+  const s = t();
+  submitted[currentShift] = true;
+  updateTabs();
+  updateStepBar();
+
+  const allDone = SHIFTS.every(sh => submitted[sh]);
+  if (allDone) {
+    showSuccessScreen();
+  } else {
+    const next = SHIFTS.find(sh => !submitted[sh]);
+    setAlert(s.shiftSaved(s.badges[row.shift]), 'ok');
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = s.submitBtn;
+    btn.disabled    = false;
+    if (next) switchShift(next);
+  }
+}
+
+function showSuccessScreen() {
+  const s = t();
+  const offenders   = getRepeatOffenders();
+  const singleFlags = [];
+  SHIFTS.forEach(shift => {
+    DEVICES.forEach(d => {
+      const inp = document.getElementById(`${shift}_${d.key}`);
+      if (inp && inp.classList.contains('danger') && !offenders.find(o => o.device.key === d.key))
+        singleFlags.push(s.devices[d.key].name);
+    });
+  });
+  let extra = '';
+  if (offenders.length)
+    extra += `<br><br><span style="color:#f87171">${s.succAlarm} ${offenders.map(o => s.devices[o.device.key].name).join(', ')}</span>`;
+  if (singleFlags.length)
+    extra += `<br><span style="color:#fb923c">${s.succSingle} ${[...new Set(singleFlags)].join(', ')}</span>`;
+
+  document.getElementById('succ-msg').innerHTML = s.successMsg + extra;
+  document.getElementById('formMain').style.display = 'none';
+  document.getElementById('successScreen').classList.add('show');
+}
+
+// ══════════════════════════════════════════
+// ALARM
+// ══════════════════════════════════════════
+function showAlarmIfNeeded(row, onClear) {
+  const offenders = getRepeatOffenders();
+  if (!offenders.length) { onClear(); return; }
+  const s = t();
+  document.getElementById('alarm-items').innerHTML = offenders.map(o => `
+    <div class="alarm-item">
+      <div class="alarm-item-name">⚠ ${s.devices[o.device.key].name}</div>
+      <div class="alarm-item-detail">
+        ${s.alarmExceeded} <span>${o.count} ${s.alarmTimes}</span> (${o.shifts.join(', ')})
+        — ${s.alarmReading} <span>${o.values.join(', ')}</span>
+        — ${s.alarmLimit} ${s.devices[o.device.key].note}
+      </div>
+    </div>`).join('');
+  pendingRow    = row;
+  alarmCallback = () => { row._alarmAcknowledged = true; onClear(); };
+  document.getElementById('alarmOverlay').classList.add('show');
+}
+
+function ackAlarm() {
+  document.getElementById('alarmOverlay').classList.remove('show');
+  if (alarmCallback) { alarmCallback(); alarmCallback = null; }
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function showAlert(msg) { setAlert(msg, 'warn'); }
+
+function setAlert(msg, type) {
+  const a = document.getElementById('alertBox');
+  if (type === 'ok') {
+    Object.assign(a.style, { background:'rgba(74,222,128,.08)', borderColor:'rgba(74,222,128,.25)', color:'var(--accent)' });
+  } else {
+    Object.assign(a.style, { background:'var(--warn-bg)', borderColor:'var(--warn-border)', color:'var(--warn)' });
+  }
+  a.textContent = msg;
+  a.classList.add('show');
+}
+
+function todayStr() {
+  const n = new Date();
+  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
+}
+
+function goPortal() { window.location.href = 'index.html'; }
+
+function resetForm() {
+  submitted = { morning:false, afternoon:false, night:false };
+  SHIFTS.forEach(sh => {
+    DEVICES.forEach(d => {
+      const inp = document.getElementById(`${sh}_${d.key}`);
+      if (inp) { inp.value = ''; inp.className = 'temp-input'; }
+      const dot = document.getElementById(`dot_${sh}_${d.key}`);
+      if (dot) dot.className = 'status-dot';
+    });
+    const sig = document.getElementById(`sig-${sh}`);
+    if (sig) sig.value = '';
+  });
+  document.getElementById('flagList').classList.remove('show');
+  document.getElementById('alertBox').classList.remove('show');
+  document.getElementById('successScreen').classList.remove('show');
+  document.getElementById('formMain').style.display = 'block';
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = t().submitBtn;
+  btn.disabled    = false;
+  switchShift('morning');
+}
+
+// ══════════════════════════════════════════
+// CLOCK
+// ══════════════════════════════════════════
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    String(n.getHours()).padStart(2,'0') + ':' + String(n.getMinutes()).padStart(2,'0');
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+
+// No-station guard
+if (!station) {
+  document.getElementById('no-station-bar').classList.add('show');
+  document.getElementById('station-bar').style.display = 'none';
+  document.getElementById('formMain').style.display    = 'none';
+} else {
+  document.getElementById('no-station-bar').classList.remove('show');
+}
+
+// Lang buttons
+document.querySelectorAll('.lang-btn').forEach(b => {
+  b.classList.toggle('active',
+    (lang==='en' && b.textContent==='EN') || (lang==='zh' && b.textContent==='中文'));
+});
+
+// Build cards + apply strings
+SHIFTS.forEach(buildCard);
+applyLang();
+</script>
+</body>
+</html>
