@@ -466,6 +466,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 </div><!-- /container -->
 
 <script>
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
 // ══════════════════════════════════════════
 // STATE FROM localStorage
 // ══════════════════════════════════════════
@@ -834,25 +835,12 @@ function submitReport() {
     notes:        val('f-notes'),
   };
 
-  // Show loading
-  document.getElementById('loading-text').textContent = L.submitting;
-  document.getElementById('loadingOverlay').classList.add('show');
 
-  // TODO: Replace with your real Google Apps Script Web App URL
-  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
-
-  fetch(SHEET_URL, {
-    method:  'POST',
-    mode:    'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify(row),
-  })
-  .then(() => onSuccess())
-  .catch(() => onSuccess());   // no-cors: treat as ok for now
+onSuccess();
+fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(()=>{});   // no-cors: treat as ok for now
 }
 
 function onSuccess() {
-  document.getElementById('loadingOverlay').classList.remove('show');
   showScreen('success');
 }
 
