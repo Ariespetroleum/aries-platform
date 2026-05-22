@@ -540,6 +540,14 @@ body {
         <div class="card-title" id="c-cash-t"></div>
         <div class="card-sub" id="c-cash-s"></div>
       </div>
+
+      <div class="menu-card" onclick="goExternal('https://fuel.ariespetroleum.com.au/')">
+        <div class="card-stripe stripe-blue"></div>
+        <span class="card-badge badge-daily" id="b-d5"></span>
+        <span class="card-icon">⛽</span>
+        <div class="card-title" id="c-fuel-t"></div>
+        <div class="card-sub" id="c-fuel-s"></div>
+      </div>
     </div>
 
     <div class="section-label" id="m-label-incident"></div>
@@ -634,6 +642,7 @@ const STRINGS = {
       cig: { t:'Cigarette Stock', s:'End of shift count' },
       news: { t:'Newspaper Returns', s:'Daily return record' },
       cash: { t:'Cash Reconciliation', s:'Shift end settlement' },
+      fuel: { t:'Fuel & Dips', s:'Daily fuel dips & fuel management' },
       refund: { t:'Refund Record', s:'Refund reason & receipt photo' },
       uf: { t:'Unpaid Fuel', s:'Customer left details' },
       do: { t:'Drive Off', s:'Unpaid fuel — no ID left' },
@@ -669,6 +678,7 @@ const STRINGS = {
       cig: { t:'香烟库存盘点', s:'班次结束时填写' },
       news: { t:'报纸退货记录', s:'每日退回登记' },
       cash: { t:'收银对账', s:'班次结算' },
+      fuel: { t:'Fuel & Dips', s:'每日油量测量与燃油管理' },
       refund: { t:'退款登记', s:'退款原因与小票照片' },
       uf: { t:'欠款燃油登记', s:'客户留下了信息' },
       do: { t:'Drive Off 登记', s:'逃单——无客户信息' },
@@ -738,7 +748,7 @@ function applyLang() {
   document.getElementById('m-label-incident').textContent = s.mLabelIncident;
   document.getElementById('m-label-ops').textContent = s.mLabelOps;
 
-  ['b-d1','b-d2','b-d3','b-d4'].forEach(id => document.getElementById(id).textContent = s.bDaily);
+  ['b-d1','b-d2','b-d3','b-d4','b-d5'].forEach(id => document.getElementById(id).textContent = s.bDaily);
   ['b-i1','b-i2','b-i3'].forEach(id => document.getElementById(id).textContent = s.bIncident);
   ['b-o1','b-o2'].forEach(id => document.getElementById(id).textContent = s.bOps);
 
@@ -746,6 +756,7 @@ function applyLang() {
   setCard('cig', 'c-cig-t', 'c-cig-s');
   setCard('news', 'c-news-t', 'c-news-s');
   setCard('cash', 'c-cash-t', 'c-cash-s');
+  setCard('fuel', 'c-fuel-t', 'c-fuel-s');
   setCard('refund', 'c-refund-t', 'c-refund-s');
   setCard('uf', 'c-uf-t', 'c-uf-s');
   setCard('do', 'c-do-t', 'c-do-s');
@@ -803,6 +814,10 @@ function confirmStation() {
 
 function go(page) {
   window.location.href = page;
+}
+
+function goExternal(url) {
+  window.location.href = url;
 }
 
 function updateDateGreeting() {
