@@ -168,8 +168,6 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 
 <script>
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
-const MANAGER_PIN = '6666';
-
 let station = localStorage.getItem('ap_station') || '';
 let lang = localStorage.getItem('ap_lang') || 'en';
 let weekOffset = 0;
@@ -238,14 +236,27 @@ function setLang(l){lang=l;localStorage.setItem('ap_lang',l);applyLang()}
 function goPortal(){window.location.href='index.html'}
 function isManager(){return localStorage.getItem('ap_roster_manager_login')==='true'}
 
-function managerLogin(){
+async function managerLogin(){
   if(isManager()){managerLogout();return}
   const pin=prompt(T().pinPrompt);
-  if(pin===MANAGER_PIN){
-    localStorage.setItem('ap_roster_manager_login','true');
-    document.getElementById('adminPanel').classList.add('show');
-    applyLang();
-  }else if(pin!==null){showStatus(T().wrongPin,'warn')}
+  if(pin===null) return;
+  showLoading(T().loading);
+  try{
+    const url=`${WEB_APP_URL}?action=verifyRosterManager&pin=${encodeURIComponent(pin)}`;
+    const res=await fetch(url,{signal:AbortSignal.timeout(5000)});
+    const data=await res.json();
+    if(data.success){
+      localStorage.setItem('ap_roster_manager_login','true');
+      document.getElementById('adminPanel').classList.add('show');
+      applyLang();
+    }else{
+      showStatus(T().wrongPin,'warn');
+    }
+  }catch(e){
+    showStatus(T().wrongPin,'warn');
+  }finally{
+    hideLoading();
+  }
 }
 
 function managerLogout(){
@@ -278,7 +289,7 @@ async function loadFromSheet(){
   showLoading(T().loading);
   try{
     const url=`${WEB_APP_URL}?action=getRosterData&station=${encodeURIComponent(station)}`;
-    const res=await fetch(url);
+    const res=await fetch(url,{signal:AbortSignal.timeout(5000)});
     const data=await res.json();
     staff=Array.isArray(data.staff)?data.staff:[];
     roster=Array.isArray(data.roster)?data.roster:[];
@@ -289,15 +300,11 @@ async function loadFromSheet(){
   }finally{hideLoading()}
 }
 
-async function saveToSheet(payload){
+function saveToSheet(payload){
   saveLocalOnly();
   if(!WEB_APP_URL){showStatus(T().savedLocal,'warn');return}
-  showLoading(T().saving);
-  try{
-    await fetch(WEB_APP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    showStatus(T().savedSheet,'ok');
-  }catch(e){showStatus(T().savedLocal,'warn')}
-  finally{hideLoading()}
+  showStatus(T().savedSheet,'ok');
+  fetch(WEB_APP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
 }
 
 function addStaff(){
