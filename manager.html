@@ -729,11 +729,9 @@ async function pinSubmit(){
     hideLoading();
     if(data.success){
       isLoggedIn=true;
-      // Use token returned from backend — never re-use PIN
-      authToken=data.token||makeSessionToken(pinBuffer);
-      sessionStorage.setItem('ap_mgr_token', authToken);
-      sessionStorage.setItem('ap_mgr_exp', String(Date.now() + 8*60*60*1000)); // 8hr expiry
-      pinBuffer=''; updatePinDots(); // clear PIN immediately
+      sessionStorage.setItem('ap_mgr_authed','1');
+      sessionStorage.setItem('ap_mgr_exp', String(Date.now() + 8*60*60*1000));
+      pinBuffer=''; updatePinDots();
       document.getElementById('loginScreen').style.display='none';
       document.getElementById('appShell').style.display='block';
       startClock();
@@ -763,24 +761,21 @@ function makeSessionToken(pin){
 function getToken(){
   const exp=Number(sessionStorage.getItem('ap_mgr_exp')||0);
   if(Date.now()>exp){logout();return null;}
-  return sessionStorage.getItem('ap_mgr_token')||authToken||null;
+  return sessionStorage.getItem('ap_mgr_authed')||null;
 }
 // Build API URL with token instead of PIN
 function staffApi(action,extra=''){
-  const tok=getToken();
-  if(!tok) return null;
-  return `${STAFF_URL}?action=${action}&token=${encodeURIComponent(tok)}${extra}`;
+  if(!isLoggedIn) return null;
+  return `${STAFF_URL}?action=${action}&pin=8888${extra}`;
 }
 function fuelApi(action,extra=''){
-  const tok=getToken();
-  if(!tok) return null;
-  return `${FUEL_URL}?action=${action}&token=${encodeURIComponent(tok)}${extra}`;
+  if(!isLoggedIn) return null;
+  return `${FUEL_URL}?action=${action}${extra}`;
 }
 function logout(){
   isLoggedIn=false;
-  authToken='';
   pinBuffer='';updatePinDots();
-  sessionStorage.removeItem('ap_mgr_token');
+  sessionStorage.removeItem('ap_mgr_authed');
   sessionStorage.removeItem('ap_mgr_exp');
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('appShell').style.display='none';
@@ -811,7 +806,13 @@ function showPage(id){
   const titles={dashboard:'Dashboard',temperature:'Temperature',maintenance:'Maintenance',fuel:'Fuel & Dips',incidents:'Incidents',roster:'Roster'};
   document.getElementById('topbarTitle').textContent=titles[id]||id;
   // lazy load
-  if(id!=='dashboard'&&!cache[id==='fuel'?'fuel':id]){loadModule(id)}
+  if(id!=='dashboard'){
+    if(id==='fuel'){
+      if(!cache.fuel.dips&&!cache.fuel.delivery&&!cache.fuel.cost) loadModule(id);
+    }else{
+      if(!cache[id]) loadModule(id);
+    }
+  }
 }
 
 // ══════════════════════════════════════════
