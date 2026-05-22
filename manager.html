@@ -674,7 +674,6 @@ const FUEL_URL  = 'https://script.google.com/macros/s/AKfycbyGCrBEdvQJ4t38e0ryRq
 // ══════════════════════════════════════════
 let isLoggedIn = false;
 let pinBuffer  = '';
-let authToken  = '';  // session token, generated after login — PIN never re-used
 let dashRange  = 'today';
 let moduleRanges = { temperature:'today', maintenance:'today', fuel:'today', incidents:'today', roster:'today' };
 let fuelTab     = 'dips';
@@ -729,7 +728,6 @@ async function pinSubmit(){
     hideLoading();
     if(data.success){
       isLoggedIn=true;
-      sessionStorage.setItem('ap_mgr_authed','1');
       sessionStorage.setItem('ap_mgr_exp', String(Date.now() + 8*60*60*1000));
       pinBuffer=''; updatePinDots();
       document.getElementById('loginScreen').style.display='none';
@@ -748,21 +746,7 @@ async function pinSubmit(){
     pinBuffer='';updatePinDots();
   }
 }
-// Generate a session token — combines timestamp + random, not reversible to PIN
-function makeSessionToken(pin){
-  const r=Math.random().toString(36).slice(2,10);
-  const t=Date.now().toString(36);
-  let h=0;
-  const s=pin+r+t;
-  for(let i=0;i<s.length;i++) h=(Math.imul(31,h)+s.charCodeAt(i))|0;
-  return t+'-'+r+'-'+Math.abs(h).toString(36);
-}
-// Check session is still valid
-function getToken(){
-  const exp=Number(sessionStorage.getItem('ap_mgr_exp')||0);
-  if(Date.now()>exp){logout();return null;}
-  return sessionStorage.getItem('ap_mgr_authed')||null;
-}
+
 // Build API URL with token instead of PIN
 function staffApi(action,extra=''){
   if(!isLoggedIn) return null;
@@ -770,7 +754,7 @@ function staffApi(action,extra=''){
 }
 function fuelApi(action,extra=''){
   if(!isLoggedIn) return null;
-  return `${FUEL_URL}?action=${action}${extra}`;
+  return `${FUEL_URL}?action=${action}&pin=8888${extra}`;
 }
 function logout(){
   isLoggedIn=false;
@@ -852,6 +836,18 @@ function filterByRange(arr,dateField,range){
 function filterByStation(arr,field,station){
   if(!station) return arr;
   return arr.filter(r=>String(r[field]||'')=== station);
+}
+
+function formatDateAU(v){
+  if(!v) return '—';
+
+  const d = new Date(v);
+
+  return d.toLocaleDateString('en-AU',{
+    year:'numeric',
+    month:'2-digit',
+    day:'2-digit'
+  });
 }
 
 function rangeLabel(range){
@@ -980,7 +976,7 @@ function renderDashboard(data,station){
     incTbody.innerHTML=`<tr class="empty-row"><td colspan="6">No incidents in this period</td></tr>`;
   }else{
     incTbody.innerHTML=allIncidents.map(r=>`<tr>
-      <td class="td-mono">${r.Date||'—'}</td>
+      <td class="td-mono">${formatDateAU(r.Date)}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td><span class="badge ${r._type==='Drive Off'?'badge-danger':'badge-warn'}">${r._type}</span></td>
       <td class="td-mono">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
@@ -1206,7 +1202,7 @@ function renderTemperatureRows(rows){
     });
     const status=issues.length>0?`<span class="badge badge-danger">ALERT</span>`:`<span class="badge badge-ok">OK</span>`;
     return `<tr>
-      <td class="td-mono">${r.Date||'—'}</td>
+      <td class="td-mono">${formatDateAU(r.Date)}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td><span class="badge badge-muted">${esc(r.Shift||'—')}</span></td>
       <td>${esc(r.SubmittedBy||'—')}</td>
@@ -1293,7 +1289,7 @@ function renderFuel(station){
   document.getElementById('fuelDipsBody').innerHTML=!dips.length
     ?`<tr class="empty-row"><td colspan="11">No dip records</td></tr>`
     :dips.map(r=>`<tr>
-      <td class="td-mono">${r.Date||String(r.Timestamp||'').slice(0,10)||'—'}</td>
+      <td class="td-mono">${formatDateAU(r.Date || r.Timestamp)}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td>${esc(r['Staff Name']||r.StaffName||'—')}</td>
       <td class="td-mono">${r['91']||'—'}</td><td class="td-mono">${r['95']||'—'}</td><td class="td-mono">${r['98']||'—'}</td>
@@ -1306,7 +1302,7 @@ function renderFuel(station){
   document.getElementById('fuelDeliveryBody').innerHTML=!delivery.length
     ?`<tr class="empty-row"><td colspan="13">No delivery records</td></tr>`
     :delivery.map(r=>`<tr>
-      <td class="td-mono">${r.Date||String(r.Timestamp||'').slice(0,10)||'—'}</td>
+      <td class="td-mono">${formatDateAU(r.Date || r.Timestamp)}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td>${esc(r['Staff Name']||'—')}</td>
       <td>${esc(r.Supplier||'—')}</td>
@@ -1322,7 +1318,7 @@ function renderFuel(station){
   document.getElementById('fuelCostBody').innerHTML=!cost.length
     ?`<tr class="empty-row"><td colspan="8">No fuel cost records</td></tr>`
     :cost.map(r=>`<tr>
-      <td class="td-mono">${r.Date||String(r.Timestamp||'').slice(0,10)||'—'}</td>
+      <td class="td-mono">${formatDateAU(r.Date || r.Timestamp)}</td>
       <td>${esc(r.Source||'—')}</td>
       <td class="td-mono">${r['91']||'—'}</td><td class="td-mono">${r['95']||'—'}</td>
       <td class="td-mono">${r['98']||'—'}</td><td class="td-mono">${r.E10||'—'}</td>
@@ -1368,7 +1364,7 @@ function renderIncidentRows(rows){
   if(incidentTab!=='all') filtered=rows.filter(r=>r._type===incidentTab);
   if(!filtered.length) return `<tr class="empty-row"><td colspan="9">No incidents</td></tr>`;
   return filtered.map(r=>`<tr>
-    <td class="td-mono">${r.Date||'—'}</td>
+    <td class="td-mono">${formatDateAU(r.Date)}</td>
     <td class="td-main">${esc(r.Station||'—')}</td>
     <td><span class="badge ${r._type==='driveoff'?'badge-danger':'badge-warn'}">${r._label}</span></td>
     <td class="td-mono" style="font-weight:600;color:var(--danger)">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
