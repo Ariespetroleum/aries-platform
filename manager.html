@@ -419,7 +419,10 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ TEMPERATURE ══ -->
       <div class="page" id="page-temperature">
-        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <button class="back-btn" style="margin-bottom:0" onclick="showPage('dashboard')">← 返回主页</button>
+          <button class="refresh-btn" onclick="loadModule('temperature')">↻ 刷新</button>
+        </div>
         <div class="page-header">
           <div class="page-eyebrow">模块</div>
           <div class="page-title">温度记录</div>
@@ -461,7 +464,10 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ MAINTENANCE ══ -->
       <div class="page" id="page-maintenance">
-        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <button class="back-btn" style="margin-bottom:0" onclick="showPage('dashboard')">← 返回主页</button>
+          <button class="refresh-btn" onclick="loadModule('maintenance')">↻ 刷新</button>
+        </div>
         <div class="page-header">
           <div class="page-eyebrow">模块</div>
           <div class="page-title">维修记录</div>
@@ -508,7 +514,10 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ FUEL & DIPS ══ -->
       <div class="page" id="page-fuel">
-        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <button class="back-btn" style="margin-bottom:0" onclick="showPage('dashboard')">← 返回主页</button>
+          <button class="refresh-btn" onclick="loadModule('fuel')">↻ 刷新</button>
+        </div>
         <div class="page-header">
           <div class="page-eyebrow">模块</div>
           <div class="page-title">油量管理</div>
@@ -529,7 +538,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
           </select>
           <div class="filter-group" id="fuelTabFilter">
             <button class="filter-btn active" onclick="setFuelTab('dips',this)">Dips</button>
-            <button class="filter-btn" onclick="setFuelTab('delivery',this)">Delivery</button>
             <button class="filter-btn" onclick="setFuelTab('cost',this)">油价记录</button>
           </div>
           <button class="refresh-btn" onclick="loadModule('fuel')">↻ 刷新</button>
@@ -579,7 +587,10 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ INCIDENTS ══ -->
       <div class="page" id="page-incidents">
-        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <button class="back-btn" style="margin-bottom:0" onclick="showPage('dashboard')">← 返回主页</button>
+          <button class="refresh-btn" onclick="loadModule('incidents')">↻ 刷新</button>
+        </div>
         <div class="page-header">
           <div class="page-eyebrow">模块</div>
           <div class="page-title">事故记录</div>
@@ -627,7 +638,10 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ ROSTER ══ -->
       <div class="page" id="page-roster">
-        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <button class="back-btn" style="margin-bottom:0" onclick="showPage('dashboard')">← 返回主页</button>
+          <button class="refresh-btn" onclick="loadModule('roster')">↻ 刷新</button>
+        </div>
         <div class="page-header">
           <div class="page-eyebrow">模块</div>
           <div class="page-title">排班表</div>
@@ -869,7 +883,7 @@ function getRangeDates(range){
 function filterByRange(arr,dateField,range){
   const{from,to}=getRangeDates(range);
   return arr.filter(r=>{
-    const d=String(r[dateField]||'').slice(0,10);
+    const d=toLocalDateKey(r[dateField]||'');
     return d>=from&&d<=to;
   });
 }
@@ -881,18 +895,50 @@ function filterByStation(arr,field,station){
 
 function formatDateAU(v){
   if(!v) return '—';
-  // handle Google Sheets Date objects serialized as strings or JS dates
-  const s = String(v);
-  // already yyyy-MM-dd
-  if(/^\d{4}-\d{2}-\d{2}/.test(s)){
-    const [y,m,d] = s.slice(0,10).split('-');
-    return `${d}/${m}/${y}`;
+  const local=toLocalDateKey(v);
+  if(!local) return '—';
+  const parts=local.split('-');
+  if(parts.length===3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  return local;
+}
+
+// Convert any date value to local AU date string yyyy-MM-dd for comparison
+function toLocalDateKey(v){
+  if(!v) return '';
+  const s=String(v);
+  // Already yyyy-MM-dd
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+  try{
+    const d=new Date(v);
+    if(isNaN(d.getTime())) return s.slice(0,10);
+    // Use Melbourne offset (+10 or +11)
+    const offset=10*60; // conservative, always AEST
+    const local=new Date(d.getTime()+offset*60000);
+    const y=local.getUTCFullYear();
+    const m=String(local.getUTCMonth()+1).padStart(2,'0');
+    const dd=String(local.getUTCDate()).padStart(2,'0');
+    return `${y}-${m}-${dd}`;
+  }catch(e){return s.slice(0,10);}
+}
+
+// Format Google Sheets time serial (1899-12-29...) to HH:MM
+function formatSheetTime(v){
+  if(!v) return '—';
+  const s=String(v);
+  // ISO date with time — extract time part
+  if(s.includes('T')){
+    try{
+      const d=new Date(v);
+      const offset=10*60;
+      const local=new Date(d.getTime()+offset*60000);
+      const h=String(local.getUTCHours()).padStart(2,'0');
+      const m=String(local.getUTCMinutes()).padStart(2,'0');
+      return `${h}:${m}`;
+    }catch(e){return s;}
   }
-  try {
-    const d = new Date(v);
-    if(!isNaN(d.getTime())) return d.toLocaleDateString('en-AU',{day:'2-digit',month:'2-digit',year:'numeric'});
-  } catch(e){}
-  return s.slice(0,10)||'—';
+  // Already HH:MM
+  if(/^\d{2}:\d{2}/.test(s)) return s.slice(0,5);
+  return s;
 }
 
 function rangeLabel(range){
@@ -919,8 +965,10 @@ function setFuelTab(tab,btn){
   fuelTab=tab;
   btn.closest('.filter-group').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  ['fuelDipsSection','fuelDeliverySection','fuelCostSection'].forEach(id=>document.getElementById(id).style.display='none');
-  document.getElementById(tab==='dips'?'fuelDipsSection':tab==='delivery'?'fuelDeliverySection':'fuelCostSection').style.display='block';
+  // dips tab shows both dips and delivery together; cost tab shows only cost
+  document.getElementById('fuelDipsSection').style.display=tab==='dips'?'block':'none';
+  document.getElementById('fuelDeliverySection').style.display=tab==='dips'?'block':'none';
+  document.getElementById('fuelCostSection').style.display=tab==='cost'?'block':'none';
   filterTable('fuel');
 }
 function setIncidentTab(tab,btn){
@@ -938,7 +986,7 @@ async function loadDashboard(){
   const station=document.getElementById('dashStationFilter').value;
   document.getElementById('dashSub').textContent=(station||'所有站点')+' · '+rangeLabel(dashRange);
   try{
-    const days=rangeToDays(dashRange);
+    const days=Math.max(rangeToDays(dashRange),7); // at least 7 days so data is visible
     const dashUrl=staffApi('getManagerDashboardData',`&days=${days}`);
     if(!dashUrl) return;
     const res=await fetch(dashUrl,{signal:AbortSignal.timeout(10000)});
@@ -954,8 +1002,8 @@ async function loadDashboard(){
           cache.fuel.delivery=fd.delivery||[];
           cache.fuel.cost=fd.cost||[];
           const fuelRange=getRangeDates(dashRange);
-          const dipCount=(fd.dips||[]).filter(r=>String(r.Date||r.Timestamp||'').slice(0,10)>=fuelRange.from&&String(r.Date||r.Timestamp||'').slice(0,10)<=fuelRange.to).length;
-          const delCount=(fd.delivery||[]).filter(r=>String(r.Date||r.Timestamp||'').slice(0,10)>=fuelRange.from&&String(r.Date||r.Timestamp||'').slice(0,10)<=fuelRange.to).length;
+          const dipCount=(fd.dips||[]).filter(r=>{const d=toLocalDateKey(r.Date||r.Timestamp||'');return d>=fuelRange.from&&d<=fuelRange.to;}).length;
+          const delCount=(fd.delivery||[]).filter(r=>{const d=toLocalDateKey(r.Date||r.Timestamp||'');return d>=fuelRange.from&&d<=fuelRange.to;}).length;
           const dsEl=document.getElementById('ds-fuel-dips');
           const ddEl=document.getElementById('ds-fuel-delivery');
           if(dsEl) dsEl.textContent=dipCount;
@@ -1056,7 +1104,7 @@ function renderDashboard(data,station){
       <td class="td-main">${esc(r.Station||r.station||'—')}</td>
       <td>${esc(r.CompanyName||r.companyName||'—')}</td>
       <td>${esc(r.EquipmentDisplay||r.equipmentDisplay||r.Equipment||r.equipment||'—')}</td>
-      <td class="td-mono">${esc(r.ArrivalTime||r.arrivalTime||'—')}</td>
+      <td class="td-mono">${formatSheetTime(r.ArrivalTime||r.arrivalTime)}</td>
       <td class="td-mono">${esc(r.ReferenceNo||r.referenceNo||'—')}</td>
       <td><span class="badge badge-warn">进行中</span></td>
     </tr>`).join('');
@@ -1154,7 +1202,7 @@ function buildMaintAlerts(openJobs,stations){
 // MODULE LOADERS
 // ══════════════════════════════════════════
 async function loadModule(mod){
-  if(mod==='fuel'){await loadFuel();return;}
+  if(mod==='fuel'){await loadFuel(true);return;} // always force-fetch when called via loadModule
   showLoading('Loading '+mod+'…');
   const stationEl=document.getElementById(mod+'StationFilter');
   const station=stationEl?stationEl.value:'';
@@ -1166,10 +1214,10 @@ async function loadModule(mod){
     const data=await res.json();
     hideLoading();
     if(!data.success){showToast('数据加载失败','danger');return;}
-    if(mod==='temperature'){cache.temperature=data.temperature||[];render温度(station);}
+    if(mod==='temperature'){cache.temperature=data.temperature||[];renderTemperature(station);}
     if(mod==='maintenance'){cache.maintenance=data.maintenance||[];cache._openMaint=data.openMaintenance||[];renderMaintenance(station);}
-    if(mod==='incidents'){cache.incidents={driveOff:data.driveOff||[],unpaidFuel:data.unpaidFuel||[]};render事故记录(station);}
-    if(mod==='roster'){cache.roster=data.roster||[];render排班表(station);}
+    if(mod==='incidents'){cache.incidents={driveOff:data.driveOff||[],unpaidFuel:data.unpaidFuel||[]};renderIncidents(station);}
+    if(mod==='roster'){cache.roster=data.roster||[];renderRoster(station);}
     lastUpdated=new Date();updateStatusBar();
   }catch(e){hideLoading();showToast('连接错误','danger');}
 }
@@ -1210,12 +1258,12 @@ async function loadFuel(force=false){
 // ══════════════════════════════════════════
 // RENDERERS
 // ══════════════════════════════════════════
-function render温度(station){
+function renderTemperature(station){
   const range=moduleRanges.temperature;
+  const tempRange=getRangeDates(range);
   let rows=(cache.temperature||[]).filter(r=>{
-    const d=String(r.Date||r.SubmittedAt||r.date||'').slice(0,10);
-    const{from,to}=getRangeDates(range);
-    return d>=from&&d<=to;
+    const d=toLocalDateKey(r.Date||r.SubmittedAt||r.date||'');
+    return d>=tempRange.from&&d<=tempRange.to;
   });
   if(station) rows=filterByStation(rows,'Station',station);
 
@@ -1250,7 +1298,7 @@ function render温度(station){
   renderTablePage('temperature');
 }
 
-function render温度Rows(rows){
+function renderTemperatureRows(rows){
   const RULES=[
     {key:'HotPie',type:'min',limit:60},
     {key:'Sandwich',type:'max',limit:5},
@@ -1295,10 +1343,10 @@ function render温度Rows(rows){
 
 function renderMaintenance(station){
   const range=moduleRanges.maintenance;
+  const{from:mRangeFrom,to:mRangeTo}=getRangeDates(range);
   let rows=(cache.maintenance||[]).filter(r=>{
-    const d=String(r.SubmittedAt||r.UpdatedAt||r.submittedAt||'').slice(0,10);
-    const{from,to}=getRangeDates(range);
-    return d>=from&&d<=to;
+    const d=toLocalDateKey(r.SubmittedAt||r.UpdatedAt||r.submittedAt||'');
+    return d>=mRangeFrom&&d<=mRangeTo;
   });
   if(station) rows=filterByStation(rows,'Station',station);
 
@@ -1331,8 +1379,8 @@ function renderMaintenanceRows(rows){
       <td>${esc(r.CompanyName||'—')}</td>
       <td>${esc(r.EquipmentDisplay||r.Equipment||'—')}</td>
       <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.InitialDescription||'—')}</td>
-      <td class="td-mono">${esc(r.ArrivalTime||'—')}</td>
-      <td class="td-mono">${esc(r.DepartureTime||'—')}</td>
+      <td class="td-mono">${formatSheetTime(r.ArrivalTime)}</td>
+      <td class="td-mono">${formatSheetTime(r.DepartureTime)}</td>
       <td><span class="badge ${String(r.IssueFixed||'').toLowerCase()==='yes'?'badge-ok':'badge-warn'}">${esc(r.IssueFixed||'—')}</span></td>
       <td>${followUp}</td>
       <td>${statusBadge}</td>
@@ -1402,11 +1450,12 @@ function renderFuel(station){
       <td style="color:var(--muted)">${esc(r.Notes||'—')}</td>
     </tr>`).join('');
 
-  tableState.fuel.filtered=fuelTab==='dips'?dips:fuelTab==='delivery'?delivery:cost;
+  // dips tab shows dips+delivery together; cost tab shows cost
+  tableState.fuel.filtered=fuelTab==='cost'?cost:[...dips,...delivery].sort((a,b)=>String(b.Date||b.Timestamp||'').localeCompare(String(a.Date||a.Timestamp||'')));
   tableState.fuel.page=1;
 }
 
-function render事故记录(station){
+function renderIncidents(station){
   const range=moduleRanges.incidents;
   let driveOff=filterByRange((cache.incidents||{}).driveOff||[],'Date',range);
   let unpaidFuel=filterByRange((cache.incidents||{}).unpaidFuel||[],'Date',range);
@@ -1475,13 +1524,13 @@ function showIncidentDetail(jsonStr){
   document.getElementById('modalOverlay').classList.add('show');
 }
 
-function render排班表(station){
+function renderRoster(station){
   const range=moduleRanges.roster;
   let rows=filterByRange(cache.roster||[],'Date',range);
   if(station) rows=filterByStation(rows,'Station',station);
 
-  const today=new Date().toISOString().slice(0,10);
-  const todayShifts=rows.filter(r=>String(r.Date||r.date||'').slice(0,10)===today);
+  const today=toLocalDateKey(new Date());
+  const todayShifts=rows.filter(r=>toLocalDateKey(r.Date||r.date||'')===today);
 
   document.getElementById('rosterStats').innerHTML=`
     <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">👥</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">总班次</div></div>
@@ -1494,14 +1543,14 @@ function render排班表(station){
   renderTablePage('roster');
 }
 
-function render排班表Rows(rows){
+function renderRosterRows(rows){
   if(!rows.length) return `<tr class="empty-row"><td colspan="8">暂无排班记录</td></tr>`;
-  const today=new Date().toISOString().slice(0,10);
+  const today=toLocalDateKey(new Date());
   return rows.map(r=>{
     const date=String(r.Date||r.date||'');
-    const isToday=date.slice(0,10)===today;
+    const isToday=toLocalDateKey(date)===today;
     return `<tr ${isToday?'style="background:rgba(34,211,238,.03)"':''}>
-      <td class="td-mono" style="${isToday?'color:var(--accent2);font-weight:600':''}">${date.slice(0,10)||'—'}${isToday?' ★':''}</td>
+      <td class="td-mono" style="${isToday?'color:var(--accent2);font-weight:600':''}">${formatDateAU(date)}${isToday?' ★':''}</td>
       <td class="td-main">${esc(r.Station||r.station||'—')}</td>
       <td>${esc(r.StaffName||r.staffName||'—')}</td>
       <td><span class="badge badge-muted">${esc(r.ShiftName||r.shiftName||'—')}</span></td>
@@ -1522,20 +1571,22 @@ function filterTable(mod){
 
   let source=[];
   if(mod==='temperature'){
+    const{from,to}=getRangeDates(moduleRanges.temperature);
     source=(cache.temperature||[]).filter(r=>{
-      const d=String(r.Date||r.SubmittedAt||r.date||'').slice(0,10);
-      const{from,to}=getRangeDates(moduleRanges.temperature);
+      const d=toLocalDateKey(r.Date||r.SubmittedAt||r.date||'');
       return d>=from&&d<=to;
     });
+    const stEl=document.getElementById('tempStationFilter');
+    if(stEl&&stEl.value) source=filterByStation(source,'Station',stEl.value);
   }
   if(mod==='maintenance'){
     const statusFilter=document.getElementById('maintStatusFilter').value;
     let mRows=cache.maintenance||[];
     // filter by date — try SubmittedAt first, fallback to UpdatedAt
+    const{from:mFrom,to:mTo}=getRangeDates(moduleRanges.maintenance);
     mRows=mRows.filter(r=>{
-      const d=String(r.SubmittedAt||r.UpdatedAt||r.submittedAt||'').slice(0,10);
-      const{from,to}=getRangeDates(moduleRanges.maintenance);
-      return d>=from&&d<=to;
+      const d=toLocalDateKey(r.SubmittedAt||r.UpdatedAt||r.submittedAt||'');
+      return d>=mFrom&&d<=mTo;
     });
     if(statusFilter) mRows=mRows.filter(r=>String(r.Status||'').toUpperCase()===statusFilter);
     source=mRows;
@@ -1573,11 +1624,11 @@ function renderTablePage(mod){
   const totalPages=Math.max(1,Math.ceil(filtered.length/perPage));
 
   let html='';
-  if(mod==='temperature') html=render温度Rows(pageRows);
+  if(mod==='temperature') html=renderTemperatureRows(pageRows);
   if(mod==='maintenance') html=renderMaintenanceRows(pageRows);
   if(mod==='fuel') html=''; // handled by renderFuel directly
   if(mod==='incidents') html=renderIncidentRows(pageRows);
-  if(mod==='roster') html=render排班表Rows(pageRows);
+  if(mod==='roster') html=renderRosterRows(pageRows);
 
   if(mod!=='fuel'){
     const tbody=document.getElementById(mod+'Body');
