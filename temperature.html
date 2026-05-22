@@ -285,6 +285,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14
 // ══════════════════════════════════════════
 // READ FROM localStorage (set by index.html)
 // ══════════════════════════════════════════
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
+
 let station = localStorage.getItem('ap_station') || '';
 let lang    = localStorage.getItem('ap_lang')    || 'en';
 
@@ -625,21 +627,9 @@ function submitShift() {
 
 function sendToSheets(row) {
   const s   = t();
-  const btn = document.getElementById('submitBtn');
-  btn.textContent = s.submitting;
-  btn.disabled    = true;
 
-  // TODO: Replace with your real Google Apps Script Web App URL
-  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
-
-  fetch(SHEET_URL, {
-    method:  'POST',
-    mode:    'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify(row),
-  })
-  .then(() => onSuccess(row))
-  .catch(() => onSuccess(row));   // no-cors always triggers catch — treat as ok for now
+  onSuccess(row);
+fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(()=>{});   // no-cors always triggers catch — treat as ok for now
 }
 
 function onSuccess(row) {
