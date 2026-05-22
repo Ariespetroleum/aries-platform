@@ -156,9 +156,22 @@ let lang = localStorage.getItem('ap_lang') || 'en';
 const openedAt = new Date();
 
 function openKey(){return 'ap_open_maintenance_' + station}
-function getOpenJob(){try{return JSON.parse(localStorage.getItem(openKey()) || 'null')}catch(e){return null}}
-function saveOpenJob(j){localStorage.setItem(openKey(), JSON.stringify(j))}
-function clearOpenJob(){localStorage.removeItem(openKey())}
+function getOpenJobs(){
+  try{
+    const data=JSON.parse(localStorage.getItem(openKey())||'[]');
+    if(Array.isArray(data))return data;
+    return data?[data]:[];
+  }catch(e){return []}
+}
+function addOpenJob(j){
+  const jobs=getOpenJobs();
+  jobs.push(j);
+  localStorage.setItem(openKey(),JSON.stringify(jobs));
+}
+function removeOpenJob(ref){
+  const jobs=getOpenJobs().filter(j=>j.referenceNo!==ref);
+  localStorage.setItem(openKey(),JSON.stringify(jobs));
+}
 
 const S = {
   en:{
@@ -232,10 +245,18 @@ function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classL
 
 function renderStart(){
   if(!station)return;
-  const job=getOpenJob();
+  const jobs=getOpenJobs();
   const L=t();
-  if(job){
-    document.getElementById('screen-start').innerHTML=`<div class="form-header"><div class="form-title">${L.reminderTitle}</div><div class="form-sub">${L.reminderMsg}</div></div>${openJobHtml(job)}<div class="btn-wrap"><button class="btn btn-warn" onclick="showCompleteFromOpen()">${L.reminderComplete}</button><button class="btn btn-secondary" onclick="clearAndNew()">${L.succNew}</button></div>`;
+  if(jobs.length){
+    const cards=jobs.map(job=>`
+      ${openJobHtml(job)}
+      <div class="btn-wrap" style="margin-bottom:14px">
+        <button class="btn btn-warn" onclick="showCompleteFromOpen('${escapeAttr(job.referenceNo)}')">${L.reminderComplete}</button>
+      </div>`).join('');
+    document.getElementById('screen-start').innerHTML=`
+      <div class="form-header"><div class="form-title">${L.reminderTitle}</div><div class="form-sub">${L.reminderMsg}</div></div>
+      ${cards}
+      <button class="btn btn-secondary" onclick="showScreen('arrival')">${L.succNew}</button>`;
     showScreen('start');
   }else{
     showScreen('arrival');
@@ -285,37 +306,28 @@ function submitArrival(){
     siteContactArrival:val('f-sitecontact-arrival')
   };
 
-  saveOpenJob(job);
+  addOpenJob(job);
 
-  document.getElementById('loading-text').textContent=L.savingArrival;
-  document.getElementById('loadingOverlay').classList.add('show');
+  document.getElementById('loadingOverlay').classList.remove('show');
+  document.getElementById('reminder-ref').textContent='Ref: '+ref;
+  document.getElementById('reminder-complete').onclick=function(){showCompleteFromOpen(ref)};
+  showScreen('reminder');
 
   if(SHEET_URL){
-    fetch(SHEET_URL,{
-      method:'POST',
-      mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(job)
-    }).then(function(){
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('reminder-ref').textContent='Ref: '+ref;
-      showScreen('reminder');
-    }).catch(function(){
-      document.getElementById('loadingOverlay').classList.remove('show');
-      document.getElementById('reminder-ref').textContent='Ref: '+ref;
-      showScreen('reminder');
-    });
-  }else{
-    document.getElementById('loadingOverlay').classList.remove('show');
-    document.getElementById('reminder-ref').textContent='Ref: '+ref;
-    showScreen('reminder');
+    fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(job)}).catch(()=>{});
   }
 }
 
-function showCompleteFromOpen(){
-  const job=getOpenJob();
+function showCompleteFromOpen(ref){
+  const jobs=getOpenJobs();
+  let job=jobs.find(j=>j.referenceNo===ref);
+  if(!job&&jobs.length){
+    job=jobs[jobs.length-1];
+    ref=job.referenceNo;
+  }
   if(!job){renderStart();return}
   document.getElementById('open-job-card').innerHTML=openJobHtml(job);
+  document.getElementById('open-job-card').dataset.ref=ref;
   document.getElementById('f-departure').value=fmtTime(new Date());
   showScreen('complete');
 }
@@ -334,7 +346,11 @@ function goReview(){
 }
 
 function buildConfirm(){
-  const L=t(),job=getOpenJob();
+  const L=t();
+  const ref=document.getElementById('open-job-card').dataset.ref;
+  const jobs=getOpenJobs();
+  const job=jobs.find(j=>j.referenceNo===ref);
+  if(!job){renderStart();return}
   const rows=[
     [L.fieldRef,job.referenceNo],[L.fieldCompany,job.companyName],[L.fieldContact,job.contactPerson],[L.fieldPhone,job.phone],
     [L.fieldArrival,job.arrivalTime],[L.fieldDeparture,val('f-departure')],[L.fieldEquipment,job.equipmentDisplay],
@@ -345,7 +361,12 @@ function buildConfirm(){
 }
 
 function submitComplete(){
-  const L=t(),job=getOpenJob();
+  const L=t();
+  const ref=document.getElementById('open-job-card').dataset.ref;
+  const jobs=getOpenJobs();
+  const job=jobs.find(j=>j.referenceNo===ref);
+  if(!job){renderStart();return}
+
   const payload={
     ...job,
     formType:'maintenanceRecord',
@@ -360,34 +381,31 @@ function submitComplete(){
     notes:val('f-notes')
   };
 
-  document.getElementById('loading-text').textContent=L.submitting;
-  document.getElementById('loadingOverlay').classList.add('show');
-
-  if(!SHEET_URL){
-    console.log(payload);
-    setTimeout(()=>onSuccess(job.referenceNo),500);
-    return;
-  }
-
-  fetch(SHEET_URL,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
-  }).then(()=>onSuccess(job.referenceNo)).catch(()=>onSuccess(job.referenceNo));
+  onSuccess(job.referenceNo);
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
 }
 
 function onSuccess(ref){
   document.getElementById('loadingOverlay').classList.remove('show');
-  clearOpenJob();
+  removeOpenJob(ref);
   document.getElementById('succ-ref').textContent='Ref: '+ref;
   showScreen('success');
 }
 
-function clearAndNew(){clearOpenJob();location.reload()}
+function clearAndNew(){
+  ['f-company','f-contact','f-phone','f-email','f-initial','f-sitecontact-arrival'].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.value='';
+  });
+  document.getElementById('f-equipment').value='';
+  document.getElementById('f-arrival').value=fmtTime(new Date());
+  document.getElementById('f-recordcreated').value=formatDateTime(openedAt);
+  document.getElementById('other-equipment-wrap').style.display='none';
+  showScreen('arrival');
+}
 function showAlert(id,msg){const a=document.getElementById(id);a.style.background='var(--warn-bg)';a.style.border='1px solid var(--warn-border)';a.style.color='var(--warn)';a.textContent=msg;a.classList.add('show');a.scrollIntoView({behavior:'smooth',block:'center'})}
 function hideAlert(id){const el=document.getElementById(id);if(el)el.classList.remove('show')}
 function escapeHtml(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function escapeAttr(str){return escapeHtml(str).replace(/'/g,'&#39;')}
 function goPortal(){window.location.href='index.html'}
 
 if(!station){
