@@ -713,52 +713,45 @@ function goReview() {
   showScreen('confirm');
 }
 
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
+
 function submitForm() {
-  const L        = t();
   const products = loadProducts();
   const staff    = document.getElementById('f-staff').value.trim();
   const shift    = document.getElementById('f-shift').value;
   const date     = document.getElementById('f-date').value;
 
-  // Save last used staff name
   localStorage.setItem(LAST_NAME_KEY, staff);
 
   const items = products.map((p, i) => ({
     productName: p.name,
-    isCustom:    p.custom,
-    qty:         getQty(i),
+    isCustom: p.custom,
+    qty: getQty(i),
   }));
 
   const payload = {
-    formType:        'cigaretteStockCheck',
-    submittedAt:     new Date().toISOString(),
+    formType:'cigaretteStockCheck',
+    submittedAt:new Date().toISOString(),
     station, lang, date, shift,
-    staffName:       staff,
+    staffName:staff,
     items,
-    totalProducts:   products.length,
-    countedProducts: items.filter(x => x.qty !== null).length,
+    totalProducts:products.length,
+    countedProducts:items.filter(x=>x.qty!==null).length,
   };
 
-  document.getElementById('loading-text').textContent = L.submitting;
-  document.getElementById('loadingOverlay').classList.add('show');
+  onSuccess();
 
-  // TODO: Replace with your real Google Apps Script Web App URL
-  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
-
-  fetch(SHEET_URL, {
-    method:'POST', mode:'no-cors',
+  fetch(SHEET_URL,{
+    method:'POST',
+    mode:'no-cors',
     headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(payload),
-  })
-  .then(() => onSuccess())
-  .catch(() => onSuccess());
+    body:JSON.stringify(payload)
+  }).catch(()=>{});
 }
 
 function onSuccess() {
-  document.getElementById('loadingOverlay').classList.remove('show');
   showScreen('success');
 }
-
 // ══════════════════════════════════════════
 // RESET — clear counts but NOT staff name
 // Show last-name hint on next focus
