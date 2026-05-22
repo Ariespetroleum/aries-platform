@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Manager Dashboard — Aries Petroleum</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#080b12;--surface:#0f1420;--surface2:#161d2e;--surface3:#1c2538;
+  --border:#1e2a3d;--border2:#263349;
+  --accent:#4ade80;--accent2:#22d3ee;--warn:#fb923c;--danger:#f87171;--purple:#a78bfa;--gold:#fbbf24;
+  --text:#e8eaf0;--muted:#5a6a85;--label:#7a8fa8;
+  --mono:'DM Mono',monospace;--sans:'Sora',sans-serif;
+  --ok-bg:rgba(74,222,128,.08);--ok-border:rgba(74,222,128,.2);
+  --warn-bg:rgba(251,146,60,.08);--warn-border:rgba(251,146,60,.25);
+  --danger-bg:rgba(248,113,113,.08);--danger-border:rgba(248,113,113,.25);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;overflow-x:hidden}
+
+/* ── NOISE OVERLAY ── */
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.018;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ── LOGIN ── */
+#loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;position:relative;z-index:1}
+.login-card{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:40px 36px;width:100%;max-width:380px;text-align:center;position:relative;overflow:hidden}
+.login-card::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:200px;height:200px;background:radial-gradient(circle,rgba(34,211,238,.06) 0%,transparent 70%);pointer-events:none}
+.login-logo{width:48px;height:48px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:22px}
+.login-brand{font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);margin-bottom:6px}
+.login-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--muted);margin-bottom:28px;line-height:1.5}
+.pin-wrap{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid var(--border2);background:transparent;transition:all .2s}
+.pin-dot.filled{background:var(--accent2);border-color:var(--accent2);box-shadow:0 0 8px rgba(34,211,238,.4)}
+.pin-input{position:absolute;opacity:0;width:1px;height:1px}
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.num-btn{background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--mono);font-size:18px;font-weight:500;padding:14px;cursor:pointer;transition:all .15s;user-select:none}
+.num-btn:hover{background:var(--surface3);border-color:var(--border2)}
+.num-btn:active{transform:scale(.95)}
+.num-btn.del{font-size:14px;color:var(--muted)}
+.num-btn.enter{background:rgba(34,211,238,.12);border-color:rgba(34,211,238,.3);color:var(--accent2);font-size:12px;letter-spacing:.06em}
+.login-error{display:none;font-size:12px;color:var(--danger);font-family:var(--mono);margin-top:8px}
+.login-error.show{display:block}
+
+/* ── APP SHELL ── */
+#appShell{display:none;min-height:100vh;position:relative;z-index:1}
+
+/* ── TOP BAR ── */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{width:28px;height:28px;background:linear-gradient(135deg,var(--accent2),var(--accent));border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.topbar-brand{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
+.topbar-divider{width:1px;height:18px;background:var(--border2)}
+.topbar-title{font-size:13px;font-weight:600;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-time{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.logout-btn{font-size:11px;color:var(--muted);cursor:pointer;font-family:var(--mono);padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:transparent;transition:all .15s}
+.logout-btn:hover{border-color:var(--danger-border);color:var(--danger)}
+
+/* ── LAYOUT ── */
+.app-body{display:flex;min-height:calc(100vh - 52px)}
+
+/* ── SIDEBAR ── */
+.sidebar{width:200px;background:var(--surface);border-right:1px solid var(--border);flex-shrink:0;padding:16px 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.nav-section-label{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--mono);padding:8px 16px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:all .15s;border-left:2px solid transparent;color:var(--label);font-size:13px}
+.nav-item:hover{background:var(--surface2);color:var(--text)}
+.nav-item.active{background:rgba(34,211,238,.06);border-left-color:var(--accent2);color:var(--accent2)}
+.nav-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.nav-label{font-weight:500}
+.nav-badge{margin-left:auto;font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+
+/* ── MAIN CONTENT ── */
+.main{flex:1;overflow:hidden;min-width:0}
+.page{display:none;padding:20px;max-width:1200px}
+.page.active{display:block}
+
+/* ── PAGE HEADER ── */
+.page-header{margin-bottom:20px}
+.page-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.page-title{font-size:22px;font-weight:700;margin-bottom:4px}
+.page-sub{font-size:12px;color:var(--muted)}
+
+/* ── FILTERS BAR ── */
+.filters-bar{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;align-items:center}
+.filter-group{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.filter-btn{padding:6px 12px;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:transparent;transition:all .15s;white-space:nowrap}
+.filter-btn:hover{color:var(--text)}
+.filter-btn.active{background:rgba(34,211,238,.1);color:var(--accent2)}
+.filter-select{background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--label);font-family:var(--mono);font-size:11px;padding:6px 10px;outline:none;cursor:pointer;-webkit-appearance:none}
+.filter-select option{background:#161d2e}
+.filter-select:focus{border-color:var(--accent2)}
+.refresh-btn{padding:6px 12px;font-family:var(--mono);font-size:11px;color:var(--muted);cursor:pointer;border:1px solid var(--border);border-radius:8px;background:transparent;transition:all .15s;display:flex;align-items:center;gap:6px}
+.refresh-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+
+/* ── STAT CARDS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative;overflow:hidden;transition:border-color .2s}
+.stat-card:hover{border-color:var(--border2)}
+.stat-card-stripe{position:absolute;top:0;left:0;width:100%;height:3px}
+.stat-card-icon{font-size:18px;margin-bottom:10px;display:block}
+.stat-card-value{font-family:var(--mono);font-size:26px;font-weight:600;line-height:1;margin-bottom:4px}
+.stat-card-label{font-size:11px;color:var(--muted);line-height:1.4}
+.stat-card-sub{font-family:var(--mono);font-size:10px;color:var(--label);margin-top:6px}
+.stat-green .stat-card-value{color:var(--accent)}
+.stat-blue .stat-card-value{color:var(--accent2)}
+.stat-orange .stat-card-value{color:var(--warn)}
+.stat-red .stat-card-value{color:var(--danger)}
+.stat-purple .stat-card-value{color:var(--purple)}
+.stat-gold .stat-card-value{color:var(--gold)}
+
+/* ── SECTION ── */
+.section{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:16px}
+.section-head{padding:12px 16px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.section-head-left{display:flex;align-items:center;gap:8px}
+.section-head-title{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.section-count{font-family:var(--mono);font-size:10px;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:2px 7px;border-radius:4px}
+
+/* ── TABLE ── */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:8px 12px;text-align:left;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;background:var(--surface2)}
+td{padding:9px 12px;border-bottom:1px solid var(--border);font-size:12px;color:var(--label);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+.td-main{color:var(--text);font-weight:500}
+.td-mono{font-family:var(--mono);font-size:11px}
+.td-right{text-align:right}
+.empty-row td{text-align:center;padding:32px;color:var(--muted);font-style:italic}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.badge-ok{background:var(--ok-bg);color:var(--accent);border:1px solid var(--ok-border)}
+.badge-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-border)}
+.badge-danger{background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+.badge-blue{background:rgba(34,211,238,.08);color:var(--accent2);border:1px solid rgba(34,211,238,.2)}
+.badge-purple{background:rgba(167,139,250,.08);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.badge-muted{background:rgba(90,106,133,.1);color:var(--muted);border:1px solid var(--border)}
+
+/* ── DASHBOARD ALERT CARDS ── */
+.alert-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:20px}
+.alert-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;transition:border-color .2s}
+.alert-card-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.alert-card-icon{font-size:16px}
+.alert-card-title{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono);color:var(--label);flex:1}
+.alert-card-count{font-family:var(--mono);font-size:12px;font-weight:600}
+.alert-card-body{font-size:12px;color:var(--muted);line-height:1.7}
+.alert-card-row{display:flex;align-items:flex-start;gap:8px;padding:3px 0}
+.alert-card-row-icon{flex-shrink:0;margin-top:1px}
+.alert-card-row-text{flex:1}
+.alert-card.has-issues{border-color:rgba(251,146,60,.25);background:rgba(251,146,60,.03)}
+.alert-card.has-danger{border-color:rgba(248,113,113,.25);background:rgba(248,113,113,.03)}
+.alert-card.all-ok{border-color:rgba(74,222,128,.2);background:rgba(74,222,128,.03)}
+
+/* ── SEARCH + PAGINATION ── */
+.table-toolbar{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--border)}
+.search-input{background:var(--surface2);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--sans);font-size:12px;padding:6px 10px;outline:none;transition:border-color .2s;width:200px}
+.search-input:focus{border-color:var(--accent2)}
+.pagination{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.page-btn{padding:4px 9px;border:1px solid var(--border);border-radius:5px;background:transparent;color:var(--muted);cursor:pointer;transition:all .15s}
+.page-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+.page-btn:disabled{opacity:.35;cursor:not-allowed}
+.page-current{color:var(--accent2);font-weight:600}
+
+/* ── LOADING ── */
+.loading-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(8,11,18,.8);align-items:center;justify-content:center;flex-direction:column;gap:14px}
+.loading-overlay.show{display:flex}
+.spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--accent2);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* ── STATUS BAR ── */
+.status-bar{padding:6px 20px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.status-dot-live{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px var(--accent);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* ── DETAIL MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;z-index:300;background:rgba(8,11,18,.85);align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:14px;width:100%;max-width:520px;max-height:80vh;overflow-y:auto}
+.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-size:15px;font-weight:700}
+.modal-close{font-size:18px;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:6px;transition:all .15s}
+.modal-close:hover{color:var(--text);background:var(--surface2)}
+.modal-body{padding:20px}
+.modal-row{display:flex;padding:8px 0;border-bottom:1px solid var(--border);gap:12px}
+.modal-row:last-child{border-bottom:none}
+.modal-key{font-size:11px;color:var(--muted);font-family:var(--mono);width:40%;flex-shrink:0}
+.modal-val{font-size:13px;font-weight:500;flex:1;word-break:break-word}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .alert-grid{grid-template-columns:1fr}
+  .page{padding:14px}
+  .filters-bar{gap:6px}
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Loading…</div>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Detail</div>
+      <div class="modal-close" onclick="closeModal()">✕</div>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">⛽</div>
+    <div class="login-brand">Aries Petroleum</div>
+    <div class="login-title">Manager Dashboard</div>
+    <div class="login-sub">Enter your 4-digit PIN to access the management portal</div>
+    <div class="pin-wrap" id="pinDots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="numpad">
+      <button class="num-btn" onclick="pinPress('1')">1</button>
+      <button class="num-btn" onclick="pinPress('2')">2</button>
+      <button class="num-btn" onclick="pinPress('3')">3</button>
+      <button class="num-btn" onclick="pinPress('4')">4</button>
+      <button class="num-btn" onclick="pinPress('5')">5</button>
+      <button class="num-btn" onclick="pinPress('6')">6</button>
+      <button class="num-btn" onclick="pinPress('7')">7</button>
+      <button class="num-btn" onclick="pinPress('8')">8</button>
+      <button class="num-btn" onclick="pinPress('9')">9</button>
+      <button class="num-btn del" onclick="pinDel()">⌫</button>
+      <button class="num-btn" onclick="pinPress('0')">0</button>
+      <button class="num-btn enter" onclick="pinSubmit()">ENTER</button>
+    </div>
+    <div class="login-error" id="loginError">Incorrect PIN. Please try again.</div>
+  </div>
+</div>
+
+<!-- ══ APP SHELL ══ -->
+<div id="appShell">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">⛽</div>
+      <div class="topbar-brand">Aries Petroleum</div>
+      <div class="topbar-divider"></div>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-time" id="topbarTime"></div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-dot-live"></div>
+    <span id="statusBarText">Connected · Last updated just now</span>
+  </div>
+
+  <div class="app-body">
+    <div class="sidebar">
+      <div class="nav-section-label">Overview</div>
+      <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+        <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span>
+      </div>
+      <div class="nav-section-label">Modules</div>
+      <div class="nav-item" onclick="showPage('temperature')" id="nav-temperature">
+        <span class="nav-icon">🌡️</span><span class="nav-label">Temperature</span>
+      </div>
+      <div class="nav-item" onclick="showPage('maintenance')" id="nav-maintenance">
+        <span class="nav-icon">🛠️</span><span class="nav-label">Maintenance</span>
+        <span class="nav-badge" id="maintenanceBadge" style="display:none">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('fuel')" id="nav-fuel">
+        <span class="nav-icon">⛽</span><span class="nav-label">Fuel & Dips</span>
+      </div>
+      <div class="nav-item" onclick="showPage('incidents')" id="nav-incidents">
+        <span class="nav-icon">🚨</span><span class="nav-label">Incidents</span>
+      </div>
+      <div class="nav-item" onclick="showPage('roster')" id="nav-roster">
+        <span class="nav-icon">📅</span><span class="nav-label">Roster</span>
+      </div>
+    </div>
+
+    <div class="main">
+
+      <!-- ══ DASHBOARD ══ -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div class="page-eyebrow">Overview</div>
+          <div class="page-title">Dashboard</div>
+          <div class="page-sub" id="dashSub">All stations · Today</div>
+        </div>
+
+        <div class="filters-bar">
+          <div class="filter-group" id="dashRangeFilter">
+            <button class="filter-btn active" onclick="setDashRange('today',this)">Today</button>
+            <button class="filter-btn" onclick="setDashRange('yesterday',this)">Yesterday</button>
+            <button class="filter-btn" onclick="setDashRange('week',this)">This Week</button>
+            <button class="filter-btn" onclick="setDashRange('lastweek',this)">Last Week</button>
+            <button class="filter-btn" onclick="setDashRange('month',this)">This Month</button>
+            <button class="filter-btn" onclick="setDashRange('lastmonth',this)">Last Month</button>
+          </div>
+          <select class="filter-select" id="dashStationFilter" onchange="loadDashboard()">
+            <option value="">All Stations</option>
+            <option>Sinopec Frankston</option>
+            <option>Sinopec Thomastown</option>
+            <option>Sinopec Shepparton</option>
+            <option>Sinopec Ballarat</option>
+            <option>BP Clayton South</option>
+            <option>BP Flemington</option>
+            <option>Liberty Golden Square</option>
+          </select>
+          <button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button>
+        </div>
+
+        <div class="stats-grid" id="dashStats">
+          <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">🌡️</span><div class="stat-card-value" id="ds-temp">—</div><div class="stat-card-label">Temperature Submissions</div></div>
+          <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">🛠️</span><div class="stat-card-value" id="ds-maint-open">—</div><div class="stat-card-label">Open Maintenance Jobs</div></div>
+          <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚗</span><div class="stat-card-value" id="ds-driveoff">—</div><div class="stat-card-label">Drive Offs</div></div>
+          <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">⛽</span><div class="stat-card-value" id="ds-unpaid">—</div><div class="stat-card-label">Unpaid Fuel</div><div class="stat-card-sub" id="ds-unpaid-amt"></div></div>
+          <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">↩️</span><div class="stat-card-value" id="ds-refund">—</div><div class="stat-card-label">Refunds</div><div class="stat-card-sub" id="ds-refund-amt"></div></div>
+          <div class="stat-card stat-purple"><div class="stat-card-stripe" style="background:var(--purple)"></div><span class="stat-card-icon">💰</span><div class="stat-card-value" id="ds-cash">—</div><div class="stat-card-label">Cash Reconciliations</div></div>
+        </div>
+
+        <div class="alert-grid" id="dashAlerts">
+          <!-- filled by JS -->
+        </div>
+
+        <!-- Recent incidents table -->
+        <div class="section">
+          <div class="section-head">
+            <div class="section-head-left">
+              <span>🚨</span>
+              <span class="section-head-title">Recent Incidents</span>
+            </div>
+            <span class="section-count" id="recentIncidentCount">—</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Station</th><th>Type</th><th>Amount</th><th>Ref</th><th>Staff</th></tr></thead>
+              <tbody id="recentIncidentsBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Open maintenance -->
+        <div class="section">
+          <div class="section-head">
+            <div class="section-head-left">
+              <span>🛠️</span>
+              <span class="section-head-title">Open Maintenance Jobs</span>
+            </div>
+            <span class="section-count" id="openMaintCount">—</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Station</th><th>Company</th><th>Equipment</th><th>Arrived</th><th>Ref</th><th>Status</th></tr></thead>
+              <tbody id="openMaintBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ TEMPERATURE ══ -->
+      <div class="page" id="page-temperature">
+        <div class="page-header">
+          <div class="page-eyebrow">Module</div>
+          <div class="page-title">Temperature Log</div>
+          <div class="page-sub">All stations · temperature records & alerts</div>
+        </div>
+        <div class="filters-bar">
+          <div class="filter-group" id="tempRangeFilter">
+            <button class="filter-btn active" onclick="setModuleRange('temperature','today',this)">Today</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','yesterday',this)">Yesterday</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','week',this)">This Week</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','lastweek',this)">Last Week</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','month',this)">This Month</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','lastmonth',this)">Last Month</button>
+          </div>
+          <select class="filter-select" id="tempStationFilter" onchange="loadModule('temperature')">
+            <option value="">All Stations</option>
+            <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
+          </select>
+          <button class="refresh-btn" onclick="loadModule('temperature')">↻ Refresh</button>
+        </div>
+        <div class="stats-grid" id="tempStats"></div>
+        <div class="section">
+          <div class="section-head">
+            <div class="section-head-left"><span>🌡️</span><span class="section-head-title">Temperature Records</span></div>
+            <span class="section-count" id="tempCount">—</span>
+          </div>
+          <div class="table-toolbar">
+            <input class="search-input" id="tempSearch" placeholder="Search…" oninput="filterTable('temperature')">
+            <div class="pagination" id="tempPagination"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Station</th><th>Shift</th><th>Staff</th><th>Hot Pie</th><th>Sandwich</th><th>Donut</th><th>Dairy</th><th>Cool Rm</th><th>Ice Cream</th><th>Freezer</th><th>Status</th></tr></thead>
+              <tbody id="tempBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ MAINTENANCE ══ -->
+      <div class="page" id="page-maintenance">
+        <div class="page-header">
+          <div class="page-eyebrow">Module</div>
+          <div class="page-title">Maintenance Records</div>
+          <div class="page-sub">All stations · service & repair log</div>
+        </div>
+        <div class="filters-bar">
+          <div class="filter-group" id="maintRangeFilter">
+            <button class="filter-btn active" onclick="setModuleRange('maintenance','today',this)">Today</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','yesterday',this)">Yesterday</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','week',this)">This Week</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','lastweek',this)">Last Week</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','month',this)">This Month</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','lastmonth',this)">Last Month</button>
+          </div>
+          <select class="filter-select" id="maintStationFilter" onchange="loadModule('maintenance')">
+            <option value="">All Stations</option>
+            <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
+          </select>
+          <select class="filter-select" id="maintStatusFilter" onchange="filterTable('maintenance')">
+            <option value="">All Status</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="COMPLETED">Completed</option>
+          </select>
+          <button class="refresh-btn" onclick="loadModule('maintenance')">↻ Refresh</button>
+        </div>
+        <div class="stats-grid" id="maintStats"></div>
+        <div class="section">
+          <div class="section-head">
+            <div class="section-head-left"><span>🛠️</span><span class="section-head-title">Maintenance Records</span></div>
+            <span class="section-count" id="maintCount">—</span>
+          </div>
+          <div class="table-toolbar">
+            <input class="search-input" id="maintSearch" placeholder="Search…" oninput="filterTable('maintenance')">
+            <div class="pagination" id="maintPagination"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Station</th><th>Company</th><th>Equipment</th><th>Issue</th><th>Arrived</th><th>Departed</th><th>Fixed?</th><th>Follow Up?</th><th>Status</th><th>Ref</th></tr></thead>
+              <tbody id="maintBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ FUEL & DIPS ══ -->
+      <div class="page" id="page-fuel">
+        <div class="page-header">
+          <div class="page-eyebrow">Module</div>
+          <div class="page-title">Fuel & Dips</div>
+          <div class="page-sub">Daily dip readings, deliveries, fuel cost</div>
+        </div>
+        <div class="filters-bar">
+          <div class="filter-group" id="fuelRangeFilter">
+            <button class="filter-btn active" onclick="setModuleRange('fuel','today',this)">Today</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','yesterday',this)">Yesterday</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','week',this)">This Week</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','lastweek',this)">Last Week</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','month',this)">This Month</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','lastmonth',this)">Last Month</button>
+          </div>
+          <select class="filter-select" id="fuelStationFilter" onchange="loadModule('fuel')">
+            <option value="">All Stations</option>
+            <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
+          </select>
+          <div class="filter-group" id="fuelTabFilter">
+            <button class="filter-btn active" onclick="setFuelTab('dips',this)">Dips</button>
+            <button class="filter-btn" onclick="setFuelTab('delivery',this)">Delivery</button>
+            <button class="filter-btn" onclick="setFuelTab('cost',this)">Fuel Cost</button>
+          </div>
+          <button class="refresh-btn" onclick="loadModule('fuel')">↻ Refresh</button>
+        </div>
+        <div class="stats-grid" id="fuelStats"></div>
+        <div class="section" id="fuelDipsSection">
+          <div class="section-head">
+            <div class="section-head-left"><span>⛽</span><span class="section-head-title">Fuel Dips</span></div>
+            <span class="section-count" id="fuelDipsCount">—</span>
+          </div>
+          <div class="table-toolbar">
+            <input class="search-input" id="fuelSearch" placeholder="Search…" oninput="filterTable('fuel')">
+            <div class="pagination" id="fuelPagination"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Station</th><th>Staff</th><th>91</th><th>95</th><th>98</th><th>E10</th><th>Diesel</th><th>Diesel 1</th><th>Diesel 2</th><th>Warning</th></tr></thead>
+              <tbody id="fuelDipsBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="section" id="fuelDeliverySection" style="display:none">
+          <div class="section-head">
+            <div class="section-head-left"><span>🚚</span><span class="section-head-title">Fuel Delivery</span></div>
+            <span class="section-count" id="fuelDeliveryCount">—</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Station</th><th>Staff</th><th>Supplier</th><th>Docket No</th><th>91</th><th>95</th><th>98</th><th>E10</th><th>Diesel</th><th>Diesel 1</th><th>Diesel 2</th></tr></thead>
+              <tbody id="fuelDeliveryBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="section" id="fuelCostSection" style="display:none">
+          <div class="section-head">
+            <div class="section-head-left"><span>💲</span><span class="section-head-title">Fuel Cost</span></div>
+            <span class="section-count" id="fuelCostCount">—</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Source</th><th>91</th><th>95</th><th>98</th><th>E10</th><th>Diesel</th><th>Notes</th></tr></thead>
+              <tbody id="fuelCostBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ INCIDENTS ══ -->
+      <div class="page" id="page-incidents">
+        <div class="page-header">
+          <div class="page-eyebrow">Module</div>
+          <div class="page-title">Incidents</div>
+          <div class="page-sub">Drive offs, unpaid fuel, refunds</div>
+        </div>
+        <div class="filters-bar">
+          <div class="filter-group" id="incRangeFilter">
+            <button class="filter-btn active" onclick="setModuleRange('incidents','today',this)">Today</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','yesterday',this)">Yesterday</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','week',this)">This Week</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','lastweek',this)">Last Week</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','month',this)">This Month</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','lastmonth',this)">Last Month</button>
+          </div>
+          <select class="filter-select" id="incStationFilter" onchange="loadModule('incidents')">
+            <option value="">All Stations</option>
+            <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
+          </select>
+          <div class="filter-group" id="incTypeFilter">
+            <button class="filter-btn active" onclick="setIncidentTab('all',this)">All</button>
+            <button class="filter-btn" onclick="setIncidentTab('driveoff',this)">Drive Off</button>
+            <button class="filter-btn" onclick="setIncidentTab('unpaid',this)">Unpaid Fuel</button>
+            <button class="filter-btn" onclick="setIncidentTab('refund',this)">Refunds</button>
+          </div>
+          <button class="refresh-btn" onclick="loadModule('incidents')">↻ Refresh</button>
+        </div>
+        <div class="stats-grid" id="incStats"></div>
+        <div class="section">
+          <div class="section-head">
+            <div class="section-head-left"><span>🚨</span><span class="section-head-title">Incident Records</span></div>
+            <span class="section-count" id="incCount">—</span>
+          </div>
+          <div class="table-toolbar">
+            <input class="search-input" id="incSearch" placeholder="Search plate, ref, staff…" oninput="filterTable('incidents')">
+            <div class="pagination" id="incPagination"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Station</th><th>Type</th><th>Amount</th><th>Plate</th><th>Staff</th><th>Ref / Receipt</th><th>Police?</th><th>Detail</th></tr></thead>
+              <tbody id="incBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ROSTER ══ -->
+      <div class="page" id="page-roster">
+        <div class="page-header">
+          <div class="page-eyebrow">Module</div>
+          <div class="page-title">Roster</div>
+          <div class="page-sub">Staff schedules across all stations</div>
+        </div>
+        <div class="filters-bar">
+          <div class="filter-group" id="rosterRangeFilter">
+            <button class="filter-btn active" onclick="setModuleRange('roster','today',this)">Today</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','yesterday',this)">Yesterday</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','week',this)">This Week</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','lastweek',this)">Last Week</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','month',this)">This Month</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','lastmonth',this)">Last Month</button>
+          </div>
+          <select class="filter-select" id="rosterStationFilter" onchange="loadModule('roster')">
+            <option value="">All Stations</option>
+            <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
+          </select>
+          <button class="refresh-btn" onclick="loadModule('roster')">↻ Refresh</button>
+        </div>
+        <div class="stats-grid" id="rosterStats"></div>
+        <div class="section">
+          <div class="section-head">
+            <div class="section-head-left"><span>📅</span><span class="section-head-title">Roster Records</span></div>
+            <span class="section-count" id="rosterCount">—</span>
+          </div>
+          <div class="table-toolbar">
+            <input class="search-input" id="rosterSearch" placeholder="Search staff, station…" oninput="filterTable('roster')">
+            <div class="pagination" id="rosterPagination"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Date</th><th>Station</th><th>Staff</th><th>Shift</th><th>Start</th><th>Finish</th><th>Role</th><th>Notes</th></tr></thead>
+              <tbody id="rosterBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /app-body -->
+</div><!-- /appShell -->
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const STAFF_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
+const FUEL_URL  = 'https://script.google.com/macros/s/AKfycbyGCrBEdvQJ4t38e0ryRqrgB-FVthGhxFgVmRtWwJYaaHQnM953bx5vvPXXcrSrGkq4ig/exec';
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let isLoggedIn = false;
+let pinBuffer  = '';
+let authToken  = '';  // session token, generated after login — PIN never re-used
+let dashRange  = 'today';
+let moduleRanges = { temperature:'today', maintenance:'today', fuel:'today', incidents:'today', roster:'today' };
+let fuelTab     = 'dips';
+let incidentTab = 'all';
+let lastUpdated = null;
+
+// raw data cache
+let cache = {
+  dashboard: null,
+  temperature: null,
+  maintenance: null,
+  fuel: { dips:null, delivery:null, cost:null },
+  incidents: null,
+  roster: null
+};
+
+// filtered/paged state
+let tableState = {
+  temperature: { filtered:[], page:1, perPage:20 },
+  maintenance:  { filtered:[], page:1, perPage:20 },
+  fuel:         { filtered:[], page:1, perPage:20 },
+  incidents:    { filtered:[], page:1, perPage:20 },
+  roster:       { filtered:[], page:1, perPage:20 }
+};
+
+// ══════════════════════════════════════════
+// PIN LOGIN
+// ══════════════════════════════════════════
+function pinPress(d){
+  if(pinBuffer.length>=4) return;
+  pinBuffer+=d;
+  updatePinDots();
+  if(pinBuffer.length===4) setTimeout(pinSubmit,100);
+}
+function pinDel(){
+  pinBuffer=pinBuffer.slice(0,-1);
+  updatePinDots();
+  document.getElementById('loginError').classList.remove('show');
+}
+function updatePinDots(){
+  for(let i=0;i<4;i++){
+    document.getElementById('pd'+i).classList.toggle('filled',i<pinBuffer.length);
+  }
+}
+async function pinSubmit(){
+  if(pinBuffer.length<4){document.getElementById('loginError').textContent='Enter 4-digit PIN.';document.getElementById('loginError').classList.add('show');return}
+  showLoading('Verifying…');
+  try{
+    // PIN sent once for verification only
+    const res=await fetch(`${STAFF_URL}?action=verifyManagerDashboard&pin=${pinBuffer}`,{signal:AbortSignal.timeout(8000)});
+    const data=await res.json();
+    hideLoading();
+    if(data.success){
+      isLoggedIn=true;
+      // Generate session token — PIN is discarded and never used again
+      authToken=makeSessionToken(pinBuffer);
+      sessionStorage.setItem('ap_mgr_token', authToken);
+      sessionStorage.setItem('ap_mgr_exp', String(Date.now() + 8*60*60*1000)); // 8hr expiry
+      pinBuffer=''; updatePinDots(); // clear PIN immediately
+      document.getElementById('loginScreen').style.display='none';
+      document.getElementById('appShell').style.display='block';
+      startClock();
+      loadDashboard();
+    }else{
+      document.getElementById('loginError').textContent='Incorrect PIN. Please try again.';
+      document.getElementById('loginError').classList.add('show');
+      pinBuffer='';updatePinDots();
+    }
+  }catch(e){
+    hideLoading();
+    document.getElementById('loginError').textContent='Connection error. Please try again.';
+    document.getElementById('loginError').classList.add('show');
+    pinBuffer='';updatePinDots();
+  }
+}
+// Generate a session token — combines timestamp + random, not reversible to PIN
+function makeSessionToken(pin){
+  const r=Math.random().toString(36).slice(2,10);
+  const t=Date.now().toString(36);
+  let h=0;
+  const s=pin+r+t;
+  for(let i=0;i<s.length;i++) h=(Math.imul(31,h)+s.charCodeAt(i))|0;
+  return t+'-'+r+'-'+Math.abs(h).toString(36);
+}
+// Check session is still valid
+function getToken(){
+  const exp=Number(sessionStorage.getItem('ap_mgr_exp')||0);
+  if(Date.now()>exp){logout();return null;}
+  return sessionStorage.getItem('ap_mgr_token')||authToken||null;
+}
+// Build API URL with token instead of PIN
+function staffApi(action,extra=''){
+  const tok=getToken();
+  if(!tok) return null;
+  return `${STAFF_URL}?action=${action}&token=${encodeURIComponent(tok)}${extra}`;
+}
+function fuelApi(action,extra=''){
+  const tok=getToken();
+  if(!tok) return null;
+  return `${FUEL_URL}?action=${action}&token=${encodeURIComponent(tok)}${extra}`;
+}
+function logout(){
+  isLoggedIn=false;
+  authToken='';
+  pinBuffer='';updatePinDots();
+  sessionStorage.removeItem('ap_mgr_token');
+  sessionStorage.removeItem('ap_mgr_exp');
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('appShell').style.display='none';
+  document.getElementById('loginError').classList.remove('show');
+  cache={dashboard:null,temperature:null,maintenance:null,fuel:{dips:null,delivery:null,cost:null},incidents:null,roster:null};
+}
+
+// keyboard support
+document.addEventListener('keydown',e=>{
+  if(!isLoggedIn){
+    if(e.key>='0'&&e.key<='9') pinPress(e.key);
+    else if(e.key==='Backspace') pinDel();
+    else if(e.key==='Enter') pinSubmit();
+  }
+});
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+  const titles={dashboard:'Dashboard',temperature:'Temperature',maintenance:'Maintenance',fuel:'Fuel & Dips',incidents:'Incidents',roster:'Roster'};
+  document.getElementById('topbarTitle').textContent=titles[id]||id;
+  // lazy load
+  if(id!=='dashboard'&&!cache[id==='fuel'?'fuel':id]){loadModule(id)}
+}
+
+// ══════════════════════════════════════════
+// DATE RANGE HELPERS
+// ══════════════════════════════════════════
+function getRangeDates(range){
+  const today=new Date();today.setHours(0,0,0,0);
+  const fmt=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  if(range==='today') return{from:fmt(today),to:fmt(today)};
+  if(range==='yesterday'){const y=new Date(today);y.setDate(y.getDate()-1);return{from:fmt(y),to:fmt(y)};}
+  if(range==='week'){
+    const d=new Date(today);const day=d.getDay();d.setDate(d.getDate()-(day===0?6:day-1));
+    return{from:fmt(d),to:fmt(today)};
+  }
+  if(range==='lastweek'){
+    const end=new Date(today);const day=end.getDay();end.setDate(end.getDate()-(day===0?0:day));end.setDate(end.getDate()-1);
+    const start=new Date(end);start.setDate(start.getDate()-6);
+    return{from:fmt(start),to:fmt(end)};
+  }
+  if(range==='month'){const s=new Date(today.getFullYear(),today.getMonth(),1);return{from:fmt(s),to:fmt(today)};}
+  if(range==='lastmonth'){
+    const s=new Date(today.getFullYear(),today.getMonth()-1,1);
+    const e=new Date(today.getFullYear(),today.getMonth(),0);
+    return{from:fmt(s),to:fmt(e)};
+  }
+  return{from:fmt(today),to:fmt(today)};
+}
+
+function filterByRange(arr,dateField,range){
+  const{from,to}=getRangeDates(range);
+  return arr.filter(r=>{
+    const d=String(r[dateField]||'').slice(0,10);
+    return d>=from&&d<=to;
+  });
+}
+
+function filterByStation(arr,field,station){
+  if(!station) return arr;
+  return arr.filter(r=>String(r[field]||'')=== station);
+}
+
+function rangeLabel(range){
+  const m={today:'Today',yesterday:'Yesterday',week:'This Week',lastweek:'Last Week',month:'This Month',lastmonth:'Last Month'};
+  return m[range]||range;
+}
+
+// ══════════════════════════════════════════
+// FILTER BUTTONS
+// ══════════════════════════════════════════
+function setDashRange(r,btn){
+  dashRange=r;
+  btn.closest('.filter-group').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadDashboard();
+}
+function setModuleRange(mod,r,btn){
+  moduleRanges[mod]=r;
+  btn.closest('.filter-group').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  loadModule(mod);
+}
+function setFuelTab(tab,btn){
+  fuelTab=tab;
+  btn.closest('.filter-group').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  ['fuelDipsSection','fuelDeliverySection','fuelCostSection'].forEach(id=>document.getElementById(id).style.display='none');
+  document.getElementById(tab==='dips'?'fuelDipsSection':tab==='delivery'?'fuelDeliverySection':'fuelCostSection').style.display='block';
+  filterTable('fuel');
+}
+function setIncidentTab(tab,btn){
+  incidentTab=tab;
+  btn.closest('.filter-group').querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  filterTable('incidents');
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════
+async function loadDashboard(){
+  showLoading('Loading dashboard…');
+  const station=document.getElementById('dashStationFilter').value;
+  document.getElementById('dashSub').textContent=(station||'All Stations')+' · '+rangeLabel(dashRange);
+  try{
+    const days=rangeToDays(dashRange);
+    const dashUrl=staffApi('getManagerDashboardData',`&days=${days}`);
+    if(!dashUrl) return;
+    const res=await fetch(dashUrl,{signal:AbortSignal.timeout(10000)});
+    const data=await res.json();
+    hideLoading();
+    if(!data.success){showToast('Failed to load dashboard','danger');return;}
+    cache.dashboard=data;
+    renderDashboard(data,station);
+    lastUpdated=new Date();
+    updateStatusBar();
+  }catch(e){hideLoading();showToast('Connection error loading dashboard','danger');}
+}
+
+function rangeToDays(r){
+  if(r==='today') return 1;
+  if(r==='yesterday') return 2;
+  if(r==='week') return 7;
+  if(r==='lastweek') return 14;
+  if(r==='month') return 31;
+  if(r==='lastmonth') return 62;
+  return 7;
+}
+
+function renderDashboard(data,station){
+  const range=dashRange;
+
+  // Dashboard uses summary numbers from backend — no full data download
+  // Module pages load their own data on demand
+  let temperature=filterByRange(data.temperature||[],'Date',range);
+  let driveOff=filterByRange(data.driveOff||[],'Date',range);
+  let unpaidFuel=filterByRange(data.unpaidFuel||[],'Date',range);
+  let refund=filterByRange(data.cash||[],'Date',range);
+  let openMaint=data.openMaintenance||[];
+
+  // Invalidate module caches when dashboard range/station changes
+  // so modules re-fetch fresh data on next visit
+  cache.temperature=null;cache.maintenance=null;cache.incidents=null;cache.roster=null;
+
+  if(station){
+    temperature=filterByStation(temperature,'Station',station);
+    driveOff=filterByStation(driveOff,'Station',station);
+    unpaidFuel=filterByStation(unpaidFuel,'Station',station);
+    refund=filterByStation(refund,'Station',station);
+    openMaint=filterByStation(openMaint,'Station',station);
+  }
+
+  // stat cards
+  const unpaidAmt=unpaidFuel.reduce((s,r)=>s+Number(r.Amount||0),0);
+  const driveAmt=driveOff.reduce((s,r)=>s+Number(r.Amount||0),0);
+  document.getElementById('ds-temp').textContent=temperature.length;
+  document.getElementById('ds-maint-open').textContent=openMaint.length;
+  document.getElementById('ds-driveoff').textContent=driveOff.length;
+  document.getElementById('ds-unpaid').textContent=unpaidFuel.length;
+  document.getElementById('ds-unpaid-amt').textContent=unpaidAmt>0?'$'+unpaidAmt.toFixed(2):'';
+  document.getElementById('ds-refund').textContent=driveOff.length+unpaidFuel.length;
+  document.getElementById('ds-refund-amt').textContent=(driveAmt+unpaidAmt)>0?'Total $'+(driveAmt+unpaidAmt).toFixed(2):'';
+  document.getElementById('ds-cash').textContent=refund.length;
+
+  // alert cards
+  const alertsEl=document.getElementById('dashAlerts');
+  const STATIONS=['Sinopec Frankston','Sinopec Thomastown','Sinopec Shepparton','Sinopec Ballarat','BP Clayton South','BP Flemington','Liberty Golden Square'];
+  const stationsToShow=station?[station]:STATIONS;
+
+  // temperature alerts
+  const tempAlerts=buildTempAlerts(temperature,stationsToShow,range);
+  // maintenance alerts
+  const maintAlerts=buildMaintAlerts(openMaint,stationsToShow);
+
+  alertsEl.innerHTML=tempAlerts+maintAlerts;
+
+  // recent incidents table
+  const allIncidents=[
+    ...driveOff.map(r=>({...r,_type:'Drive Off'})),
+    ...unpaidFuel.map(r=>({...r,_type:'Unpaid Fuel'}))
+  ].sort((a,b)=>String(b.Date||b.SubmittedAt).localeCompare(String(a.Date||a.SubmittedAt))).slice(0,20);
+
+  document.getElementById('recentIncidentCount').textContent=allIncidents.length+' records';
+  const incTbody=document.getElementById('recentIncidentsBody');
+  if(!allIncidents.length){
+    incTbody.innerHTML=`<tr class="empty-row"><td colspan="6">No incidents in this period</td></tr>`;
+  }else{
+    incTbody.innerHTML=allIncidents.map(r=>`<tr>
+      <td class="td-mono">${r.Date||'—'}</td>
+      <td class="td-main">${esc(r.Station||'—')}</td>
+      <td><span class="badge ${r._type==='Drive Off'?'badge-danger':'badge-warn'}">${r._type}</span></td>
+      <td class="td-mono">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
+      <td class="td-mono">${esc(r.Plate||'—')}</td>
+      <td>${esc(r.SubmittedBy||r.StaffName||'—')}</td>
+    </tr>`).join('');
+  }
+
+  // open maintenance table
+  document.getElementById('openMaintCount').textContent=openMaint.length+' open';
+  const maintTbody=document.getElementById('openMaintBody');
+  if(!openMaint.length){
+    maintTbody.innerHTML=`<tr class="empty-row"><td colspan="6">No open maintenance jobs</td></tr>`;
+  }else{
+    maintTbody.innerHTML=openMaint.map(r=>`<tr>
+      <td class="td-main">${esc(r.Station||r.station||'—')}</td>
+      <td>${esc(r.CompanyName||r.companyName||'—')}</td>
+      <td>${esc(r.EquipmentDisplay||r.equipmentDisplay||r.Equipment||r.equipment||'—')}</td>
+      <td class="td-mono">${esc(r.ArrivalTime||r.arrivalTime||'—')}</td>
+      <td class="td-mono">${esc(r.ReferenceNo||r.referenceNo||'—')}</td>
+      <td><span class="badge badge-warn">IN PROGRESS</span></td>
+    </tr>`).join('');
+  }
+
+  // update badge
+  const badge=document.getElementById('maintenanceBadge');
+  if(openMaint.length>0){badge.textContent=openMaint.length;badge.style.display='inline'}
+  else badge.style.display='none';
+}
+
+function buildTempAlerts(records,stations,range){
+  const TEMP_RULES=[
+    {key:'HotPie',label:'Hot Pie',type:'min',limit:60},
+    {key:'Sandwich',label:'Sandwich Fridge',type:'max',limit:5},
+    {key:'Donut',label:'Donut Fridge',type:'max',limit:5},
+    {key:'Dairy',label:'Dairy Fridge',type:'max',limit:5},
+    {key:'CoolRoom',label:'Cool Room',type:'max',limit:5},
+    {key:'IceCream',label:'Ice Cream',type:'max',limit:-15},
+    {key:'Freezer',label:'Freezer',type:'max',limit:-15}
+  ];
+
+  const submittedByStation={};
+  const alertsByStation={};
+  records.forEach(r=>{
+    const st=r.Station||'';
+    if(!submittedByStation[st])submittedByStation[st]=new Set();
+    submittedByStation[st].add((r.Date||'')+'_'+(r.Shift||''));
+
+    TEMP_RULES.forEach(rule=>{
+      const v=Number(r[rule.key]||'');
+      if(isNaN(v)||r[rule.key]==='') return;
+      const bad=(rule.type==='min'&&v<rule.limit)||(rule.type==='max'&&v>rule.limit);
+      if(bad){
+        if(!alertsByStation[st])alertsByStation[st]=[];
+        alertsByStation[st].push(`${rule.label}: ${v}°C`);
+      }
+    });
+  });
+
+  const stationLines=stations.map(st=>{
+    const submitted=submittedByStation[st]?submittedByStation[st].size:0;
+    const issues=alertsByStation[st]||[];
+    const icon=issues.length?'⚠️':submitted>0?'✅':'❌';
+    const detail=issues.length?issues.slice(0,2).join(', ')+(issues.length>2?'…':''):(submitted===0&&range==='today'?'No submissions today':'');
+    return `<div class="alert-card-row"><span class="alert-card-row-icon">${icon}</span><span class="alert-card-row-text"><strong>${st.replace('Sinopec ','').replace('BP ','').replace(' Golden Square','')}</strong>${detail?` — <span style="color:var(--warn)">${detail}</span>`:''}</span></div>`;
+  }).join('');
+
+  const totalIssues=Object.values(alertsByStation).flat().length;
+  const cardClass=totalIssues>0?'has-issues':'all-ok';
+
+  return `<div class="alert-card ${cardClass}">
+    <div class="alert-card-header">
+      <span class="alert-card-icon">🌡️</span>
+      <span class="alert-card-title">Temperature</span>
+      <span class="alert-card-count" style="color:${totalIssues>0?'var(--warn)':'var(--accent)'}">${totalIssues>0?totalIssues+' alerts':'All OK'}</span>
+    </div>
+    <div class="alert-card-body">${stationLines}</div>
+  </div>`;
+}
+
+function buildMaintAlerts(openJobs,stations){
+  const byStation={};
+  openJobs.forEach(j=>{
+    const st=j.Station||j.station||'';
+    if(!byStation[st])byStation[st]=[];
+    byStation[st].push(j.EquipmentDisplay||j.equipmentDisplay||j.Equipment||j.equipment||'Unknown');
+  });
+
+  const stationLines=stations.filter(st=>byStation[st]).map(st=>`
+    <div class="alert-card-row">
+      <span class="alert-card-row-icon">⚠️</span>
+      <span class="alert-card-row-text"><strong>${st.replace('Sinopec ','').replace('BP ','')}</strong> — ${byStation[st].slice(0,2).join(', ')}${byStation[st].length>2?'…':''}</span>
+    </div>`).join('');
+
+  const total=openJobs.length;
+  if(!total) return `<div class="alert-card all-ok">
+    <div class="alert-card-header"><span class="alert-card-icon">🛠️</span><span class="alert-card-title">Maintenance</span><span class="alert-card-count" style="color:var(--accent)">All Clear</span></div>
+    <div class="alert-card-body" style="color:var(--muted);font-size:12px">No open maintenance jobs</div>
+  </div>`;
+
+  return `<div class="alert-card has-issues">
+    <div class="alert-card-header"><span class="alert-card-icon">🛠️</span><span class="alert-card-title">Maintenance</span><span class="alert-card-count" style="color:var(--warn)">${total} Open</span></div>
+    <div class="alert-card-body">${stationLines}</div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// MODULE LOADERS
+// ══════════════════════════════════════════
+async function loadModule(mod){
+  if(mod==='fuel'){await loadFuel();return;}
+  showLoading('Loading '+mod+'…');
+  const stationEl=document.getElementById(mod+'StationFilter');
+  const station=stationEl?stationEl.value:'';
+  try{
+    const days=rangeToDays(moduleRanges[mod]||'week')+5;// extra buffer
+    const modUrl=staffApi('getManagerDashboardData',`&days=${days}`);
+    if(!modUrl) return;
+    const res=await fetch(modUrl,{signal:AbortSignal.timeout(10000)});
+    const data=await res.json();
+    hideLoading();
+    if(!data.success){showToast('Failed to load data','danger');return;}
+    if(mod==='temperature'){cache.temperature=data.temperature||[];renderTemperature(station);}
+    if(mod==='maintenance'){cache.maintenance=data.maintenance||[];cache._openMaint=data.openMaintenance||[];renderMaintenance(station);}
+    if(mod==='incidents'){cache.incidents={driveOff:data.driveOff||[],unpaidFuel:data.unpaidFuel||[]};renderIncidents(station);}
+    if(mod==='roster'){cache.roster=data.roster||[];renderRoster(station);}
+    lastUpdated=new Date();updateStatusBar();
+  }catch(e){hideLoading();showToast('Connection error','danger');}
+}
+
+async function loadFuel(){
+  showLoading('Loading Fuel & Dips…');
+  const station=document.getElementById('fuelStationFilter').value;
+  try{
+    const fuelUrl=fuelApi('getFuelDashboard');
+    if(!fuelUrl) return;
+    const res=await fetch(fuelUrl,{signal:AbortSignal.timeout(10000)});
+    const data=await res.json();
+    hideLoading();
+    if(!data.success){showToast('Failed to load fuel data','danger');return;}
+    cache.fuel.dips=data.dips||[];
+    cache.fuel.delivery=data.delivery||[];
+    cache.fuel.cost=data.cost||[];
+    renderFuel(station);
+    lastUpdated=new Date();updateStatusBar();
+  }catch(e){
+    hideLoading();
+    showToast('Could not connect to Fuel & Dips system','warn');
+    cache.fuel.dips=[];cache.fuel.delivery=[];cache.fuel.cost=[];
+    renderFuel(station);
+  }
+}
+
+// ══════════════════════════════════════════
+// RENDERERS
+// ══════════════════════════════════════════
+function renderTemperature(station){
+  const range=moduleRanges.temperature;
+  let rows=filterByRange(cache.temperature||[],'Date',range);
+  if(station) rows=filterByStation(rows,'Station',station);
+
+  const RULES=[
+    {key:'HotPie',type:'min',limit:60},
+    {key:'Sandwich',type:'max',limit:5},
+    {key:'Donut',type:'max',limit:5},
+    {key:'Dairy',type:'max',limit:5},
+    {key:'CoolRoom',type:'max',limit:5},
+    {key:'IceCream',type:'max',limit:-15},
+    {key:'Freezer',type:'max',limit:-15}
+  ];
+
+  let danger=0,warning=0;
+  rows.forEach(r=>{
+    RULES.forEach(rule=>{
+      const v=Number(r[rule.key]||'');if(isNaN(v)||r[rule.key]==='') return;
+      if((rule.type==='min'&&v<rule.limit-5)||(rule.type==='max'&&v>rule.limit+2)) danger++;
+      else if((rule.type==='min'&&v<rule.limit)||(rule.type==='max'&&v>rule.limit)) warning++;
+    });
+  });
+
+  document.getElementById('tempStats').innerHTML=`
+    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📋</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">Submissions</div></div>
+    <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚨</span><div class="stat-card-value">${danger}</div><div class="stat-card-label">Danger Readings</div></div>
+    <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">⚠️</span><div class="stat-card-value">${warning}</div><div class="stat-card-label">Warning Readings</div></div>
+  `;
+
+  document.getElementById('tempCount').textContent=rows.length+' records';
+  tableState.temperature.filtered=rows;
+  tableState.temperature.page=1;
+  renderTablePage('temperature');
+}
+
+function renderTemperatureRows(rows){
+  const RULES=[
+    {key:'HotPie',type:'min',limit:60},
+    {key:'Sandwich',type:'max',limit:5},
+    {key:'Donut',type:'max',limit:5},
+    {key:'Dairy',type:'max',limit:5},
+    {key:'CoolRoom',type:'max',limit:5},
+    {key:'IceCream',type:'max',limit:-15},
+    {key:'Freezer',type:'max',limit:-15}
+  ];
+  function tempBadge(val,rule){
+    if(val===''||val===null||val===undefined) return '<span style="color:var(--border2)">—</span>';
+    const v=Number(val);
+    const bad=(rule.type==='min'&&v<rule.limit)||(rule.type==='max'&&v>rule.limit);
+    const warn=(rule.type==='min'&&v<rule.limit+5&&v>=rule.limit-0)||(rule.type==='max'&&v>rule.limit-2&&v<=rule.limit+2);
+    const cls=bad?'style="color:var(--danger);font-weight:600"':warn?'style="color:var(--warn)"':'style="color:var(--accent)"';
+    return `<span ${cls}>${v}</span>`;
+  }
+
+  if(!rows.length) return `<tr class="empty-row"><td colspan="12">No records</td></tr>`;
+  return rows.map(r=>{
+    const issues=RULES.filter(rule=>{
+      const v=Number(r[rule.key]||'');
+      return !isNaN(v)&&r[rule.key]!==''&&((rule.type==='min'&&v<rule.limit)||(rule.type==='max'&&v>rule.limit));
+    });
+    const status=issues.length>0?`<span class="badge badge-danger">ALERT</span>`:`<span class="badge badge-ok">OK</span>`;
+    return `<tr>
+      <td class="td-mono">${r.Date||'—'}</td>
+      <td class="td-main">${esc(r.Station||'—')}</td>
+      <td><span class="badge badge-muted">${esc(r.Shift||'—')}</span></td>
+      <td>${esc(r.SubmittedBy||'—')}</td>
+      <td>${tempBadge(r.HotPie,RULES[0])}</td>
+      <td>${tempBadge(r.Sandwich,RULES[1])}</td>
+      <td>${tempBadge(r.Donut,RULES[2])}</td>
+      <td>${tempBadge(r.Dairy,RULES[3])}</td>
+      <td>${tempBadge(r.CoolRoom,RULES[4])}</td>
+      <td>${tempBadge(r.IceCream,RULES[5])}</td>
+      <td>${tempBadge(r.Freezer,RULES[6])}</td>
+      <td>${status}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderMaintenance(station){
+  const range=moduleRanges.maintenance;
+  let rows=filterByRange(cache.maintenance||[],'SubmittedAt',range);
+  if(station) rows=filterByStation(rows,'Station',station);
+
+  const open=rows.filter(r=>String(r.Status||'').toUpperCase()==='IN_PROGRESS').length;
+  const completed=rows.filter(r=>String(r.Status||'').toUpperCase()==='COMPLETED').length;
+  const followUp=rows.filter(r=>String(r.FollowUpRequired||'').toUpperCase()==='YES').length;
+
+  document.getElementById('maintStats').innerHTML=`
+    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📋</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">Total Records</div></div>
+    <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">⏳</span><div class="stat-card-value">${open}</div><div class="stat-card-label">In Progress</div></div>
+    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">✅</span><div class="stat-card-value">${completed}</div><div class="stat-card-label">Completed</div></div>
+    <div class="stat-card stat-purple"><div class="stat-card-stripe" style="background:var(--purple)"></div><span class="stat-card-icon">🔁</span><div class="stat-card-value">${followUp}</div><div class="stat-card-label">Follow Up Required</div></div>
+  `;
+
+  document.getElementById('maintCount').textContent=rows.length+' records';
+  tableState.maintenance.filtered=rows;
+  tableState.maintenance.page=1;
+  renderTablePage('maintenance');
+}
+
+function renderMaintenanceRows(rows){
+  const statusFilter=document.getElementById('maintStatusFilter').value;
+  let filtered=rows;
+  if(statusFilter) filtered=rows.filter(r=>String(r.Status||'').toUpperCase()===statusFilter);
+  if(!filtered.length) return `<tr class="empty-row"><td colspan="11">No records</td></tr>`;
+  return filtered.map(r=>{
+    const status=String(r.Status||'').toUpperCase();
+    const statusBadge=status==='COMPLETED'?`<span class="badge badge-ok">DONE</span>`:`<span class="badge badge-warn">IN PROGRESS</span>`;
+    const followUp=String(r.FollowUpRequired||'').toUpperCase()==='YES'?`<span class="badge badge-purple">YES</span>`:`<span class="badge badge-muted">NO</span>`;
+    return `<tr>
+      <td class="td-mono">${String(r.SubmittedAt||'').slice(0,10)||'—'}</td>
+      <td class="td-main">${esc(r.Station||'—')}</td>
+      <td>${esc(r.CompanyName||'—')}</td>
+      <td>${esc(r.EquipmentDisplay||r.Equipment||'—')}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.InitialDescription||'—')}</td>
+      <td class="td-mono">${esc(r.ArrivalTime||'—')}</td>
+      <td class="td-mono">${esc(r.DepartureTime||'—')}</td>
+      <td><span class="badge ${String(r.IssueFixed||'').toLowerCase()==='yes'?'badge-ok':'badge-warn'}">${esc(r.IssueFixed||'—')}</span></td>
+      <td>${followUp}</td>
+      <td>${statusBadge}</td>
+      <td class="td-mono">${esc(r.ReferenceNo||'—')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderFuel(station){
+  const range=moduleRanges.fuel;
+  let dips=filterByRange(cache.fuel.dips||[],'Date',range);
+  let delivery=filterByRange(cache.fuel.delivery||[],'Date',range);
+  let cost=filterByRange(cache.fuel.cost||[],'Date',range);
+  if(station){
+    dips=filterByStation(dips,'Station',station);
+    delivery=filterByStation(delivery,'Station',station);
+  }
+
+  document.getElementById('fuelStats').innerHTML=`
+    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📊</span><div class="stat-card-value">${dips.length}</div><div class="stat-card-label">Dip Records</div></div>
+    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">🚚</span><div class="stat-card-value">${delivery.length}</div><div class="stat-card-label">Deliveries</div></div>
+    <div class="stat-card stat-gold"><div class="stat-card-stripe" style="background:var(--gold)"></div><span class="stat-card-icon">💲</span><div class="stat-card-value">${cost.length}</div><div class="stat-card-label">Cost Records</div></div>
+  `;
+
+  document.getElementById('fuelDipsCount').textContent=dips.length+' records';
+  document.getElementById('fuelDeliveryCount').textContent=delivery.length+' records';
+  document.getElementById('fuelCostCount').textContent=cost.length+' records';
+
+  // dips
+  document.getElementById('fuelDipsBody').innerHTML=!dips.length
+    ?`<tr class="empty-row"><td colspan="11">No dip records</td></tr>`
+    :dips.map(r=>`<tr>
+      <td class="td-mono">${r.Date||String(r.Timestamp||'').slice(0,10)||'—'}</td>
+      <td class="td-main">${esc(r.Station||'—')}</td>
+      <td>${esc(r['Staff Name']||r.StaffName||'—')}</td>
+      <td class="td-mono">${r['91']||'—'}</td><td class="td-mono">${r['95']||'—'}</td><td class="td-mono">${r['98']||'—'}</td>
+      <td class="td-mono">${r.E10||'—'}</td><td class="td-mono">${r.Diesel||'—'}</td>
+      <td class="td-mono">${r['Diesel 1']||'—'}</td><td class="td-mono">${r['Diesel 2']||'—'}</td>
+      <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:${r.Warning?'var(--warn)':'var(--muted)'}">${esc(r.Warning||'—')}</td>
+    </tr>`).join('');
+
+  // delivery
+  document.getElementById('fuelDeliveryBody').innerHTML=!delivery.length
+    ?`<tr class="empty-row"><td colspan="13">No delivery records</td></tr>`
+    :delivery.map(r=>`<tr>
+      <td class="td-mono">${r.Date||String(r.Timestamp||'').slice(0,10)||'—'}</td>
+      <td class="td-main">${esc(r.Station||'—')}</td>
+      <td>${esc(r['Staff Name']||'—')}</td>
+      <td>${esc(r.Supplier||'—')}</td>
+      <td class="td-mono">${esc(r['Docket No']||'—')}</td>
+      <td class="td-mono">${r['91 Delivered']||'—'}</td><td class="td-mono">${r['95 Delivered']||'—'}</td>
+      <td class="td-mono">${r['98 Delivered']||'—'}</td><td class="td-mono">${r['E10 Delivered']||'—'}</td>
+      <td class="td-mono">${r['Diesel Delivered']||'—'}</td>
+      <td class="td-mono">${r['Diesel 1 Delivered']||'—'}</td>
+      <td class="td-mono">${r['Diesel 2 Delivered']||'—'}</td>
+    </tr>`).join('');
+
+  // cost
+  document.getElementById('fuelCostBody').innerHTML=!cost.length
+    ?`<tr class="empty-row"><td colspan="8">No fuel cost records</td></tr>`
+    :cost.map(r=>`<tr>
+      <td class="td-mono">${r.Date||String(r.Timestamp||'').slice(0,10)||'—'}</td>
+      <td>${esc(r.Source||'—')}</td>
+      <td class="td-mono">${r['91']||'—'}</td><td class="td-mono">${r['95']||'—'}</td>
+      <td class="td-mono">${r['98']||'—'}</td><td class="td-mono">${r.E10||'—'}</td>
+      <td class="td-mono">${r.Diesel||'—'}</td>
+      <td style="color:var(--muted)">${esc(r.Notes||'—')}</td>
+    </tr>`).join('');
+
+  tableState.fuel.filtered=fuelTab==='dips'?dips:fuelTab==='delivery'?delivery:cost;
+  tableState.fuel.page=1;
+}
+
+function renderIncidents(station){
+  const range=moduleRanges.incidents;
+  let driveOff=filterByRange((cache.incidents||{}).driveOff||[],'Date',range);
+  let unpaidFuel=filterByRange((cache.incidents||{}).unpaidFuel||[],'Date',range);
+  if(station){
+    driveOff=filterByStation(driveOff,'Station',station);
+    unpaidFuel=filterByStation(unpaidFuel,'Station',station);
+  }
+
+  const doAmt=driveOff.reduce((s,r)=>s+Number(r.Amount||0),0);
+  const ufAmt=unpaidFuel.reduce((s,r)=>s+Number(r.Amount||0),0);
+
+  document.getElementById('incStats').innerHTML=`
+    <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚗</span><div class="stat-card-value">${driveOff.length}</div><div class="stat-card-label">Drive Offs</div><div class="stat-card-sub">${doAmt>0?'$'+doAmt.toFixed(2):''}</div></div>
+    <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">⛽</span><div class="stat-card-value">${unpaidFuel.length}</div><div class="stat-card-label">Unpaid Fuel</div><div class="stat-card-sub">${ufAmt>0?'$'+ufAmt.toFixed(2):''}</div></div>
+    <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">💰</span><div class="stat-card-value">$${(doAmt+ufAmt).toFixed(2)}</div><div class="stat-card-label">Total Loss</div></div>
+  `;
+
+  const allRows=[
+    ...driveOff.map(r=>({...r,_type:'driveoff',_label:'Drive Off'})),
+    ...unpaidFuel.map(r=>({...r,_type:'unpaid',_label:'Unpaid Fuel'}))
+  ].sort((a,b)=>String(b.Date||'').localeCompare(String(a.Date||'')));
+
+  document.getElementById('incCount').textContent=allRows.length+' records';
+  tableState.incidents.filtered=allRows;
+  tableState.incidents.page=1;
+  renderTablePage('incidents');
+}
+
+function renderIncidentRows(rows){
+  let filtered=rows;
+  if(incidentTab!=='all') filtered=rows.filter(r=>r._type===incidentTab);
+  if(!filtered.length) return `<tr class="empty-row"><td colspan="9">No incidents</td></tr>`;
+  return filtered.map(r=>`<tr>
+    <td class="td-mono">${r.Date||'—'}</td>
+    <td class="td-main">${esc(r.Station||'—')}</td>
+    <td><span class="badge ${r._type==='driveoff'?'badge-danger':'badge-warn'}">${r._label}</span></td>
+    <td class="td-mono" style="font-weight:600;color:var(--danger)">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
+    <td class="td-mono">${esc(r.Plate||'—')}</td>
+    <td>${esc(r.SubmittedBy||r.StaffName||'—')}</td>
+    <td class="td-mono">${esc(r.RecordID||r.ReferenceNo||r.referenceNo||'—')}</td>
+    <td>${r.PoliceReported?`<span class="badge badge-blue">${esc(r.PoliceReported)}</span>`:'—'}</td>
+    <td><button class="filter-btn" style="padding:3px 8px;font-size:10px" onclick="showIncidentDetail(${JSON.stringify(JSON.stringify(r))})">View</button></td>
+  </tr>`).join('');
+}
+
+function showIncidentDetail(jsonStr){
+  const r=JSON.parse(jsonStr);
+  document.getElementById('modalTitle').textContent=(r._label||'Incident')+' — '+r.Station;
+  const fields=r._type==='driveoff'?[
+    ['Date',r.Date],['Time',r.Time],['Station',r.Station],['Pump',r.Pump],['Fuel Type',r.FuelType],
+    ['Litres',r.Litres],['Amount Lost','$'+(Number(r.Amount||0).toFixed(2))],['Plate',r.Plate],
+    ['State',r.PlateState],['Vehicle',r.Vehicle],['Direction',r.Direction],
+    ['Gender',r.DriverGender],['Age',r.DriverAge],['Appearance',r.DriverAppearance],
+    ['CCTV',r.CCTV],['Police Reported',r.PoliceReported],['Police Ref',r.PoliceReportNo],
+    ['Staff',r.SubmittedBy],['Notes',r.Notes]
+  ]:[
+    ['Date',r.Date],['Time',r.Time],['Station',r.Station],['Pump',r.Pump],
+    ['Amount Owing','$'+(Number(r.Amount||0).toFixed(2))],['Fuel Type',r.FuelType],
+    ['Plate',r.Plate],['Vehicle',r.Vehicle],['Staff',r.SubmittedBy],
+    ['Customer Name',r.CustomerName],['Phone','****'+String(r.Phone||'').slice(-4)],
+    ['Payment Deadline',r.PaymentDeadline],['Ref',r.RecordID]
+  ];
+  document.getElementById('modalBody').innerHTML=fields.filter(([,v])=>v&&v!=='—').map(([k,v])=>`
+    <div class="modal-row"><div class="modal-key">${k}</div><div class="modal-val">${esc(String(v||''))}</div></div>
+  `).join('');
+  document.getElementById('modalOverlay').classList.add('show');
+}
+
+function renderRoster(station){
+  const range=moduleRanges.roster;
+  let rows=filterByRange(cache.roster||[],'Date',range);
+  if(station) rows=filterByStation(rows,'Station',station);
+
+  const today=new Date().toISOString().slice(0,10);
+  const todayShifts=rows.filter(r=>String(r.Date||r.date||'').slice(0,10)===today);
+
+  document.getElementById('rosterStats').innerHTML=`
+    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">👥</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">Total Shifts</div></div>
+    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">📅</span><div class="stat-card-value">${todayShifts.length}</div><div class="stat-card-label">Today's Shifts</div></div>
+  `;
+
+  document.getElementById('rosterCount').textContent=rows.length+' records';
+  tableState.roster.filtered=rows;
+  tableState.roster.page=1;
+  renderTablePage('roster');
+}
+
+function renderRosterRows(rows){
+  if(!rows.length) return `<tr class="empty-row"><td colspan="8">No roster records</td></tr>`;
+  const today=new Date().toISOString().slice(0,10);
+  return rows.map(r=>{
+    const date=String(r.Date||r.date||'');
+    const isToday=date.slice(0,10)===today;
+    return `<tr ${isToday?'style="background:rgba(34,211,238,.03)"':''}>
+      <td class="td-mono" style="${isToday?'color:var(--accent2);font-weight:600':''}">${date.slice(0,10)||'—'}${isToday?' ★':''}</td>
+      <td class="td-main">${esc(r.Station||r.station||'—')}</td>
+      <td>${esc(r.StaffName||r.staffName||'—')}</td>
+      <td><span class="badge badge-muted">${esc(r.ShiftName||r.shiftName||'—')}</span></td>
+      <td class="td-mono">${esc(r.StartTime||r.startTime||'—')}</td>
+      <td class="td-mono">${esc(r.FinishTime||r.finishTime||'—')}</td>
+      <td>${esc(r.Role||r.role||'—')}</td>
+      <td style="color:var(--muted)">${esc(r.Notes||r.notes||'')}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ══════════════════════════════════════════
+// TABLE PAGINATION + SEARCH
+// ══════════════════════════════════════════
+function filterTable(mod){
+  const searchEl=document.getElementById(mod+'Search');
+  const q=searchEl?searchEl.value.toLowerCase():'';
+
+  let source=[];
+  if(mod==='temperature') source=filterByRange(cache.temperature||[],'Date',moduleRanges.temperature);
+  if(mod==='maintenance') source=filterByRange(cache.maintenance||[],'SubmittedAt',moduleRanges.maintenance);
+  if(mod==='fuel'){
+    const fuelStation=document.getElementById('fuelStationFilter').value;
+    const tab=fuelTab;
+    const raw=tab==='dips'?(cache.fuel.dips||[]):tab==='delivery'?(cache.fuel.delivery||[]):(cache.fuel.cost||[]);
+    source=filterByRange(raw,'Date',moduleRanges.fuel);
+    if(fuelStation) source=filterByStation(source,'Station',fuelStation);
+  }
+  if(mod==='incidents'){
+    const allRows=[
+      ...(filterByRange((cache.incidents||{}).driveOff||[],'Date',moduleRanges.incidents)).map(r=>({...r,_type:'driveoff',_label:'Drive Off'})),
+      ...(filterByRange((cache.incidents||{}).unpaidFuel||[],'Date',moduleRanges.incidents)).map(r=>({...r,_type:'unpaid',_label:'Unpaid Fuel'}))
+    ];
+    source=allRows.filter(r=>incidentTab==='all'||r._type===incidentTab);
+  }
+  if(mod==='roster') source=filterByRange(cache.roster||[],'Date',moduleRanges.roster);
+
+  if(q){
+    source=source.filter(r=>Object.values(r).some(v=>String(v||'').toLowerCase().includes(q)));
+  }
+
+  tableState[mod].filtered=source;
+  tableState[mod].page=1;
+  renderTablePage(mod);
+}
+
+function renderTablePage(mod){
+  const state=tableState[mod];
+  const{filtered,page,perPage}=state;
+  const start=(page-1)*perPage;
+  const pageRows=filtered.slice(start,start+perPage);
+  const totalPages=Math.max(1,Math.ceil(filtered.length/perPage));
+
+  let html='';
+  if(mod==='temperature') html=renderTemperatureRows(pageRows);
+  if(mod==='maintenance') html=renderMaintenanceRows(pageRows);
+  if(mod==='fuel') html=''; // handled by renderFuel directly
+  if(mod==='incidents') html=renderIncidentRows(pageRows);
+  if(mod==='roster') html=renderRosterRows(pageRows);
+
+  if(mod!=='fuel'){
+    const tbody=document.getElementById(mod+'Body');
+    if(tbody) tbody.innerHTML=html;
+  }
+
+  // pagination
+  const pagEl=document.getElementById(mod+'Pagination');
+  if(pagEl){
+    pagEl.innerHTML=`
+      <button class="page-btn" onclick="changePage('${mod}',-1)" ${page<=1?'disabled':''}>‹</button>
+      <span class="page-current">${page}</span><span>/</span><span>${totalPages}</span>
+      <button class="page-btn" onclick="changePage('${mod}',1)" ${page>=totalPages?'disabled':''}>›</button>
+      <span style="margin-left:4px">(${filtered.length})</span>
+    `;
+  }
+}
+
+function changePage(mod,delta){
+  const state=tableState[mod];
+  const total=Math.max(1,Math.ceil(state.filtered.length/state.perPage));
+  state.page=Math.max(1,Math.min(total,state.page+delta));
+  renderTablePage(mod);
+}
+
+// ══════════════════════════════════════════
+// MODAL
+// ══════════════════════════════════════════
+function closeModal(){document.getElementById('modalOverlay').classList.remove('show')}
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))closeModal()});
+
+// ══════════════════════════════════════════
+// CLOCK + STATUS
+// ══════════════════════════════════════════
+function startClock(){
+  updateClock();
+  setInterval(updateClock,30000);
+}
+function updateClock(){
+  const n=new Date();
+  document.getElementById('topbarTime').textContent=
+    n.toLocaleDateString('en-AU',{weekday:'short',day:'numeric',month:'short'})+' '+
+    String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0');
+}
+function updateStatusBar(){
+  if(!lastUpdated) return;
+  const mins=Math.round((Date.now()-lastUpdated)/60000);
+  document.getElementById('statusBarText').textContent=`Connected · Updated ${mins<1?'just now':mins+'m ago'}`;
+}
+
+// ══════════════════════════════════════════
+// LOADING + TOAST
+// ══════════════════════════════════════════
+function showLoading(msg){document.getElementById('loadingText').textContent=msg||'Loading…';document.getElementById('loadingOverlay').classList.add('show')}
+function hideLoading(){document.getElementById('loadingOverlay').classList.remove('show')}
+function showToast(msg,type){
+  const t=document.createElement('div');
+  t.style.cssText=`position:fixed;bottom:20px;right:20px;z-index:999;padding:10px 16px;border-radius:8px;font-family:var(--mono);font-size:12px;font-weight:500;transition:opacity .3s;background:${type==='danger'?'var(--danger-bg)':type==='warn'?'var(--warn-bg)':'var(--ok-bg)'};color:${type==='danger'?'var(--danger)':type==='warn'?'var(--warn)':'var(--accent)'};border:1px solid ${type==='danger'?'var(--danger-border)':type==='warn'?'var(--warn-border)':'var(--ok-border)'}`;
+  t.textContent=msg;document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300)},3000);
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+</script>
+</body>
+</html>
