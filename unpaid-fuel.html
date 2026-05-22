@@ -332,11 +332,12 @@ function submitForm(){
     signatureFileName:referenceNo+'_signature.png',
     notes:`Fuel: ${val('f-fueltype') || '-'}, Litres: ${val('f-litres') || '-'}, Customer: ${val('f-cname')}, Address: ${val('f-caddress')}, DL: ${val('f-dlnum')} ${val('f-dlstate')}, Deadline: ${document.getElementById('deadline-value').textContent}`
   };
-  document.getElementById('loading-text').textContent=L.submitting;document.getElementById('loadingOverlay').classList.add('show');
-  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).then(()=>onSuccess(row)).catch(()=>onSuccess(row));
+
+onSuccess(row);
+fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(row)}).catch(()=>{});
 }
 
-function onSuccess(row){document.getElementById('loadingOverlay').classList.remove('show');document.getElementById('succ-ref').textContent='Ref: '+row.referenceNo;showScreen('success')}
+function onSuccess(row){document.getElementById('succ-ref').textContent='Ref: '+row.referenceNo;showScreen('success')}
 
 function initCanvas(){
   canvas=document.getElementById('sigCanvas');ctx=canvas.getContext('2d');
