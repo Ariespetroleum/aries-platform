@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Manager Dashboard — Aries Petroleum</title>
+<title>管理后台 — Aries Petroleum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -191,25 +191,51 @@ tr:hover td{background:rgba(255,255,255,.015)}
 .modal-key{font-size:11px;color:var(--muted);font-family:var(--mono);width:40%;flex-shrink:0}
 .modal-val{font-size:13px;font-weight:500;flex:1;word-break:break-word}
 
-/* ── MOBILE BOTTOM NAV ── */
-.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--surface);border-top:1px solid var(--border);padding:6px 0 env(safe-area-inset-bottom,6px)}
-.mobile-nav-inner{display:flex;justify-content:space-around;align-items:center}
-.mobile-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 10px;cursor:pointer;color:var(--muted);font-size:10px;font-family:var(--mono);border-radius:8px;transition:all .15s;min-width:52px}
-.mobile-nav-item:active{background:var(--surface2)}
-.mobile-nav-item.active{color:var(--accent2)}
-.mobile-nav-item .mnav-icon{font-size:18px;position:relative}
-.mobile-nav-badge{position:absolute;top:-4px;right:-6px;background:var(--danger);color:#fff;font-size:8px;font-weight:700;padding:1px 4px;border-radius:8px;font-family:var(--mono)}
+
 
 /* ── RESPONSIVE ── */
+/* ── CLICKABLE STAT CARD ── */
+.stat-card.clickable{cursor:pointer}
+.stat-card.clickable:hover{border-color:var(--accent2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(34,211,238,.08)}
+.stat-card.clickable:active{transform:translateY(0)}
+
+/* ── BACK BUTTON ── */
+.back-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;font-family:var(--mono);font-size:11px;color:var(--muted);border:1px solid var(--border);border-radius:8px;background:transparent;cursor:pointer;transition:all .15s;margin-bottom:16px}
+.back-btn:hover{border-color:var(--accent2);color:var(--accent2)}
+
+/* ── DRAWER (mobile nav) ── */
+.drawer-overlay{display:none;position:fixed;inset:0;z-index:150;background:rgba(8,11,18,.7);backdrop-filter:blur(2px)}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:220px;background:var(--surface);border-right:1px solid var(--border2);z-index:160;transform:translateX(-100%);transition:transform .25s cubic-bezier(.4,0,.2,1);padding:0;overflow-y:auto}
+.drawer.open{transform:translateX(0)}
+.drawer-header{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.drawer-brand{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-family:var(--mono)}
+.drawer-close{font-size:18px;color:var(--muted);cursor:pointer;padding:4px 8px;border-radius:6px}
+.drawer-close:hover{color:var(--text);background:var(--surface2)}
+.drawer-nav{padding:12px 0}
+.drawer-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;color:var(--label);font-size:13px;transition:all .15s;border-left:2px solid transparent}
+.drawer-item:hover{background:var(--surface2);color:var(--text)}
+.drawer-item.active{background:rgba(34,211,238,.06);border-left-color:var(--accent2);color:var(--accent2)}
+.drawer-item-icon{font-size:15px;width:20px;text-align:center}
+.drawer-item-label{font-weight:500}
+.drawer-badge{margin-left:auto;font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:4px;background:var(--danger-bg);color:var(--danger);border:1px solid var(--danger-border)}
+
+/* ── HAMBURGER ── */
+.hamburger{display:none;align-items:center;justify-content:center;width:32px;height:32px;cursor:pointer;color:var(--muted);font-size:18px;border-radius:6px;transition:all .15s;margin-right:4px}
+.hamburger:hover{background:var(--surface2);color:var(--text)}
+
 @media(max-width:768px){
   .sidebar{display:none}
-  .mobile-nav{display:block}
+  .hamburger{display:flex}
   .stats-grid{grid-template-columns:1fr 1fr}
   .alert-grid{grid-template-columns:1fr}
-  .page{padding:14px;padding-bottom:80px}
-  .filters-bar{gap:6px}
-  .filters-bar .filter-group{overflow-x:auto;flex-shrink:0}
+  .page{padding:14px}
+  .filters-bar{gap:6px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px}
+  .filters-bar .filter-group{flex-shrink:0}
+  .filter-select{flex-shrink:0}
   .app-body{flex-direction:column}
+  .table-toolbar{flex-wrap:wrap}
+  .search-input{width:100%}
 }
 </style>
 </head>
@@ -217,14 +243,14 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
 <div class="loading-overlay" id="loadingOverlay">
   <div class="spinner"></div>
-  <div class="loading-text" id="loadingText">Loading…</div>
+  <div class="loading-text" id="loadingText">加载中…</div>
 </div>
 
 <!-- ══ MODAL ══ -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title" id="modalTitle">Detail</div>
+      <div class="modal-title" id="modalTitle">详情</div>
       <div class="modal-close" onclick="closeModal()">✕</div>
     </div>
     <div class="modal-body" id="modalBody"></div>
@@ -236,8 +262,8 @@ tr:hover td{background:rgba(255,255,255,.015)}
   <div class="login-card">
     <div class="login-logo">⛽</div>
     <div class="login-brand">Aries Petroleum</div>
-    <div class="login-title">Manager Dashboard</div>
-    <div class="login-sub">Enter your 4-digit PIN to access the management portal</div>
+    <div class="login-title">管理后台</div>
+    <div class="login-sub">请输入4位数PIN码登录管理后台</div>
     <div class="pin-wrap" id="pinDots">
       <div class="pin-dot" id="pd0"></div>
       <div class="pin-dot" id="pd1"></div>
@@ -258,7 +284,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <button class="num-btn" onclick="pinPress('0')">0</button>
       <button class="num-btn enter" onclick="pinSubmit()">ENTER</button>
     </div>
-    <div class="login-error" id="loginError">Incorrect PIN. Please try again.</div>
+    <div class="login-error" id="loginError">PIN码错误，请重试。</div>
   </div>
 </div>
 
@@ -267,44 +293,45 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
   <div class="topbar">
     <div class="topbar-left">
+      <div class="hamburger" id="hamburgerBtn" onclick="openDrawer()">☰</div>
       <div class="topbar-logo">⛽</div>
       <div class="topbar-brand">Aries Petroleum</div>
       <div class="topbar-divider"></div>
-      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-title" id="topbarTitle">主页</div>
     </div>
     <div class="topbar-right">
       <div class="topbar-time" id="topbarTime"></div>
-      <button class="logout-btn" onclick="logout()">Logout</button>
+      <button class="logout-btn" onclick="logout()">退出登录</button>
     </div>
   </div>
 
   <div class="status-bar">
     <div class="status-dot-live"></div>
-    <span id="statusBarText">Connected · Last updated just now</span>
+    <span id="statusBarText">已连接 · 刚刚更新</span>
   </div>
 
   <div class="app-body">
     <div class="sidebar">
-      <div class="nav-section-label">Overview</div>
+      <div class="nav-section-label">总览</div>
       <div class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
-        <span class="nav-icon">📊</span><span class="nav-label">Dashboard</span>
+        <span class="nav-icon">📊</span><span class="nav-label">主页</span>
       </div>
-      <div class="nav-section-label">Modules</div>
+      <div class="nav-section-label">功能模块</div>
       <div class="nav-item" onclick="showPage('temperature')" id="nav-temperature">
-        <span class="nav-icon">🌡️</span><span class="nav-label">Temperature</span>
+        <span class="nav-icon">🌡️</span><span class="nav-label">温度记录</span>
       </div>
       <div class="nav-item" onclick="showPage('maintenance')" id="nav-maintenance">
-        <span class="nav-icon">🛠️</span><span class="nav-label">Maintenance</span>
+        <span class="nav-icon">🛠️</span><span class="nav-label">维修记录</span>
         <span class="nav-badge" id="maintenanceBadge" style="display:none">0</span>
       </div>
       <div class="nav-item" onclick="showPage('fuel')" id="nav-fuel">
-        <span class="nav-icon">⛽</span><span class="nav-label">Fuel & Dips</span>
+        <span class="nav-icon">⛽</span><span class="nav-label">油量管理</span>
       </div>
       <div class="nav-item" onclick="showPage('incidents')" id="nav-incidents">
-        <span class="nav-icon">🚨</span><span class="nav-label">Incidents</span>
+        <span class="nav-icon">🚨</span><span class="nav-label">事故记录</span>
       </div>
       <div class="nav-item" onclick="showPage('roster')" id="nav-roster">
-        <span class="nav-icon">📅</span><span class="nav-label">Roster</span>
+        <span class="nav-icon">📅</span><span class="nav-label">排班表</span>
       </div>
     </div>
 
@@ -313,22 +340,22 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <!-- ══ DASHBOARD ══ -->
       <div class="page active" id="page-dashboard">
         <div class="page-header">
-          <div class="page-eyebrow">Overview</div>
-          <div class="page-title">Dashboard</div>
-          <div class="page-sub" id="dashSub">All stations · Today</div>
+          <div class="page-eyebrow">总览</div>
+          <div class="page-title">主页</div>
+          <div class="page-sub" id="dashSub">所有站点 · 今天</div>
         </div>
 
         <div class="filters-bar">
           <div class="filter-group" id="dashRangeFilter">
-            <button class="filter-btn active" onclick="setDashRange('today',this)">Today</button>
-            <button class="filter-btn" onclick="setDashRange('yesterday',this)">Yesterday</button>
-            <button class="filter-btn" onclick="setDashRange('week',this)">This Week</button>
-            <button class="filter-btn" onclick="setDashRange('lastweek',this)">Last Week</button>
-            <button class="filter-btn" onclick="setDashRange('month',this)">This Month</button>
-            <button class="filter-btn" onclick="setDashRange('lastmonth',this)">Last Month</button>
+            <button class="filter-btn active" onclick="setDashRange('today',this)">今天</button>
+            <button class="filter-btn" onclick="setDashRange('yesterday',this)">昨天</button>
+            <button class="filter-btn" onclick="setDashRange('week',this)">本周</button>
+            <button class="filter-btn" onclick="setDashRange('lastweek',this)">上周</button>
+            <button class="filter-btn" onclick="setDashRange('month',this)">本月</button>
+            <button class="filter-btn" onclick="setDashRange('lastmonth',this)">上月</button>
           </div>
           <select class="filter-select" id="dashStationFilter" onchange="loadDashboard()">
-            <option value="">All Stations</option>
+            <option value="">所有站点</option>
             <option>Sinopec Frankston</option>
             <option>Sinopec Thomastown</option>
             <option>Sinopec Shepparton</option>
@@ -337,16 +364,18 @@ tr:hover td{background:rgba(255,255,255,.015)}
             <option>BP Flemington</option>
             <option>Liberty Golden Square</option>
           </select>
-          <button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button>
+          <button class="refresh-btn" onclick="loadDashboard()">↻ 刷新</button>
         </div>
 
         <div class="stats-grid" id="dashStats">
-          <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">🌡️</span><div class="stat-card-value" id="ds-temp">—</div><div class="stat-card-label">Temperature Submissions</div></div>
-          <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">🛠️</span><div class="stat-card-value" id="ds-maint-open">—</div><div class="stat-card-label">Open Maintenance Jobs</div></div>
-          <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚗</span><div class="stat-card-value" id="ds-driveoff">—</div><div class="stat-card-label">Drive Offs</div></div>
-          <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">⛽</span><div class="stat-card-value" id="ds-unpaid">—</div><div class="stat-card-label">Unpaid Fuel</div><div class="stat-card-sub" id="ds-unpaid-amt"></div></div>
-          <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">↩️</span><div class="stat-card-value" id="ds-refund">—</div><div class="stat-card-label">Refunds</div><div class="stat-card-sub" id="ds-refund-amt"></div></div>
-          <div class="stat-card stat-purple"><div class="stat-card-stripe" style="background:var(--purple)"></div><span class="stat-card-icon">💰</span><div class="stat-card-value" id="ds-cash">—</div><div class="stat-card-label">Cash Reconciliations</div></div>
+          <div class="stat-card stat-blue clickable" onclick="showPage('temperature')" title="View 温度"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">🌡️</span><div class="stat-card-value" id="ds-temp">—</div><div class="stat-card-label">温度提交次数</div></div>
+          <div class="stat-card stat-orange clickable" onclick="showPage('maintenance')" title="View Maintenance"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">🛠️</span><div class="stat-card-value" id="ds-maint-open">—</div><div class="stat-card-label">未完成维修</div></div>
+          <div class="stat-card stat-red clickable" onclick="showPage('incidents')" title="View 事故记录"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚗</span><div class="stat-card-value" id="ds-driveoff">—</div><div class="stat-card-label">油站逃跑</div></div>
+          <div class="stat-card stat-red clickable" onclick="showPage('incidents')" title="View 事故记录"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">⛽</span><div class="stat-card-value" id="ds-unpaid">—</div><div class="stat-card-label">未付油费</div><div class="stat-card-sub" id="ds-unpaid-amt"></div></div>
+          <div class="stat-card stat-orange clickable" onclick="showPage('incidents')" title="View 事故记录"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">↩️</span><div class="stat-card-value" id="ds-refund">—</div><div class="stat-card-label">事故总计</div><div class="stat-card-sub" id="ds-refund-amt"></div></div>
+          <div class="stat-card stat-purple clickable" onclick="showPage('incidents')" title="View 事故记录"><div class="stat-card-stripe" style="background:var(--purple)"></div><span class="stat-card-icon">💰</span><div class="stat-card-value" id="ds-cash">—</div><div class="stat-card-label">收银对账</div></div>
+          <div class="stat-card stat-gold clickable" onclick="showPage('fuel')" title="View 油量管理"><div class="stat-card-stripe" style="background:var(--gold)"></div><span class="stat-card-icon">📊</span><div class="stat-card-value" id="ds-fuel-dips">—</div><div class="stat-card-label">油量记录</div></div>
+          <div class="stat-card stat-green clickable" onclick="showPage('fuel')" title="View 油量管理"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">🚚</span><div class="stat-card-value" id="ds-fuel-delivery">—</div><div class="stat-card-label">油品配送</div></div>
         </div>
 
         <div class="alert-grid" id="dashAlerts">
@@ -358,30 +387,30 @@ tr:hover td{background:rgba(255,255,255,.015)}
           <div class="section-head">
             <div class="section-head-left">
               <span>🚨</span>
-              <span class="section-head-title">Recent Incidents</span>
+              <span class="section-head-title">最近事故</span>
             </div>
             <span class="section-count" id="recentIncidentCount">—</span>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Station</th><th>Type</th><th>Amount</th><th>Ref</th><th>Staff</th></tr></thead>
+              <thead><tr><th>日期</th><th>站点</th><th>类型</th><th>金额</th><th>参考编号</th><th>员工</th></tr></thead>
               <tbody id="recentIncidentsBody"></tbody>
             </table>
           </div>
         </div>
 
-        <!-- Open maintenance -->
+        <!-- open maintenance -->
         <div class="section">
           <div class="section-head">
             <div class="section-head-left">
               <span>🛠️</span>
-              <span class="section-head-title">Open Maintenance Jobs</span>
+              <span class="section-head-title">未完成维修</span>
             </div>
             <span class="section-count" id="openMaintCount">—</span>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Station</th><th>Company</th><th>Equipment</th><th>Arrived</th><th>Ref</th><th>Status</th></tr></thead>
+              <thead><tr><th>站点</th><th>公司</th><th>设备</th><th>到达时间</th><th>参考编号</th><th>状态</th></tr></thead>
               <tbody id="openMaintBody"></tbody>
             </table>
           </div>
@@ -390,39 +419,40 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ TEMPERATURE ══ -->
       <div class="page" id="page-temperature">
+        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
         <div class="page-header">
-          <div class="page-eyebrow">Module</div>
-          <div class="page-title">Temperature Log</div>
-          <div class="page-sub">All stations · temperature records & alerts</div>
+          <div class="page-eyebrow">模块</div>
+          <div class="page-title">温度记录</div>
+          <div class="page-sub">所有站点 · 温度记录与预警</div>
         </div>
         <div class="filters-bar">
           <div class="filter-group" id="tempRangeFilter">
-            <button class="filter-btn active" onclick="setModuleRange('temperature','today',this)">Today</button>
-            <button class="filter-btn" onclick="setModuleRange('temperature','yesterday',this)">Yesterday</button>
-            <button class="filter-btn" onclick="setModuleRange('temperature','week',this)">This Week</button>
-            <button class="filter-btn" onclick="setModuleRange('temperature','lastweek',this)">Last Week</button>
-            <button class="filter-btn" onclick="setModuleRange('temperature','month',this)">This Month</button>
-            <button class="filter-btn" onclick="setModuleRange('temperature','lastmonth',this)">Last Month</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','today',this)">今天</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','yesterday',this)">昨天</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','week',this)">本周</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','lastweek',this)">上周</button>
+            <button class="filter-btn active" onclick="setModuleRange('temperature','month',this)">本月</button>
+            <button class="filter-btn" onclick="setModuleRange('temperature','lastmonth',this)">上月</button>
           </div>
           <select class="filter-select" id="tempStationFilter" onchange="loadModule('temperature')">
-            <option value="">All Stations</option>
+            <option value="">所有站点</option>
             <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
           </select>
-          <button class="refresh-btn" onclick="loadModule('temperature')">↻ Refresh</button>
+          <button class="refresh-btn" onclick="loadModule('temperature')">↻ 刷新</button>
         </div>
         <div class="stats-grid" id="tempStats"></div>
         <div class="section">
           <div class="section-head">
-            <div class="section-head-left"><span>🌡️</span><span class="section-head-title">Temperature Records</span></div>
+            <div class="section-head-left"><span>🌡️</span><span class="section-head-title">温度记录</span></div>
             <span class="section-count" id="tempCount">—</span>
           </div>
           <div class="table-toolbar">
-            <input class="search-input" id="tempSearch" placeholder="Search…" oninput="filterTable('temperature')">
+            <input class="search-input" id="tempSearch" placeholder="搜索…" oninput="filterTable('temperature')">
             <div class="pagination" id="tempPagination"></div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Station</th><th>Shift</th><th>Staff</th><th>Hot Pie</th><th>Sandwich</th><th>Donut</th><th>Dairy</th><th>Cool Rm</th><th>Ice Cream</th><th>Freezer</th><th>Status</th></tr></thead>
+              <thead><tr><th>日期</th><th>站点</th><th>班次</th><th>员工</th><th>热派</th><th>三明治</th><th>甜甜圈</th><th>乳制品</th><th>冷藏室</th><th>冰淇淋</th><th>冷冻柜</th><th>状态</th></tr></thead>
               <tbody id="tempBody"></tbody>
             </table>
           </div>
@@ -431,44 +461,45 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ MAINTENANCE ══ -->
       <div class="page" id="page-maintenance">
+        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
         <div class="page-header">
-          <div class="page-eyebrow">Module</div>
-          <div class="page-title">Maintenance Records</div>
-          <div class="page-sub">All stations · service & repair log</div>
+          <div class="page-eyebrow">模块</div>
+          <div class="page-title">维修记录</div>
+          <div class="page-sub">所有站点 · 服务与维修日志</div>
         </div>
         <div class="filters-bar">
           <div class="filter-group" id="maintRangeFilter">
-            <button class="filter-btn active" onclick="setModuleRange('maintenance','today',this)">Today</button>
-            <button class="filter-btn" onclick="setModuleRange('maintenance','yesterday',this)">Yesterday</button>
-            <button class="filter-btn" onclick="setModuleRange('maintenance','week',this)">This Week</button>
-            <button class="filter-btn" onclick="setModuleRange('maintenance','lastweek',this)">Last Week</button>
-            <button class="filter-btn" onclick="setModuleRange('maintenance','month',this)">This Month</button>
-            <button class="filter-btn" onclick="setModuleRange('maintenance','lastmonth',this)">Last Month</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','today',this)">今天</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','yesterday',this)">昨天</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','week',this)">本周</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','lastweek',this)">上周</button>
+            <button class="filter-btn active" onclick="setModuleRange('maintenance','month',this)">本月</button>
+            <button class="filter-btn" onclick="setModuleRange('maintenance','lastmonth',this)">上月</button>
           </div>
           <select class="filter-select" id="maintStationFilter" onchange="loadModule('maintenance')">
-            <option value="">All Stations</option>
+            <option value="">所有站点</option>
             <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
           </select>
           <select class="filter-select" id="maintStatusFilter" onchange="filterTable('maintenance')">
-            <option value="">All Status</option>
-            <option value="IN_PROGRESS">In Progress</option>
-            <option value="COMPLETED">Completed</option>
+            <option value="">全部状态</option>
+            <option value="IN_PROGRESS">进行中</option>
+            <option value="COMPLETED">已完成</option>
           </select>
-          <button class="refresh-btn" onclick="loadModule('maintenance')">↻ Refresh</button>
+          <button class="refresh-btn" onclick="loadModule('maintenance')">↻ 刷新</button>
         </div>
         <div class="stats-grid" id="maintStats"></div>
         <div class="section">
           <div class="section-head">
-            <div class="section-head-left"><span>🛠️</span><span class="section-head-title">Maintenance Records</span></div>
+            <div class="section-head-left"><span>🛠️</span><span class="section-head-title">维修记录</span></div>
             <span class="section-count" id="maintCount">—</span>
           </div>
           <div class="table-toolbar">
-            <input class="search-input" id="maintSearch" placeholder="Search…" oninput="filterTable('maintenance')">
+            <input class="search-input" id="maintSearch" placeholder="搜索…" oninput="filterTable('maintenance')">
             <div class="pagination" id="maintPagination"></div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Station</th><th>Company</th><th>Equipment</th><th>Issue</th><th>Arrived</th><th>Departed</th><th>Fixed?</th><th>Follow Up?</th><th>Status</th><th>Ref</th></tr></thead>
+              <thead><tr><th>日期</th><th>站点</th><th>公司</th><th>设备</th><th>问题描述</th><th>到达</th><th>离开</th><th>已修好?</th><th>需跟进?</th><th>状态</th><th>参考编号</th></tr></thead>
               <tbody id="maintBody"></tbody>
             </table>
           </div>
@@ -477,68 +508,69 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ FUEL & DIPS ══ -->
       <div class="page" id="page-fuel">
+        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
         <div class="page-header">
-          <div class="page-eyebrow">Module</div>
-          <div class="page-title">Fuel & Dips</div>
-          <div class="page-sub">Daily dip readings, deliveries, fuel cost</div>
+          <div class="page-eyebrow">模块</div>
+          <div class="page-title">油量管理</div>
+          <div class="page-sub">每日油量读数、配送与油价</div>
         </div>
         <div class="filters-bar">
           <div class="filter-group" id="fuelRangeFilter">
-            <button class="filter-btn active" onclick="setModuleRange('fuel','today',this)">Today</button>
-            <button class="filter-btn" onclick="setModuleRange('fuel','yesterday',this)">Yesterday</button>
-            <button class="filter-btn" onclick="setModuleRange('fuel','week',this)">This Week</button>
-            <button class="filter-btn" onclick="setModuleRange('fuel','lastweek',this)">Last Week</button>
-            <button class="filter-btn" onclick="setModuleRange('fuel','month',this)">This Month</button>
-            <button class="filter-btn" onclick="setModuleRange('fuel','lastmonth',this)">Last Month</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','today',this)">今天</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','yesterday',this)">昨天</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','week',this)">本周</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','lastweek',this)">上周</button>
+            <button class="filter-btn active" onclick="setModuleRange('fuel','month',this)">本月</button>
+            <button class="filter-btn" onclick="setModuleRange('fuel','lastmonth',this)">上月</button>
           </div>
           <select class="filter-select" id="fuelStationFilter" onchange="loadModule('fuel')">
-            <option value="">All Stations</option>
+            <option value="">所有站点</option>
             <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
           </select>
           <div class="filter-group" id="fuelTabFilter">
             <button class="filter-btn active" onclick="setFuelTab('dips',this)">Dips</button>
             <button class="filter-btn" onclick="setFuelTab('delivery',this)">Delivery</button>
-            <button class="filter-btn" onclick="setFuelTab('cost',this)">Fuel Cost</button>
+            <button class="filter-btn" onclick="setFuelTab('cost',this)">油价记录</button>
           </div>
-          <button class="refresh-btn" onclick="loadModule('fuel')">↻ Refresh</button>
+          <button class="refresh-btn" onclick="loadModule('fuel')">↻ 刷新</button>
         </div>
         <div class="stats-grid" id="fuelStats"></div>
         <div class="section" id="fuelDipsSection">
           <div class="section-head">
-            <div class="section-head-left"><span>⛽</span><span class="section-head-title">Fuel Dips</span></div>
+            <div class="section-head-left"><span>⛽</span><span class="section-head-title">油量读数</span></div>
             <span class="section-count" id="fuelDipsCount">—</span>
           </div>
           <div class="table-toolbar">
-            <input class="search-input" id="fuelSearch" placeholder="Search…" oninput="filterTable('fuel')">
+            <input class="search-input" id="fuelSearch" placeholder="搜索…" oninput="filterTable('fuel')">
             <div class="pagination" id="fuelPagination"></div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Station</th><th>Staff</th><th>91</th><th>95</th><th>98</th><th>E10</th><th>Diesel</th><th>Diesel 1</th><th>Diesel 2</th><th>Warning</th></tr></thead>
+              <thead><tr><th>日期</th><th>站点</th><th>员工</th><th>91</th><th>95</th><th>98</th><th>E10</th><th>柴油</th><th>柴油1</th><th>柴油2</th><th>警告</th></tr></thead>
               <tbody id="fuelDipsBody"></tbody>
             </table>
           </div>
         </div>
         <div class="section" id="fuelDeliverySection" style="display:none">
           <div class="section-head">
-            <div class="section-head-left"><span>🚚</span><span class="section-head-title">Fuel Delivery</span></div>
+            <div class="section-head-left"><span>🚚</span><span class="section-head-title">油品配送</span></div>
             <span class="section-count" id="fuelDeliveryCount">—</span>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Station</th><th>Staff</th><th>Supplier</th><th>Docket No</th><th>91</th><th>95</th><th>98</th><th>E10</th><th>Diesel</th><th>Diesel 1</th><th>Diesel 2</th></tr></thead>
+              <thead><tr><th>日期</th><th>站点</th><th>员工</th><th>供应商</th><th>送货单号</th><th>91</th><th>95</th><th>98</th><th>E10</th><th>柴油</th><th>柴油1</th><th>柴油2</th></tr></thead>
               <tbody id="fuelDeliveryBody"></tbody>
             </table>
           </div>
         </div>
         <div class="section" id="fuelCostSection" style="display:none">
           <div class="section-head">
-            <div class="section-head-left"><span>💲</span><span class="section-head-title">Fuel Cost</span></div>
+            <div class="section-head-left"><span>💲</span><span class="section-head-title">油价记录</span></div>
             <span class="section-count" id="fuelCostCount">—</span>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Source</th><th>91</th><th>95</th><th>98</th><th>E10</th><th>Diesel</th><th>Notes</th></tr></thead>
+              <thead><tr><th>日期</th><th>来源</th><th>91</th><th>95</th><th>98</th><th>E10</th><th>柴油</th><th>备注</th></tr></thead>
               <tbody id="fuelCostBody"></tbody>
             </table>
           </div>
@@ -547,45 +579,46 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ INCIDENTS ══ -->
       <div class="page" id="page-incidents">
+        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
         <div class="page-header">
-          <div class="page-eyebrow">Module</div>
-          <div class="page-title">Incidents</div>
-          <div class="page-sub">Drive offs, unpaid fuel, refunds</div>
+          <div class="page-eyebrow">模块</div>
+          <div class="page-title">事故记录</div>
+          <div class="page-sub">逃跑加油、未付油费、退款</div>
         </div>
         <div class="filters-bar">
           <div class="filter-group" id="incRangeFilter">
-            <button class="filter-btn active" onclick="setModuleRange('incidents','today',this)">Today</button>
-            <button class="filter-btn" onclick="setModuleRange('incidents','yesterday',this)">Yesterday</button>
-            <button class="filter-btn" onclick="setModuleRange('incidents','week',this)">This Week</button>
-            <button class="filter-btn" onclick="setModuleRange('incidents','lastweek',this)">Last Week</button>
-            <button class="filter-btn" onclick="setModuleRange('incidents','month',this)">This Month</button>
-            <button class="filter-btn" onclick="setModuleRange('incidents','lastmonth',this)">Last Month</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','today',this)">今天</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','yesterday',this)">昨天</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','week',this)">本周</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','lastweek',this)">上周</button>
+            <button class="filter-btn active" onclick="setModuleRange('incidents','month',this)">本月</button>
+            <button class="filter-btn" onclick="setModuleRange('incidents','lastmonth',this)">上月</button>
           </div>
           <select class="filter-select" id="incStationFilter" onchange="loadModule('incidents')">
-            <option value="">All Stations</option>
+            <option value="">所有站点</option>
             <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
           </select>
           <div class="filter-group" id="incTypeFilter">
-            <button class="filter-btn active" onclick="setIncidentTab('all',this)">All</button>
-            <button class="filter-btn" onclick="setIncidentTab('driveoff',this)">Drive Off</button>
-            <button class="filter-btn" onclick="setIncidentTab('unpaid',this)">Unpaid Fuel</button>
-            <button class="filter-btn" onclick="setIncidentTab('refund',this)">Refunds</button>
+            <button class="filter-btn active" onclick="setIncidentTab('all',this)">全部</button>
+            <button class="filter-btn" onclick="setIncidentTab('driveoff',this)">逃跑加油</button>
+            <button class="filter-btn" onclick="setIncidentTab('unpaid',this)">未付油费</button>
+            <button class="filter-btn" onclick="setIncidentTab('refund',this)">退款</button>
           </div>
-          <button class="refresh-btn" onclick="loadModule('incidents')">↻ Refresh</button>
+          <button class="refresh-btn" onclick="loadModule('incidents')">↻ 刷新</button>
         </div>
         <div class="stats-grid" id="incStats"></div>
         <div class="section">
           <div class="section-head">
-            <div class="section-head-left"><span>🚨</span><span class="section-head-title">Incident Records</span></div>
+            <div class="section-head-left"><span>🚨</span><span class="section-head-title">事故记录</span></div>
             <span class="section-count" id="incCount">—</span>
           </div>
           <div class="table-toolbar">
-            <input class="search-input" id="incSearch" placeholder="Search plate, ref, staff…" oninput="filterTable('incidents')">
+            <input class="search-input" id="incSearch" placeholder="搜索车牌、编号、员工…" oninput="filterTable('incidents')">
             <div class="pagination" id="incPagination"></div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Station</th><th>Type</th><th>Amount</th><th>Plate</th><th>Staff</th><th>Ref / Receipt</th><th>Police?</th><th>Detail</th></tr></thead>
+              <thead><tr><th>日期</th><th>站点</th><th>类型</th><th>金额</th><th>车牌</th><th>员工</th><th>参考编号</th><th>报警?</th><th>详情</th></tr></thead>
               <tbody id="incBody"></tbody>
             </table>
           </div>
@@ -594,39 +627,40 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ ROSTER ══ -->
       <div class="page" id="page-roster">
+        <button class="back-btn" onclick="showPage('dashboard')">← 返回主页</button>
         <div class="page-header">
-          <div class="page-eyebrow">Module</div>
-          <div class="page-title">Roster</div>
-          <div class="page-sub">Staff schedules across all stations</div>
+          <div class="page-eyebrow">模块</div>
+          <div class="page-title">排班表</div>
+          <div class="page-sub">所有站点员工排班</div>
         </div>
         <div class="filters-bar">
           <div class="filter-group" id="rosterRangeFilter">
-            <button class="filter-btn active" onclick="setModuleRange('roster','today',this)">Today</button>
-            <button class="filter-btn" onclick="setModuleRange('roster','yesterday',this)">Yesterday</button>
-            <button class="filter-btn" onclick="setModuleRange('roster','week',this)">This Week</button>
-            <button class="filter-btn" onclick="setModuleRange('roster','lastweek',this)">Last Week</button>
-            <button class="filter-btn" onclick="setModuleRange('roster','month',this)">This Month</button>
-            <button class="filter-btn" onclick="setModuleRange('roster','lastmonth',this)">Last Month</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','today',this)">今天</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','yesterday',this)">昨天</button>
+            <button class="filter-btn active" onclick="setModuleRange('roster','week',this)">本周</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','lastweek',this)">上周</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','month',this)">本月</button>
+            <button class="filter-btn" onclick="setModuleRange('roster','lastmonth',this)">上月</button>
           </div>
           <select class="filter-select" id="rosterStationFilter" onchange="loadModule('roster')">
-            <option value="">All Stations</option>
+            <option value="">所有站点</option>
             <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
           </select>
-          <button class="refresh-btn" onclick="loadModule('roster')">↻ Refresh</button>
+          <button class="refresh-btn" onclick="loadModule('roster')">↻ 刷新</button>
         </div>
         <div class="stats-grid" id="rosterStats"></div>
         <div class="section">
           <div class="section-head">
-            <div class="section-head-left"><span>📅</span><span class="section-head-title">Roster Records</span></div>
+            <div class="section-head-left"><span>📅</span><span class="section-head-title">排班表 Records</span></div>
             <span class="section-count" id="rosterCount">—</span>
           </div>
           <div class="table-toolbar">
-            <input class="search-input" id="rosterSearch" placeholder="Search staff, station…" oninput="filterTable('roster')">
+            <input class="search-input" id="rosterSearch" placeholder="搜索员工、站点…" oninput="filterTable('roster')">
             <div class="pagination" id="rosterPagination"></div>
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th>Date</th><th>Station</th><th>Staff</th><th>Shift</th><th>Start</th><th>Finish</th><th>Role</th><th>Notes</th></tr></thead>
+              <thead><tr><th>日期</th><th>站点</th><th>员工</th><th>班次</th><th>开始</th><th>结束</th><th>职位</th><th>备注</th></tr></thead>
               <tbody id="rosterBody"></tbody>
             </table>
           </div>
@@ -636,26 +670,34 @@ tr:hover td{background:rgba(255,255,255,.015)}
     </div><!-- /main -->
   </div><!-- /app-body -->
 
-  <!-- ══ MOBILE BOTTOM NAV ══ -->
-  <div class="mobile-nav">
-    <div class="mobile-nav-inner">
-      <div class="mobile-nav-item active" onclick="showPage('dashboard')" id="mnav-dashboard">
-        <span class="mnav-icon">📊</span><span>Dashboard</span>
+
+
+  <!-- ══ DRAWER ══ -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <span class="drawer-brand">Aries Petroleum</span>
+      <span class="drawer-close" onclick="closeDrawer()">✕</span>
+    </div>
+    <div class="drawer-nav">
+      <div class="drawer-item active" onclick="showPage('dashboard');closeDrawer()" id="dnav-dashboard">
+        <span class="drawer-item-icon">📊</span><span class="drawer-item-label">主页</span>
       </div>
-      <div class="mobile-nav-item" onclick="showPage('temperature')" id="mnav-temperature">
-        <span class="mnav-icon">🌡️</span><span>Temp</span>
+      <div class="drawer-item" onclick="showPage('temperature');closeDrawer()" id="dnav-temperature">
+        <span class="drawer-item-icon">🌡️</span><span class="drawer-item-label">温度记录</span>
       </div>
-      <div class="mobile-nav-item" onclick="showPage('maintenance')" id="mnav-maintenance">
-        <span class="mnav-icon" style="position:relative">🛠️<span class="mobile-nav-badge" id="mmaintBadge" style="display:none">0</span></span><span>Maint</span>
+      <div class="drawer-item" onclick="showPage('maintenance');closeDrawer()" id="dnav-maintenance">
+        <span class="drawer-item-icon">🛠️</span><span class="drawer-item-label">维修记录</span>
+        <span class="drawer-badge" id="drawerMaintBadge" style="display:none">0</span>
       </div>
-      <div class="mobile-nav-item" onclick="showPage('fuel')" id="mnav-fuel">
-        <span class="mnav-icon">⛽</span><span>Fuel</span>
+      <div class="drawer-item" onclick="showPage('fuel');closeDrawer()" id="dnav-fuel">
+        <span class="drawer-item-icon">⛽</span><span class="drawer-item-label">油量管理</span>
       </div>
-      <div class="mobile-nav-item" onclick="showPage('incidents')" id="mnav-incidents">
-        <span class="mnav-icon">🚨</span><span>Incidents</span>
+      <div class="drawer-item" onclick="showPage('incidents');closeDrawer()" id="dnav-incidents">
+        <span class="drawer-item-icon">🚨</span><span class="drawer-item-label">事故记录</span>
       </div>
-      <div class="mobile-nav-item" onclick="showPage('roster')" id="mnav-roster">
-        <span class="mnav-icon">📅</span><span>Roster</span>
+      <div class="drawer-item" onclick="showPage('roster');closeDrawer()" id="dnav-roster">
+        <span class="drawer-item-icon">📅</span><span class="drawer-item-label">排班表</span>
       </div>
     </div>
   </div>
@@ -675,7 +717,7 @@ const FUEL_URL  = 'https://script.google.com/macros/s/AKfycbyGCrBEdvQJ4t38e0ryRq
 let isLoggedIn = false;
 let pinBuffer  = '';
 let dashRange  = 'today';
-let moduleRanges = { temperature:'today', maintenance:'today', fuel:'today', incidents:'today', roster:'today' };
+let moduleRanges = { temperature:'month', maintenance:'month', fuel:'month', incidents:'month', roster:'week' };
 let fuelTab     = 'dips';
 let incidentTab = 'all';
 let lastUpdated = null;
@@ -719,8 +761,8 @@ function updatePinDots(){
   }
 }
 async function pinSubmit(){
-  if(pinBuffer.length<4){document.getElementById('loginError').textContent='Enter 4-digit PIN.';document.getElementById('loginError').classList.add('show');return}
-  showLoading('Verifying…');
+  if(pinBuffer.length<4){document.getElementById('loginError').textContent='请输入4位PIN码。';document.getElementById('loginError').classList.add('show');return}
+  showLoading('验证中…');
   try{
     // PIN sent once for verification only
     const res=await fetch(`${STAFF_URL}?action=verifyManagerDashboard&pin=${pinBuffer}`,{signal:AbortSignal.timeout(8000)});
@@ -728,6 +770,7 @@ async function pinSubmit(){
     hideLoading();
     if(data.success){
       isLoggedIn=true;
+      sessionStorage.setItem('ap_mgr_authed','1');
       sessionStorage.setItem('ap_mgr_exp', String(Date.now() + 8*60*60*1000));
       pinBuffer=''; updatePinDots();
       document.getElementById('loginScreen').style.display='none';
@@ -735,19 +778,18 @@ async function pinSubmit(){
       startClock();
       loadDashboard();
     }else{
-      document.getElementById('loginError').textContent='Incorrect PIN. Please try again.';
+      document.getElementById('loginError').textContent='PIN码错误，请重试。';
       document.getElementById('loginError').classList.add('show');
       pinBuffer='';updatePinDots();
     }
   }catch(e){
     hideLoading();
-    document.getElementById('loginError').textContent='Connection error. Please try again.';
+    document.getElementById('loginError').textContent='连接错误，请重试。';
     document.getElementById('loginError').classList.add('show');
     pinBuffer='';updatePinDots();
   }
 }
-
-// Build API URL with token instead of PIN
+// Build API URL
 function staffApi(action,extra=''){
   if(!isLoggedIn) return null;
   return `${STAFF_URL}?action=${action}&pin=8888${extra}`;
@@ -782,17 +824,16 @@ document.addEventListener('keydown',e=>{
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.querySelectorAll('.mobile-nav-item').forEach(n=>n.classList.remove('active'));
+
   document.getElementById('page-'+id).classList.add('active');
   document.getElementById('nav-'+id).classList.add('active');
-  const mnavEl=document.getElementById('mnav-'+id);
-  if(mnavEl) mnavEl.classList.add('active');
-  const titles={dashboard:'Dashboard',temperature:'Temperature',maintenance:'Maintenance',fuel:'Fuel & Dips',incidents:'Incidents',roster:'Roster'};
+
+  const titles={dashboard:'Dashboard',temperature:'温度',maintenance:'Maintenance',fuel:'油量管理',incidents:'事故记录',roster:'排班表'};
   document.getElementById('topbarTitle').textContent=titles[id]||id;
   // lazy load
   if(id!=='dashboard'){
     if(id==='fuel'){
-      if(!cache.fuel.dips&&!cache.fuel.delivery&&!cache.fuel.cost) loadModule(id);
+      if(!cache.fuel.dips||!cache.fuel.delivery||!cache.fuel.cost) loadModule(id);
     }else{
       if(!cache[id]) loadModule(id);
     }
@@ -840,14 +881,18 @@ function filterByStation(arr,field,station){
 
 function formatDateAU(v){
   if(!v) return '—';
-
-  const d = new Date(v);
-
-  return d.toLocaleDateString('en-AU',{
-    year:'numeric',
-    month:'2-digit',
-    day:'2-digit'
-  });
+  // handle Google Sheets Date objects serialized as strings or JS dates
+  const s = String(v);
+  // already yyyy-MM-dd
+  if(/^\d{4}-\d{2}-\d{2}/.test(s)){
+    const [y,m,d] = s.slice(0,10).split('-');
+    return `${d}/${m}/${y}`;
+  }
+  try {
+    const d = new Date(v);
+    if(!isNaN(d.getTime())) return d.toLocaleDateString('en-AU',{day:'2-digit',month:'2-digit',year:'numeric'});
+  } catch(e){}
+  return s.slice(0,10)||'—';
 }
 
 function rangeLabel(range){
@@ -889,9 +934,9 @@ function setIncidentTab(tab,btn){
 // DASHBOARD
 // ══════════════════════════════════════════
 async function loadDashboard(){
-  showLoading('Loading dashboard…');
+  showLoading('加载主页中…');
   const station=document.getElementById('dashStationFilter').value;
-  document.getElementById('dashSub').textContent=(station||'All Stations')+' · '+rangeLabel(dashRange);
+  document.getElementById('dashSub').textContent=(station||'所有站点')+' · '+rangeLabel(dashRange);
   try{
     const days=rangeToDays(dashRange);
     const dashUrl=staffApi('getManagerDashboardData',`&days=${days}`);
@@ -899,12 +944,28 @@ async function loadDashboard(){
     const res=await fetch(dashUrl,{signal:AbortSignal.timeout(10000)});
     const data=await res.json();
     hideLoading();
-    if(!data.success){showToast('Failed to load dashboard','danger');return;}
+    if(!data.success){showToast('主页加载失败','danger');return;}
     cache.dashboard=data;
+    // Also fetch fuel summary for dashboard cards
+    fetch(`${FUEL_URL}?action=getFuelDashboard&pin=8888`,{signal:AbortSignal.timeout(10000)})
+      .then(r=>r.json()).then(fd=>{
+        if(fd.success){
+          cache.fuel.dips=fd.dips||[];
+          cache.fuel.delivery=fd.delivery||[];
+          cache.fuel.cost=fd.cost||[];
+          const fuelRange=getRangeDates(dashRange);
+          const dipCount=(fd.dips||[]).filter(r=>String(r.Date||r.Timestamp||'').slice(0,10)>=fuelRange.from&&String(r.Date||r.Timestamp||'').slice(0,10)<=fuelRange.to).length;
+          const delCount=(fd.delivery||[]).filter(r=>String(r.Date||r.Timestamp||'').slice(0,10)>=fuelRange.from&&String(r.Date||r.Timestamp||'').slice(0,10)<=fuelRange.to).length;
+          const dsEl=document.getElementById('ds-fuel-dips');
+          const ddEl=document.getElementById('ds-fuel-delivery');
+          if(dsEl) dsEl.textContent=dipCount;
+          if(ddEl) ddEl.textContent=delCount;
+        }
+      }).catch(()=>{});
     renderDashboard(data,station);
     lastUpdated=new Date();
     updateStatusBar();
-  }catch(e){hideLoading();showToast('Connection error loading dashboard','danger');}
+  }catch(e){hideLoading();showToast('加载主页时连接错误','danger');}
 }
 
 function rangeToDays(r){
@@ -953,30 +1014,30 @@ function renderDashboard(data,station){
   document.getElementById('ds-cash').textContent=refund.length;
 
   // alert cards
-  const alertsEl=document.getElementById('dashAlerts');
+  const 个警告El=document.getElementById('dashAlerts');
   const STATIONS=['Sinopec Frankston','Sinopec Thomastown','Sinopec Shepparton','Sinopec Ballarat','BP Clayton South','BP Flemington','Liberty Golden Square'];
   const stationsToShow=station?[station]:STATIONS;
 
-  // temperature alerts
+  // temperature 个警告
   const tempAlerts=buildTempAlerts(temperature,stationsToShow,range);
-  // maintenance alerts
+  // maintenance 个警告
   const maintAlerts=buildMaintAlerts(openMaint,stationsToShow);
 
-  alertsEl.innerHTML=tempAlerts+maintAlerts;
+  个警告El.innerHTML=tempAlerts+maintAlerts;
 
   // recent incidents table
   const allIncidents=[
     ...driveOff.map(r=>({...r,_type:'Drive Off'})),
-    ...unpaidFuel.map(r=>({...r,_type:'Unpaid Fuel'}))
+    ...unpaidFuel.map(r=>({...r,_type:'未付油费'}))
   ].sort((a,b)=>String(b.Date||b.SubmittedAt).localeCompare(String(a.Date||a.SubmittedAt))).slice(0,20);
 
-  document.getElementById('recentIncidentCount').textContent=allIncidents.length+' records';
+  document.getElementById('recentIncidentCount').textContent=allIncidents.length+' 条记录';
   const incTbody=document.getElementById('recentIncidentsBody');
   if(!allIncidents.length){
-    incTbody.innerHTML=`<tr class="empty-row"><td colspan="6">No incidents in this period</td></tr>`;
+    incTbody.innerHTML=`<tr class="empty-row"><td colspan="6">该时间段内没有事故记录</td></tr>`;
   }else{
     incTbody.innerHTML=allIncidents.map(r=>`<tr>
-      <td class="td-mono">${formatDateAU(r.Date)}</td>
+      <td class="td-mono">${formatDateAU(r.Date||r.SubmittedAt)}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td><span class="badge ${r._type==='Drive Off'?'badge-danger':'badge-warn'}">${r._type}</span></td>
       <td class="td-mono">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
@@ -986,10 +1047,10 @@ function renderDashboard(data,station){
   }
 
   // open maintenance table
-  document.getElementById('openMaintCount').textContent=openMaint.length+' open';
+  document.getElementById('openMaintCount').textContent=openMaint.length+' 未完成';
   const maintTbody=document.getElementById('openMaintBody');
   if(!openMaint.length){
-    maintTbody.innerHTML=`<tr class="empty-row"><td colspan="6">No open maintenance jobs</td></tr>`;
+    maintTbody.innerHTML=`<tr class="empty-row"><td colspan="6">没有未完成的维修工单</td></tr>`;
   }else{
     maintTbody.innerHTML=openMaint.map(r=>`<tr>
       <td class="td-main">${esc(r.Station||r.station||'—')}</td>
@@ -997,23 +1058,23 @@ function renderDashboard(data,station){
       <td>${esc(r.EquipmentDisplay||r.equipmentDisplay||r.Equipment||r.equipment||'—')}</td>
       <td class="td-mono">${esc(r.ArrivalTime||r.arrivalTime||'—')}</td>
       <td class="td-mono">${esc(r.ReferenceNo||r.referenceNo||'—')}</td>
-      <td><span class="badge badge-warn">IN PROGRESS</span></td>
+      <td><span class="badge badge-warn">进行中</span></td>
     </tr>`).join('');
   }
 
   // update badge
   const badge=document.getElementById('maintenanceBadge');
-  const mbadge=document.getElementById('mmaintBadge');
+  const drawerBadge=document.getElementById('drawerMaintBadge');
   if(openMaint.length>0){
     badge.textContent=openMaint.length;badge.style.display='inline';
-    if(mbadge){mbadge.textContent=openMaint.length;mbadge.style.display='inline';}
+    if(drawerBadge){drawerBadge.textContent=openMaint.length;drawerBadge.style.display='inline';}
   }else{
     badge.style.display='none';
-    if(mbadge) mbadge.style.display='none';
+    if(drawerBadge) drawerBadge.style.display='none';
   }
 }
 
-function buildTempAlerts(records,stations,range){
+function buildTempAlerts(条记录,stations,range){
   const TEMP_RULES=[
     {key:'HotPie',label:'Hot Pie',type:'min',limit:60},
     {key:'Sandwich',label:'Sandwich Fridge',type:'max',limit:5},
@@ -1025,8 +1086,8 @@ function buildTempAlerts(records,stations,range){
   ];
 
   const submittedByStation={};
-  const alertsByStation={};
-  records.forEach(r=>{
+  const 个警告ByStation={};
+  条记录.forEach(r=>{
     const st=r.Station||'';
     if(!submittedByStation[st])submittedByStation[st]=new Set();
     submittedByStation[st].add((r.Date||'')+'_'+(r.Shift||''));
@@ -1036,28 +1097,28 @@ function buildTempAlerts(records,stations,range){
       if(isNaN(v)||r[rule.key]==='') return;
       const bad=(rule.type==='min'&&v<rule.limit)||(rule.type==='max'&&v>rule.limit);
       if(bad){
-        if(!alertsByStation[st])alertsByStation[st]=[];
-        alertsByStation[st].push(`${rule.label}: ${v}°C`);
+        if(!个警告ByStation[st])个警告ByStation[st]=[];
+        个警告ByStation[st].push(`${rule.label}: ${v}°C`);
       }
     });
   });
 
   const stationLines=stations.map(st=>{
     const submitted=submittedByStation[st]?submittedByStation[st].size:0;
-    const issues=alertsByStation[st]||[];
+    const issues=个警告ByStation[st]||[];
     const icon=issues.length?'⚠️':submitted>0?'✅':'❌';
-    const detail=issues.length?issues.slice(0,2).join(', ')+(issues.length>2?'…':''):(submitted===0&&range==='today'?'No submissions today':'');
+    const detail=issues.length?issues.slice(0,2).join(', ')+(issues.length>2?'…':''):(submitted===0&&range==='today'?'今天尚未提交':'');
     return `<div class="alert-card-row"><span class="alert-card-row-icon">${icon}</span><span class="alert-card-row-text"><strong>${st.replace('Sinopec ','').replace('BP ','').replace(' Golden Square','')}</strong>${detail?` — <span style="color:var(--warn)">${detail}</span>`:''}</span></div>`;
   }).join('');
 
-  const totalIssues=Object.values(alertsByStation).flat().length;
+  const totalIssues=Object.values(个警告ByStation).flat().length;
   const cardClass=totalIssues>0?'has-issues':'all-ok';
 
   return `<div class="alert-card ${cardClass}">
     <div class="alert-card-header">
       <span class="alert-card-icon">🌡️</span>
-      <span class="alert-card-title">Temperature</span>
-      <span class="alert-card-count" style="color:${totalIssues>0?'var(--warn)':'var(--accent)'}">${totalIssues>0?totalIssues+' alerts':'All OK'}</span>
+      <span class="alert-card-title">温度记录</span>
+      <span class="alert-card-count" style="color:${totalIssues>0?'var(--warn)':'var(--accent)'}">${totalIssues>0?totalIssues+' 个警告':'全部正常'}</span>
     </div>
     <div class="alert-card-body">${stationLines}</div>
   </div>`;
@@ -1079,12 +1140,12 @@ function buildMaintAlerts(openJobs,stations){
 
   const total=openJobs.length;
   if(!total) return `<div class="alert-card all-ok">
-    <div class="alert-card-header"><span class="alert-card-icon">🛠️</span><span class="alert-card-title">Maintenance</span><span class="alert-card-count" style="color:var(--accent)">All Clear</span></div>
-    <div class="alert-card-body" style="color:var(--muted);font-size:12px">No open maintenance jobs</div>
+    <div class="alert-card-header"><span class="alert-card-icon">🛠️</span><span class="alert-card-title">维修记录</span><span class="alert-card-count" style="color:var(--accent)">全部正常</span></div>
+    <div class="alert-card-body" style="color:var(--muted);font-size:12px">没有未完成的维修工单</div>
   </div>`;
 
   return `<div class="alert-card has-issues">
-    <div class="alert-card-header"><span class="alert-card-icon">🛠️</span><span class="alert-card-title">Maintenance</span><span class="alert-card-count" style="color:var(--warn)">${total} Open</span></div>
+    <div class="alert-card-header"><span class="alert-card-icon">🛠️</span><span class="alert-card-title">维修记录</span><span class="alert-card-count" style="color:var(--warn)">${total} 未完成</span></div>
     <div class="alert-card-body">${stationLines}</div>
   </div>`;
 }
@@ -1098,39 +1159,49 @@ async function loadModule(mod){
   const stationEl=document.getElementById(mod+'StationFilter');
   const station=stationEl?stationEl.value:'';
   try{
-    const days=rangeToDays(moduleRanges[mod]||'week')+5;// extra buffer
+    const days=rangeToDays(moduleRanges[mod]||'month');
     const modUrl=staffApi('getManagerDashboardData',`&days=${days}`);
     if(!modUrl) return;
     const res=await fetch(modUrl,{signal:AbortSignal.timeout(10000)});
     const data=await res.json();
     hideLoading();
-    if(!data.success){showToast('Failed to load data','danger');return;}
-    if(mod==='temperature'){cache.temperature=data.temperature||[];renderTemperature(station);}
+    if(!data.success){showToast('数据加载失败','danger');return;}
+    if(mod==='temperature'){cache.temperature=data.temperature||[];render温度(station);}
     if(mod==='maintenance'){cache.maintenance=data.maintenance||[];cache._openMaint=data.openMaintenance||[];renderMaintenance(station);}
-    if(mod==='incidents'){cache.incidents={driveOff:data.driveOff||[],unpaidFuel:data.unpaidFuel||[]};renderIncidents(station);}
-    if(mod==='roster'){cache.roster=data.roster||[];renderRoster(station);}
+    if(mod==='incidents'){cache.incidents={driveOff:data.driveOff||[],unpaidFuel:data.unpaidFuel||[]};render事故记录(station);}
+    if(mod==='roster'){cache.roster=data.roster||[];render排班表(station);}
     lastUpdated=new Date();updateStatusBar();
-  }catch(e){hideLoading();showToast('Connection error','danger');}
+  }catch(e){hideLoading();showToast('连接错误','danger');}
 }
 
-async function loadFuel(){
-  showLoading('Loading Fuel & Dips…');
+async function loadFuel(force=false){
   const station=document.getElementById('fuelStationFilter').value;
+  // Skip if already loading (prevent double-fetch)
+  if(cache.fuel._loading) return;
+  // Skip fetch if all three caches are populated
+  if(!force && cache.fuel.dips && cache.fuel.delivery && cache.fuel.cost){
+    renderFuel(station);
+    return;
+  }
+  cache.fuel._loading=true;
+  showLoading('加载中…');
   try{
     const fuelUrl=fuelApi('getFuelDashboard');
     if(!fuelUrl) return;
     const res=await fetch(fuelUrl,{signal:AbortSignal.timeout(10000)});
     const data=await res.json();
     hideLoading();
-    if(!data.success){showToast('Failed to load fuel data','danger');return;}
+    if(!data.success){cache.fuel._loading=false;showToast('油量数据加载失败','danger');return;}
     cache.fuel.dips=data.dips||[];
     cache.fuel.delivery=data.delivery||[];
     cache.fuel.cost=data.cost||[];
+    cache.fuel._loading=false;
     renderFuel(station);
     lastUpdated=new Date();updateStatusBar();
   }catch(e){
     hideLoading();
-    showToast('Could not connect to Fuel & Dips system','warn');
+    cache.fuel._loading=false;
+    showToast('无法连接油量管理系统','warn');
     cache.fuel.dips=[];cache.fuel.delivery=[];cache.fuel.cost=[];
     renderFuel(station);
   }
@@ -1139,9 +1210,13 @@ async function loadFuel(){
 // ══════════════════════════════════════════
 // RENDERERS
 // ══════════════════════════════════════════
-function renderTemperature(station){
+function render温度(station){
   const range=moduleRanges.temperature;
-  let rows=filterByRange(cache.temperature||[],'Date',range);
+  let rows=(cache.temperature||[]).filter(r=>{
+    const d=String(r.Date||r.SubmittedAt||r.date||'').slice(0,10);
+    const{from,to}=getRangeDates(range);
+    return d>=from&&d<=to;
+  });
   if(station) rows=filterByStation(rows,'Station',station);
 
   const RULES=[
@@ -1164,18 +1239,18 @@ function renderTemperature(station){
   });
 
   document.getElementById('tempStats').innerHTML=`
-    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📋</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">Submissions</div></div>
-    <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚨</span><div class="stat-card-value">${danger}</div><div class="stat-card-label">Danger Readings</div></div>
-    <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">⚠️</span><div class="stat-card-value">${warning}</div><div class="stat-card-label">Warning Readings</div></div>
+    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📋</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">提交次数</div></div>
+    <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚨</span><div class="stat-card-value">${danger}</div><div class="stat-card-label">危险读数</div></div>
+    <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">⚠️</span><div class="stat-card-value">${warning}</div><div class="stat-card-label">警告读数</div></div>
   `;
 
-  document.getElementById('tempCount').textContent=rows.length+' records';
+  document.getElementById('tempCount').textContent=rows.length+' 条记录';
   tableState.temperature.filtered=rows;
   tableState.temperature.page=1;
   renderTablePage('temperature');
 }
 
-function renderTemperatureRows(rows){
+function render温度Rows(rows){
   const RULES=[
     {key:'HotPie',type:'min',limit:60},
     {key:'Sandwich',type:'max',limit:5},
@@ -1194,7 +1269,7 @@ function renderTemperatureRows(rows){
     return `<span ${cls}>${v}</span>`;
   }
 
-  if(!rows.length) return `<tr class="empty-row"><td colspan="12">No records</td></tr>`;
+  if(!rows.length) return `<tr class="empty-row"><td colspan="12">暂无记录</td></tr>`;
   return rows.map(r=>{
     const issues=RULES.filter(rule=>{
       const v=Number(r[rule.key]||'');
@@ -1202,7 +1277,7 @@ function renderTemperatureRows(rows){
     });
     const status=issues.length>0?`<span class="badge badge-danger">ALERT</span>`:`<span class="badge badge-ok">OK</span>`;
     return `<tr>
-      <td class="td-mono">${formatDateAU(r.Date)}</td>
+      <td class="td-mono">${r.Date||'—'}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td><span class="badge badge-muted">${esc(r.Shift||'—')}</span></td>
       <td>${esc(r.SubmittedBy||'—')}</td>
@@ -1220,34 +1295,35 @@ function renderTemperatureRows(rows){
 
 function renderMaintenance(station){
   const range=moduleRanges.maintenance;
-  let rows=filterByRange(cache.maintenance||[],'SubmittedAt',range);
+  let rows=(cache.maintenance||[]).filter(r=>{
+    const d=String(r.SubmittedAt||r.UpdatedAt||r.submittedAt||'').slice(0,10);
+    const{from,to}=getRangeDates(range);
+    return d>=from&&d<=to;
+  });
   if(station) rows=filterByStation(rows,'Station',station);
 
-  const open=rows.filter(r=>String(r.Status||'').toUpperCase()==='IN_PROGRESS').length;
+  const openCount=rows.filter(r=>String(r.Status||'').toUpperCase()==='IN_PROGRESS').length;
   const completed=rows.filter(r=>String(r.Status||'').toUpperCase()==='COMPLETED').length;
   const followUp=rows.filter(r=>String(r.FollowUpRequired||'').toUpperCase()==='YES').length;
 
   document.getElementById('maintStats').innerHTML=`
-    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📋</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">Total Records</div></div>
-    <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">⏳</span><div class="stat-card-value">${open}</div><div class="stat-card-label">In Progress</div></div>
-    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">✅</span><div class="stat-card-value">${completed}</div><div class="stat-card-label">Completed</div></div>
-    <div class="stat-card stat-purple"><div class="stat-card-stripe" style="background:var(--purple)"></div><span class="stat-card-icon">🔁</span><div class="stat-card-value">${followUp}</div><div class="stat-card-label">Follow Up Required</div></div>
+    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📋</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">总记录</div></div>
+    <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">⏳</span><div class="stat-card-value">${openCount}</div><div class="stat-card-label">进行中</div></div>
+    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">✅</span><div class="stat-card-value">${completed}</div><div class="stat-card-label">已完成</div></div>
+    <div class="stat-card stat-purple"><div class="stat-card-stripe" style="background:var(--purple)"></div><span class="stat-card-icon">🔁</span><div class="stat-card-value">${followUp}</div><div class="stat-card-label">需要跟进</div></div>
   `;
 
-  document.getElementById('maintCount').textContent=rows.length+' records';
+  document.getElementById('maintCount').textContent=rows.length+' 条记录';
   tableState.maintenance.filtered=rows;
   tableState.maintenance.page=1;
   renderTablePage('maintenance');
 }
 
 function renderMaintenanceRows(rows){
-  const statusFilter=document.getElementById('maintStatusFilter').value;
-  let filtered=rows;
-  if(statusFilter) filtered=rows.filter(r=>String(r.Status||'').toUpperCase()===statusFilter);
-  if(!filtered.length) return `<tr class="empty-row"><td colspan="11">No records</td></tr>`;
-  return filtered.map(r=>{
+  if(!rows.length) return `<tr class="empty-row"><td colspan="11">暂无记录</td></tr>`;
+  return rows.map(r=>{
     const status=String(r.Status||'').toUpperCase();
-    const statusBadge=status==='COMPLETED'?`<span class="badge badge-ok">DONE</span>`:`<span class="badge badge-warn">IN PROGRESS</span>`;
+    const statusBadge=status==='COMPLETED'?`<span class="badge badge-ok">已完成</span>`:`<span class="badge badge-warn">进行中</span>`;
     const followUp=String(r.FollowUpRequired||'').toUpperCase()==='YES'?`<span class="badge badge-purple">YES</span>`:`<span class="badge badge-muted">NO</span>`;
     return `<tr>
       <td class="td-mono">${String(r.SubmittedAt||'').slice(0,10)||'—'}</td>
@@ -1276,20 +1352,20 @@ function renderFuel(station){
   }
 
   document.getElementById('fuelStats').innerHTML=`
-    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📊</span><div class="stat-card-value">${dips.length}</div><div class="stat-card-label">Dip Records</div></div>
-    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">🚚</span><div class="stat-card-value">${delivery.length}</div><div class="stat-card-label">Deliveries</div></div>
-    <div class="stat-card stat-gold"><div class="stat-card-stripe" style="background:var(--gold)"></div><span class="stat-card-icon">💲</span><div class="stat-card-value">${cost.length}</div><div class="stat-card-label">Cost Records</div></div>
+    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📊</span><div class="stat-card-value">${dips.length}</div><div class="stat-card-label">油量记录</div></div>
+    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">🚚</span><div class="stat-card-value">${delivery.length}</div><div class="stat-card-label">配送次数</div></div>
+    <div class="stat-card stat-gold"><div class="stat-card-stripe" style="background:var(--gold)"></div><span class="stat-card-icon">💲</span><div class="stat-card-value">${cost.length}</div><div class="stat-card-label">价格记录</div></div>
   `;
 
-  document.getElementById('fuelDipsCount').textContent=dips.length+' records';
-  document.getElementById('fuelDeliveryCount').textContent=delivery.length+' records';
-  document.getElementById('fuelCostCount').textContent=cost.length+' records';
+  document.getElementById('fuelDipsCount').textContent=dips.length+' 条记录';
+  document.getElementById('fuelDeliveryCount').textContent=delivery.length+' 条记录';
+  document.getElementById('fuelCostCount').textContent=cost.length+' 条记录';
 
   // dips
   document.getElementById('fuelDipsBody').innerHTML=!dips.length
-    ?`<tr class="empty-row"><td colspan="11">No dip records</td></tr>`
+    ?`<tr class="empty-row"><td colspan="11">暂无油量记录</td></tr>`
     :dips.map(r=>`<tr>
-      <td class="td-mono">${formatDateAU(r.Date || r.Timestamp)}</td>
+      <td class="td-mono">${formatDateAU(r.Date||r.Timestamp)}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td>${esc(r['Staff Name']||r.StaffName||'—')}</td>
       <td class="td-mono">${r['91']||'—'}</td><td class="td-mono">${r['95']||'—'}</td><td class="td-mono">${r['98']||'—'}</td>
@@ -1300,9 +1376,9 @@ function renderFuel(station){
 
   // delivery
   document.getElementById('fuelDeliveryBody').innerHTML=!delivery.length
-    ?`<tr class="empty-row"><td colspan="13">No delivery records</td></tr>`
+    ?`<tr class="empty-row"><td colspan="13">暂无配送记录</td></tr>`
     :delivery.map(r=>`<tr>
-      <td class="td-mono">${formatDateAU(r.Date || r.Timestamp)}</td>
+      <td class="td-mono">${formatDateAU(r.Date||r.Timestamp)}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td>${esc(r['Staff Name']||'—')}</td>
       <td>${esc(r.Supplier||'—')}</td>
@@ -1316,9 +1392,9 @@ function renderFuel(station){
 
   // cost
   document.getElementById('fuelCostBody').innerHTML=!cost.length
-    ?`<tr class="empty-row"><td colspan="8">No fuel cost records</td></tr>`
+    ?`<tr class="empty-row"><td colspan="8">暂无油价记录</td></tr>`
     :cost.map(r=>`<tr>
-      <td class="td-mono">${formatDateAU(r.Date || r.Timestamp)}</td>
+      <td class="td-mono">${formatDateAU(r.Date||r.Timestamp)}</td>
       <td>${esc(r.Source||'—')}</td>
       <td class="td-mono">${r['91']||'—'}</td><td class="td-mono">${r['95']||'—'}</td>
       <td class="td-mono">${r['98']||'—'}</td><td class="td-mono">${r.E10||'—'}</td>
@@ -1330,7 +1406,7 @@ function renderFuel(station){
   tableState.fuel.page=1;
 }
 
-function renderIncidents(station){
+function render事故记录(station){
   const range=moduleRanges.incidents;
   let driveOff=filterByRange((cache.incidents||{}).driveOff||[],'Date',range);
   let unpaidFuel=filterByRange((cache.incidents||{}).unpaidFuel||[],'Date',range);
@@ -1343,17 +1419,17 @@ function renderIncidents(station){
   const ufAmt=unpaidFuel.reduce((s,r)=>s+Number(r.Amount||0),0);
 
   document.getElementById('incStats').innerHTML=`
-    <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚗</span><div class="stat-card-value">${driveOff.length}</div><div class="stat-card-label">Drive Offs</div><div class="stat-card-sub">${doAmt>0?'$'+doAmt.toFixed(2):''}</div></div>
-    <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">⛽</span><div class="stat-card-value">${unpaidFuel.length}</div><div class="stat-card-label">Unpaid Fuel</div><div class="stat-card-sub">${ufAmt>0?'$'+ufAmt.toFixed(2):''}</div></div>
-    <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">💰</span><div class="stat-card-value">$${(doAmt+ufAmt).toFixed(2)}</div><div class="stat-card-label">Total Loss</div></div>
+    <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚗</span><div class="stat-card-value">${driveOff.length}</div><div class="stat-card-label">油站逃跑</div><div class="stat-card-sub">${doAmt>0?'$'+doAmt.toFixed(2):''}</div></div>
+    <div class="stat-card stat-orange"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">⛽</span><div class="stat-card-value">${unpaidFuel.length}</div><div class="stat-card-label">未付油费</div><div class="stat-card-sub">${ufAmt>0?'$'+ufAmt.toFixed(2):''}</div></div>
+    <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">💰</span><div class="stat-card-value">$${(doAmt+ufAmt).toFixed(2)}</div><div class="stat-card-label">总损失</div></div>
   `;
 
   const allRows=[
     ...driveOff.map(r=>({...r,_type:'driveoff',_label:'Drive Off'})),
-    ...unpaidFuel.map(r=>({...r,_type:'unpaid',_label:'Unpaid Fuel'}))
+    ...unpaidFuel.map(r=>({...r,_type:'unpaid',_label:'未付油费'}))
   ].sort((a,b)=>String(b.Date||'').localeCompare(String(a.Date||'')));
 
-  document.getElementById('incCount').textContent=allRows.length+' records';
+  document.getElementById('incCount').textContent=allRows.length+' 条记录';
   tableState.incidents.filtered=allRows;
   tableState.incidents.page=1;
   renderTablePage('incidents');
@@ -1362,9 +1438,9 @@ function renderIncidents(station){
 function renderIncidentRows(rows){
   let filtered=rows;
   if(incidentTab!=='all') filtered=rows.filter(r=>r._type===incidentTab);
-  if(!filtered.length) return `<tr class="empty-row"><td colspan="9">No incidents</td></tr>`;
+  if(!filtered.length) return `<tr class="empty-row"><td colspan="9">暂无事故记录</td></tr>`;
   return filtered.map(r=>`<tr>
-    <td class="td-mono">${formatDateAU(r.Date)}</td>
+    <td class="td-mono">${r.Date||'—'}</td>
     <td class="td-main">${esc(r.Station||'—')}</td>
     <td><span class="badge ${r._type==='driveoff'?'badge-danger':'badge-warn'}">${r._label}</span></td>
     <td class="td-mono" style="font-weight:600;color:var(--danger)">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
@@ -1399,7 +1475,7 @@ function showIncidentDetail(jsonStr){
   document.getElementById('modalOverlay').classList.add('show');
 }
 
-function renderRoster(station){
+function render排班表(station){
   const range=moduleRanges.roster;
   let rows=filterByRange(cache.roster||[],'Date',range);
   if(station) rows=filterByStation(rows,'Station',station);
@@ -1408,18 +1484,18 @@ function renderRoster(station){
   const todayShifts=rows.filter(r=>String(r.Date||r.date||'').slice(0,10)===today);
 
   document.getElementById('rosterStats').innerHTML=`
-    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">👥</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">Total Shifts</div></div>
-    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">📅</span><div class="stat-card-value">${todayShifts.length}</div><div class="stat-card-label">Today's Shifts</div></div>
+    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">👥</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">总班次</div></div>
+    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">📅</span><div class="stat-card-value">${todayShifts.length}</div><div class="stat-card-label">今日班次</div></div>
   `;
 
-  document.getElementById('rosterCount').textContent=rows.length+' records';
+  document.getElementById('rosterCount').textContent=rows.length+' 条记录';
   tableState.roster.filtered=rows;
   tableState.roster.page=1;
   renderTablePage('roster');
 }
 
-function renderRosterRows(rows){
-  if(!rows.length) return `<tr class="empty-row"><td colspan="8">No roster records</td></tr>`;
+function render排班表Rows(rows){
+  if(!rows.length) return `<tr class="empty-row"><td colspan="8">暂无排班记录</td></tr>`;
   const today=new Date().toISOString().slice(0,10);
   return rows.map(r=>{
     const date=String(r.Date||r.date||'');
@@ -1445,8 +1521,25 @@ function filterTable(mod){
   const q=searchEl?searchEl.value.toLowerCase():'';
 
   let source=[];
-  if(mod==='temperature') source=filterByRange(cache.temperature||[],'Date',moduleRanges.temperature);
-  if(mod==='maintenance') source=filterByRange(cache.maintenance||[],'SubmittedAt',moduleRanges.maintenance);
+  if(mod==='temperature'){
+    source=(cache.temperature||[]).filter(r=>{
+      const d=String(r.Date||r.SubmittedAt||r.date||'').slice(0,10);
+      const{from,to}=getRangeDates(moduleRanges.temperature);
+      return d>=from&&d<=to;
+    });
+  }
+  if(mod==='maintenance'){
+    const statusFilter=document.getElementById('maintStatusFilter').value;
+    let mRows=cache.maintenance||[];
+    // filter by date — try SubmittedAt first, fallback to UpdatedAt
+    mRows=mRows.filter(r=>{
+      const d=String(r.SubmittedAt||r.UpdatedAt||r.submittedAt||'').slice(0,10);
+      const{from,to}=getRangeDates(moduleRanges.maintenance);
+      return d>=from&&d<=to;
+    });
+    if(statusFilter) mRows=mRows.filter(r=>String(r.Status||'').toUpperCase()===statusFilter);
+    source=mRows;
+  }
   if(mod==='fuel'){
     const fuelStation=document.getElementById('fuelStationFilter').value;
     const tab=fuelTab;
@@ -1457,7 +1550,7 @@ function filterTable(mod){
   if(mod==='incidents'){
     const allRows=[
       ...(filterByRange((cache.incidents||{}).driveOff||[],'Date',moduleRanges.incidents)).map(r=>({...r,_type:'driveoff',_label:'Drive Off'})),
-      ...(filterByRange((cache.incidents||{}).unpaidFuel||[],'Date',moduleRanges.incidents)).map(r=>({...r,_type:'unpaid',_label:'Unpaid Fuel'}))
+      ...(filterByRange((cache.incidents||{}).unpaidFuel||[],'Date',moduleRanges.incidents)).map(r=>({...r,_type:'unpaid',_label:'未付油费'}))
     ];
     source=allRows.filter(r=>incidentTab==='all'||r._type===incidentTab);
   }
@@ -1480,11 +1573,11 @@ function renderTablePage(mod){
   const totalPages=Math.max(1,Math.ceil(filtered.length/perPage));
 
   let html='';
-  if(mod==='temperature') html=renderTemperatureRows(pageRows);
+  if(mod==='temperature') html=render温度Rows(pageRows);
   if(mod==='maintenance') html=renderMaintenanceRows(pageRows);
   if(mod==='fuel') html=''; // handled by renderFuel directly
   if(mod==='incidents') html=renderIncidentRows(pageRows);
-  if(mod==='roster') html=renderRosterRows(pageRows);
+  if(mod==='roster') html=render排班表Rows(pageRows);
 
   if(mod!=='fuel'){
     const tbody=document.getElementById(mod+'Body');
@@ -1532,13 +1625,13 @@ function updateClock(){
 function updateStatusBar(){
   if(!lastUpdated) return;
   const mins=Math.round((Date.now()-lastUpdated)/60000);
-  document.getElementById('statusBarText').textContent=`Connected · Updated ${mins<1?'just now':mins+'m ago'}`;
+  document.getElementById('statusBarText').textContent=`已连接 · 更新于 ${mins<1?'刚刚':mins+'分钟前'}`;
 }
 
 // ══════════════════════════════════════════
 // LOADING + TOAST
 // ══════════════════════════════════════════
-function showLoading(msg){document.getElementById('loadingText').textContent=msg||'Loading…';document.getElementById('loadingOverlay').classList.add('show')}
+function showLoading(msg){document.getElementById('loadingText').textContent=msg||'加载中…';document.getElementById('loadingOverlay').classList.add('show')}
 function hideLoading(){document.getElementById('loadingOverlay').classList.remove('show')}
 function showToast(msg,type){
   const t=document.createElement('div');
@@ -1551,6 +1644,22 @@ function showToast(msg,type){
 // HELPERS
 // ══════════════════════════════════════════
 function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// ── DRAWER ──
+function openDrawer(){
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeDrawer(){
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+// close drawer on escape key
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape') closeDrawer();
+});
 </script>
 </body>
 </html>
