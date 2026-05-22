@@ -621,7 +621,7 @@ async function renderWeekPanel() {
 async function renderWeekPanelFromSheet() {
   try {
     const url = `${SHEET_URL}?action=getNewspaperWeeklySummary&station=${encodeURIComponent(station)}&weekOffset=${weekPanelOffset}`;
-    const res = await fetch(url);
+    const res = await fetch(url,{signal:AbortSignal.timeout(5000)});
     const data = await res.json();
     if (!data || data.success !== true || !Array.isArray(data.items)) return false;
 
@@ -875,26 +875,11 @@ function submitForm() {
     totalReturns: items.reduce((s,x)=>s+x.qty, 0),
   };
 
-  document.getElementById('loading-text').textContent = L.submitting;
-  document.getElementById('loadingOverlay').classList.add('show');
-
-  if (!SHEET_URL) {
-    // Front-end preview mode only. Paste Apps Script URL into SHEET_URL when backend is ready.
-    setTimeout(() => onSuccess(), 400);
-    return;
-  }
-
-  fetch(SHEET_URL, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(payload),
-  })
-  .then(()=>onSuccess())
-  .catch(()=>onSuccess());
+onSuccess();
+fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
 }
 
 function onSuccess() {
-  document.getElementById('loadingOverlay').classList.remove('show');
   showScreen('success');
 }
 
