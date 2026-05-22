@@ -836,7 +836,7 @@ async function loadOpenMaintenance() {
 
   try {
     const url = `${WEB_APP_URL}?action=getOpenMaintenance&station=${encodeURIComponent(station)}&t=${Date.now()}`;
-    const res = await fetch(url);
+    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
     const data = await res.json();
 
     if (data && data.success && Array.isArray(data.jobs)) {
