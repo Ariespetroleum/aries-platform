@@ -348,10 +348,13 @@ tr:hover td{background:rgba(255,255,255,.015)}
 
       <!-- ══ DASHBOARD ══ -->
       <div class="page active" id="page-dashboard">
-        <div class="page-header">
-          <div class="page-eyebrow">总览</div>
-          <div class="page-title">主页</div>
-          <div class="page-sub" id="dashSub">所有站点 · 今天</div>
+        <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between">
+          <div>
+            <div class="page-eyebrow">总览</div>
+            <div class="page-title">主页</div>
+            <div class="page-sub" id="dashSub">所有站点 · 今天</div>
+          </div>
+          <button class="refresh-btn" style="margin-top:4px;flex-shrink:0" onclick="loadDashboard()">↻ 刷新</button>
         </div>
 
         <div class="filters-bar">
@@ -1216,9 +1219,7 @@ function renderDashboard(data,station){
   let refund=filterByRange(data.cash||[],'Date',range);
   let openMaint=data.openMaintenance||[];
 
-  // Invalidate module caches when dashboard range/station changes
-  // so modules re-fetch fresh data on next visit
-  cache.temperature=null;cache.maintenance=null;cache.incidents=null;cache.roster=null;
+  // Keep module caches warm — loadModule will use cache.dashboard directly
 
   if(station){
     temperature=filterByStation(temperature,'Station',station);
@@ -1401,8 +1402,7 @@ function buildMaintAlerts(openJobs,stations){
 // MODULE LOADERS
 // ══════════════════════════════════════════
 async function loadModule(mod){
-  if(mod==='fuel'){await loadFuel(true);return;} // always force-fetch when called via loadModule
-  showLoading('Loading '+mod+'…');
+  if(mod==='fuel'){await loadFuel(true);return;}
   // Map module name to actual station filter element id
   const stationFilterIds={
     temperature:'tempStationFilter',
@@ -1415,14 +1415,31 @@ async function loadModule(mod){
   };
   const stationEl=document.getElementById(stationFilterIds[mod]||(mod+'StationFilter'));
   const station=stationEl?stationEl.value:'';
+
+  // If dashboard data is already cached AND has enough days, use it directly
+  const neededDays=Math.max(rangeToDays(moduleRanges[mod]||'month'),31);
+  const cachedDays=cache.dashboard?cache.dashboard.periodDays||0:0;
+  if(cache.dashboard && cachedDays>=neededDays){
+    const data=cache.dashboard;
+    if(mod==='temperature'){cache.temperature=data.temperature||[];renderTemperature(station);return;}
+    if(mod==='maintenance'){cache.maintenance=data.maintenance||[];cache._openMaint=data.openMaintenance||[];renderMaintenance(station);return;}
+    if(mod==='incidents'){cache.incidents={driveOff:data.driveOff||[],unpaidFuel:data.unpaidFuel||[]};renderIncidents(station);return;}
+    if(mod==='roster'){cache.roster=data.roster||[];renderRoster(station);return;}
+    if(mod==='cash'){cache.cash=data.cash||[];renderCash(station);return;}
+    if(mod==='cigarette'){cache.cigarette=data.cigarette||[];renderCigarette();return;}
+    if(mod==='newspaper'){cache.newspaper=data.newspaper||[];renderNewspaper(station);return;}
+  }
+
+  // No cached dashboard — fetch fresh
+  showLoading('加载中…');
   try{
-    const days=Math.max(rangeToDays(moduleRanges[mod]||'month'),31); // ensure full month
-    const modUrl=staffApi('getManagerDashboardData',`&days=${days}`);
-    if(!modUrl) return;
-    const res=await fetch(modUrl,{signal:AbortSignal.timeout(10000)});
+    const modUrl=staffApi('getManagerDashboardData',`&days=${neededDays}`);
+    if(!modUrl){hideLoading();return;}
+    const res=await fetch(modUrl,{signal:AbortSignal.timeout(15000)});
     const data=await res.json();
     hideLoading();
     if(!data.success){showToast('数据加载失败','danger');return;}
+    cache.dashboard=data;
     if(mod==='temperature'){cache.temperature=data.temperature||[];renderTemperature(station);}
     if(mod==='maintenance'){cache.maintenance=data.maintenance||[];cache._openMaint=data.openMaintenance||[];renderMaintenance(station);}
     if(mod==='incidents'){cache.incidents={driveOff:data.driveOff||[],unpaidFuel:data.unpaidFuel||[]};renderIncidents(station);}
@@ -1431,7 +1448,15 @@ async function loadModule(mod){
     if(mod==='cigarette'){cache.cigarette=data.cigarette||[];renderCigarette();}
     if(mod==='newspaper'){cache.newspaper=data.newspaper||[];renderNewspaper(station);}
     lastUpdated=new Date();updateStatusBar();
-  }catch(e){hideLoading();showToast('连接错误','danger');}
+  }catch(e){
+    hideLoading();
+    if(e.name==='TimeoutError'||e.name==='AbortError'){
+      showToast('连接超时，请检查网络后重试','warn');
+    }else{
+      showToast('加载失败：'+e.message,'danger');
+    }
+    console.error('loadModule error:',e);
+  }
 }
 
 async function loadFuel(force=false){
