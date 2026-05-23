@@ -376,6 +376,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
             <option>BP Flemington</option>
             <option>Liberty Golden Square</option>
           </select>
+          <button class="refresh-btn" onclick="loadDashboard()">↻ 刷新</button>
         </div>
 
         <div class="stats-grid" style="grid-template-columns:1fr 1fr" id="dashStats">
@@ -1170,7 +1171,7 @@ async function loadDashboard(){
     const days=Math.max(rangeToDays(dashRange),7); // at least 7 days so data is visible
     const dashUrl=staffApi('getManagerDashboardData',`&days=${days}`);
     if(!dashUrl) return;
-    const res=await fetch(dashUrl,{signal:AbortSignal.timeout(10000)});
+    const res=await fetch(dashUrl,{signal:AbortSignal.timeout(20000)});
     const data=await res.json();
     hideLoading();
     if(!data.success){showToast('主页加载失败','danger');return;}
@@ -1194,7 +1195,16 @@ async function loadDashboard(){
     renderDashboard(data,station);
     lastUpdated=new Date();
     updateStatusBar();
-  }catch(e){hideLoading();showToast('加载主页时连接错误','danger');}
+  }catch(e){
+    hideLoading();
+    if(e.name==='TimeoutError'||e.name==='AbortError'){
+      showToast('主页加载超时，正在重试…','warn');
+      setTimeout(loadDashboard, 2000); // auto-retry once
+    }else{
+      showToast('加载主页失败：'+e.message,'danger');
+    }
+    console.error('loadDashboard error:',e);
+  }
 }
 
 function rangeToDays(r){
@@ -1415,10 +1425,10 @@ async function loadModule(mod){
   const stationEl=document.getElementById(stationFilterIds[mod]||(mod+'StationFilter'));
   const station=stationEl?stationEl.value:'';
 
-  // If dashboard data is already cached, use it directly to avoid repeated Apps Script calls.
-  // This keeps module pages stable even when Apps Script is cold or slow.
+  // If dashboard data is already cached AND has enough days, use it directly
   const neededDays=Math.max(rangeToDays(moduleRanges[mod]||'month'),31);
-  if(cache.dashboard){
+  const cachedDays=cache.dashboard?cache.dashboard.periodDays||0:0;
+  if(cache.dashboard && cachedDays>=neededDays){
     const data=cache.dashboard;
     if(mod==='temperature'){cache.temperature=data.temperature||[];renderTemperature(station);return;}
     if(mod==='maintenance'){cache.maintenance=data.maintenance||[];cache._openMaint=data.openMaintenance||[];renderMaintenance(station);return;}
