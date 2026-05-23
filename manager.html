@@ -336,6 +336,9 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="nav-item" onclick="showPage('incidents')" id="nav-incidents">
         <span class="nav-icon">🚨</span><span class="nav-label">事故总览</span>
       </div>
+      <div class="nav-item" onclick="showPage('newspaper')" id="nav-newspaper">
+        <span class="nav-icon">📰</span><span class="nav-label">报纸退货</span>
+      </div>
       <div class="nav-item" onclick="showPage('roster')" id="nav-roster">
         <span class="nav-icon">📅</span><span class="nav-label">排班表</span>
       </div>
@@ -383,6 +386,9 @@ tr:hover td{background:rgba(255,255,255,.015)}
           <!-- Row 3: 维修 | 事故 -->
           <div class="stat-card stat-orange clickable" onclick="showPage('maintenance')" title="查看维修记录"><div class="stat-card-stripe" style="background:var(--warn)"></div><span class="stat-card-icon">🛠️</span><div class="stat-card-value" id="ds-maint-open">—</div><div class="stat-card-label">维修记录</div><div class="stat-card-sub" id="ds-maint-sub">未完成工单</div></div>
           <div class="stat-card stat-red clickable" onclick="showPage('incidents')" title="查看事故总览"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">🚨</span><div class="stat-card-value" id="ds-incidents-total">—</div><div class="stat-card-label">事故总览</div><div class="stat-card-sub" id="ds-incidents-amt"></div></div>
+          <!-- Row 4: 报纸 | 排班表 -->
+          <div class="stat-card stat-green clickable" onclick="showPage('newspaper')" title="查看报纸退货"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">📰</span><div class="stat-card-value" id="ds-newspaper">—</div><div class="stat-card-label">报纸退货</div><div class="stat-card-sub" id="ds-newspaper-sub">本期退货次数</div></div>
+          <div class="stat-card stat-purple clickable" onclick="showPage('roster')" title="查看排班表"><div class="stat-card-stripe" style="background:var(--purple)"></div><span class="stat-card-icon">📅</span><div class="stat-card-value" id="ds-roster">—</div><div class="stat-card-label">排班表</div><div class="stat-card-sub" id="ds-roster-sub">今日班次</div></div>
         </div>
 
         <div class="alert-grid" id="dashAlerts">
@@ -566,7 +572,7 @@ tr:hover td{background:rgba(255,255,255,.015)}
             </table>
           </div>
         </div>
-        <div class="section" id="fuelDeliverySection" style="display:none">
+        <div class="section" id="fuelDeliverySection">
           <div class="section-head">
             <div class="section-head-left"><span>🚚</span><span class="section-head-title">油品配送</span></div>
             <span class="section-count" id="fuelDeliveryCount">—</span>
@@ -698,6 +704,51 @@ tr:hover td{background:rgba(255,255,255,.015)}
       </div>
 
 
+
+      <!-- ══ NEWSPAPER ══ -->
+      <div class="page" id="page-newspaper">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+          <button class="back-btn" style="margin-bottom:0" onclick="showPage('dashboard')">← 返回主页</button>
+          <button class="refresh-btn" onclick="loadModule('newspaper')">↻ 刷新</button>
+        </div>
+        <div class="page-header">
+          <div class="page-eyebrow">模块</div>
+          <div class="page-title">报纸退货</div>
+          <div class="page-sub">各站点每日报纸退货记录</div>
+        </div>
+        <div class="filters-bar">
+          <div class="filter-group" id="newspaperRangeFilter">
+            <button class="filter-btn" onclick="setModuleRange('newspaper','today',this)">今天</button>
+            <button class="filter-btn" onclick="setModuleRange('newspaper','yesterday',this)">昨天</button>
+            <button class="filter-btn active" onclick="setModuleRange('newspaper','week',this)">本周</button>
+            <button class="filter-btn" onclick="setModuleRange('newspaper','lastweek',this)">上周</button>
+            <button class="filter-btn" onclick="setModuleRange('newspaper','month',this)">本月</button>
+          </div>
+          <select class="filter-select" id="newspaperStationFilter" onchange="loadModule('newspaper')">
+            <option value="">所有站点</option>
+            <option>Sinopec Frankston</option><option>Sinopec Thomastown</option><option>Sinopec Shepparton</option><option>Sinopec Ballarat</option><option>BP Clayton South</option><option>BP Flemington</option><option>Liberty Golden Square</option>
+          </select>
+          <button class="refresh-btn" onclick="loadModule('newspaper')">↻ 刷新</button>
+        </div>
+        <div class="stats-grid" id="newspaperStats"></div>
+        <div class="section">
+          <div class="section-head">
+            <div class="section-head-left"><span>📰</span><span class="section-head-title">退货记录</span></div>
+            <span class="section-count" id="newspaperCount">—</span>
+          </div>
+          <div class="table-toolbar">
+            <input class="search-input" id="newspaperSearch" placeholder="搜索报纸名称、站点…" oninput="filterTable('newspaper')">
+            <div class="pagination" id="newspaperPagination"></div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>日期</th><th>站点</th><th>员工</th><th>报纸</th><th>退货数</th><th>备注</th></tr></thead>
+              <tbody id="newspaperBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <!-- ══ CASH ══ -->
       <div class="page" id="page-cash">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
@@ -827,6 +878,9 @@ tr:hover td{background:rgba(255,255,255,.015)}
       <div class="drawer-item" onclick="showPage('incidents');closeDrawer()" id="dnav-incidents">
         <span class="drawer-item-icon">🚨</span><span class="drawer-item-label">事故总览</span>
       </div>
+      <div class="drawer-item" onclick="showPage('newspaper');closeDrawer()" id="dnav-newspaper">
+        <span class="drawer-item-icon">📰</span><span class="drawer-item-label">报纸退货</span>
+      </div>
       <div class="drawer-item" onclick="showPage('roster');closeDrawer()" id="dnav-roster">
         <span class="drawer-item-icon">📅</span><span class="drawer-item-label">排班表</span>
       </div>
@@ -848,7 +902,7 @@ const FUEL_URL  = 'https://script.google.com/macros/s/AKfycbyGCrBEdvQJ4t38e0ryRq
 let isLoggedIn = false;
 let pinBuffer  = '';
 let dashRange  = 'today';
-let moduleRanges = { temperature:'month', maintenance:'month', fuel:'month', incidents:'month', roster:'week', cash:'month', cigarette:'month' };
+let moduleRanges = { temperature:'month', maintenance:'month', fuel:'month', incidents:'month', roster:'week', cash:'month', cigarette:'month', newspaper:'week' };
 let fuelTab     = 'dips';
 let incidentTab = 'all';
 let lastUpdated = null;
@@ -862,7 +916,8 @@ let cache = {
   incidents: null,
   roster: null,
   cash: null,
-  cigarette: null
+  cigarette: null,
+  newspaper: null
 };
 
 // filtered/paged state
@@ -873,7 +928,8 @@ let tableState = {
   incidents:    { filtered:[], page:1, perPage:20 },
   roster:       { filtered:[], page:1, perPage:20 },
   cash:         { filtered:[], page:1, perPage:20 },
-  cigarette:    { filtered:[], page:1, perPage:20 }
+  cigarette:    { filtered:[], page:1, perPage:20 },
+  newspaper:    { filtered:[], page:1, perPage:20 }
 };
 
 // ══════════════════════════════════════════
@@ -941,7 +997,7 @@ function logout(){
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('appShell').style.display='none';
   document.getElementById('loginError').classList.remove('show');
-  cache={dashboard:null,temperature:null,maintenance:null,fuel:{dips:null,delivery:null,cost:null},incidents:null,roster:null,cash:null,cigarette:null};
+  cache={dashboard:null,temperature:null,maintenance:null,fuel:{dips:null,delivery:null,cost:null},incidents:null,roster:null,cash:null,cigarette:null,newspaper:null};
 }
 
 // keyboard support
@@ -963,7 +1019,7 @@ function showPage(id){
   document.getElementById('page-'+id).classList.add('active');
   document.getElementById('nav-'+id).classList.add('active');
 
-  const titles={dashboard:'主页',temperature:'温度记录',maintenance:'维修记录',fuel:'油量管理',incidents:'事故总览',roster:'排班表',cash:'收银对账',cigarette:'香烟库存'};
+  const titles={dashboard:'主页',temperature:'温度记录',maintenance:'维修记录',fuel:'油量管理',incidents:'事故总览',roster:'排班表',cash:'收银对账',cigarette:'香烟库存',newspaper:'报纸退货'};
   document.getElementById('topbarTitle').textContent=titles[id]||id;
   // lazy load
   if(id!=='dashboard'){
@@ -1187,10 +1243,22 @@ function renderDashboard(data,station){
   document.getElementById('ds-cash-count').textContent=cashData.length;
   document.getElementById('ds-cash-amt').textContent=totalSales>0?'总销售 $'+totalSales.toFixed(2):cashData.length+' 条记录';
   // Cigarette latest count
-  const cigData=cache.cigarette||[];
+  const cigData=data.cigarette||[];
   const cigLatest=cigData.length>0?cigData.reduce((s,r)=>s+Number(r.Quantity||0),0):0;
   document.getElementById('ds-cig').textContent=cigLatest||'—';
   document.getElementById('ds-cig-sub').textContent=cigData.length>0?'最新盘点合计':'暂无数据';
+  // Newspaper - use summary from dashboard data
+  const newsData=filterByRange(data.newspaper||[],'Date',range);
+  const newsFiltered=station?filterByStation(newsData,'Station',station):newsData;
+  const newsTotalQty=newsFiltered.reduce((s,r)=>s+Number(r.ReturnQty||r.returnQty||0),0);
+  document.getElementById('ds-newspaper').textContent=newsFiltered.length||'—';
+  document.getElementById('ds-newspaper-sub').textContent=newsFiltered.length>0?'退货 '+newsTotalQty+' 份':'暂无记录';
+  // Roster today
+  const todayKey2=toLocalDateKey(new Date());
+  const rosterData=(data.roster||[]).filter(r=>toLocalDateKey(r.Date||r.date||'')===todayKey2);
+  const rosterFiltered=station?filterByStation(rosterData,'Station',station):rosterData;
+  document.getElementById('ds-roster').textContent=rosterFiltered.length||'—';
+  document.getElementById('ds-roster-sub').textContent=rosterFiltered.length>0?rosterFiltered.length+' 个班次':'今日暂无排班';
 
   // alert cards
   const 个警告El=document.getElementById('dashAlerts');
@@ -1335,10 +1403,20 @@ function buildMaintAlerts(openJobs,stations){
 async function loadModule(mod){
   if(mod==='fuel'){await loadFuel(true);return;} // always force-fetch when called via loadModule
   showLoading('Loading '+mod+'…');
-  const stationEl=document.getElementById(mod+'StationFilter');
+  // Map module name to actual station filter element id
+  const stationFilterIds={
+    temperature:'tempStationFilter',
+    maintenance:'maintStationFilter',
+    incidents:'incStationFilter',
+    roster:'rosterStationFilter',
+    cash:'cashStationFilter',
+    cigarette:'cigStationFilter',
+    newspaper:'newspaperStationFilter'
+  };
+  const stationEl=document.getElementById(stationFilterIds[mod]||(mod+'StationFilter'));
   const station=stationEl?stationEl.value:'';
   try{
-    const days=rangeToDays(moduleRanges[mod]||'month');
+    const days=Math.max(rangeToDays(moduleRanges[mod]||'month'),31); // ensure full month
     const modUrl=staffApi('getManagerDashboardData',`&days=${days}`);
     if(!modUrl) return;
     const res=await fetch(modUrl,{signal:AbortSignal.timeout(10000)});
@@ -1351,6 +1429,7 @@ async function loadModule(mod){
     if(mod==='roster'){cache.roster=data.roster||[];renderRoster(station);}
     if(mod==='cash'){cache.cash=data.cash||[];renderCash(station);}
     if(mod==='cigarette'){cache.cigarette=data.cigarette||[];renderCigarette();}
+    if(mod==='newspaper'){cache.newspaper=data.newspaper||[];renderNewspaper(station);}
     lastUpdated=new Date();updateStatusBar();
   }catch(e){hideLoading();showToast('连接错误','danger');}
 }
@@ -1458,7 +1537,7 @@ function renderTemperatureRows(rows){
     });
     const status=issues.length>0?`<span class="badge badge-danger">ALERT</span>`:`<span class="badge badge-ok">OK</span>`;
     return `<tr>
-      <td class="td-mono">${r.Date||'—'}</td>
+      <td class="td-mono">${formatDateAU(r.Date||r.SubmittedAt)}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td><span class="badge badge-muted">${esc(r.Shift||'—')}</span></td>
       <td>${esc(r.SubmittedBy||'—')}</td>
@@ -1507,7 +1586,7 @@ function renderMaintenanceRows(rows){
     const statusBadge=status==='COMPLETED'?`<span class="badge badge-ok">已完成</span>`:`<span class="badge badge-warn">进行中</span>`;
     const followUp=String(r.FollowUpRequired||'').toUpperCase()==='YES'?`<span class="badge badge-purple">YES</span>`:`<span class="badge badge-muted">NO</span>`;
     return `<tr>
-      <td class="td-mono">${String(r.SubmittedAt||'').slice(0,10)||'—'}</td>
+      <td class="td-mono">${formatDateAU(r.SubmittedAt||r.UpdatedAt)}</td>
       <td class="td-main">${esc(r.Station||'—')}</td>
       <td>${esc(r.CompanyName||'—')}</td>
       <td>${esc(r.EquipmentDisplay||r.Equipment||'—')}</td>
@@ -1606,15 +1685,51 @@ function renderIncidents(station){
     <div class="stat-card stat-red"><div class="stat-card-stripe" style="background:var(--danger)"></div><span class="stat-card-icon">💰</span><div class="stat-card-value">$${(doAmt+ufAmt).toFixed(2)}</div><div class="stat-card-label">总损失</div></div>
   `;
 
+  // Update counts
+  const doCountEl=document.getElementById('driveoffCount');
+  const ufCountEl=document.getElementById('unpaidCount');
+  if(doCountEl) doCountEl.textContent=driveOff.length+' 条';
+  if(ufCountEl) ufCountEl.textContent=unpaidFuel.length+' 条';
+
+  // Drive Off table
+  const incTbody=document.getElementById('incBody');
+  if(incTbody) incTbody.innerHTML=!driveOff.length
+    ?`<tr class="empty-row"><td colspan="9">暂无逃跑记录</td></tr>`
+    :driveOff.map(r=>`<tr>
+      <td class="td-mono">${formatDateAU(r.Date)}</td>
+      <td class="td-mono">${r.Time||'—'}</td>
+      <td class="td-main">${esc(r.Station||'—')}</td>
+      <td class="td-mono" style="color:var(--danger);font-weight:600">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
+      <td class="td-mono">${esc(r.Plate||'—')}</td>
+      <td>${esc(r.FuelType||'—')}</td>
+      <td>${esc(r.SubmittedBy||'—')}</td>
+      <td>${r.PoliceReported?`<span class="badge badge-blue">${esc(r.PoliceReported)}</span>`:'—'}</td>
+      <td><button class="filter-btn" style="padding:3px 8px;font-size:10px" onclick="showIncidentDetail(${JSON.stringify(JSON.stringify({...r,_type:'driveoff',_label:'Drive Off'}))})">详情</button></td>
+    </tr>`).join('');
+
+  // Unpaid Fuel table
+  const ufTbody=document.getElementById('unpaidBody');
+  if(ufTbody) ufTbody.innerHTML=!unpaidFuel.length
+    ?`<tr class="empty-row"><td colspan="9">暂无未付记录</td></tr>`
+    :unpaidFuel.map(r=>`<tr>
+      <td class="td-mono">${formatDateAU(r.Date)}</td>
+      <td class="td-mono">${r.Time||'—'}</td>
+      <td class="td-main">${esc(r.Station||'—')}</td>
+      <td class="td-mono" style="color:var(--warn);font-weight:600">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
+      <td class="td-mono">${esc(r.Plate||'—')}</td>
+      <td>${esc(r.FuelType||'—')}</td>
+      <td>${esc(r.SubmittedBy||'—')}</td>
+      <td class="td-mono">${esc(r.RecordID||'—')}</td>
+      <td><button class="filter-btn" style="padding:3px 8px;font-size:10px" onclick="showIncidentDetail(${JSON.stringify(JSON.stringify({...r,_type:'unpaid',_label:'未付油费'}))})">详情</button></td>
+    </tr>`).join('');
+
+  // Keep tableState for search/pagination on combined rows
   const allRows=[
     ...driveOff.map(r=>({...r,_type:'driveoff',_label:'Drive Off'})),
     ...unpaidFuel.map(r=>({...r,_type:'unpaid',_label:'未付油费'}))
   ].sort((a,b)=>String(b.Date||'').localeCompare(String(a.Date||'')));
-
-  document.getElementById('incCount').textContent=allRows.length+' 条记录';
   tableState.incidents.filtered=allRows;
   tableState.incidents.page=1;
-  renderTablePage('incidents');
 }
 
 function renderIncidentRows(rows){
@@ -1732,11 +1847,41 @@ function filterTable(mod){
     if(fuelStation) source=filterByStation(source,'Station',fuelStation);
   }
   if(mod==='incidents'){
-    const allRows=[
-      ...(filterByRange((cache.incidents||{}).driveOff||[],'Date',moduleRanges.incidents)).map(r=>({...r,_type:'driveoff',_label:'Drive Off'})),
-      ...(filterByRange((cache.incidents||{}).unpaidFuel||[],'Date',moduleRanges.incidents)).map(r=>({...r,_type:'unpaid',_label:'未付油费'}))
-    ];
-    source=allRows.filter(r=>incidentTab==='all'||r._type===incidentTab);
+    // Filter and update both tables independently
+    const incStation=document.getElementById('incStationFilter')?document.getElementById('incStationFilter').value:'';
+    let doRows=filterByRange((cache.incidents||{}).driveOff||[],'Date',moduleRanges.incidents);
+    let ufRows=filterByRange((cache.incidents||{}).unpaidFuel||[],'Date',moduleRanges.incidents);
+    if(incStation){doRows=filterByStation(doRows,'Station',incStation);ufRows=filterByStation(ufRows,'Station',incStation);}
+    if(q){
+      doRows=doRows.filter(r=>Object.values(r).some(v=>String(v||'').toLowerCase().includes(q)));
+      ufRows=ufRows.filter(r=>Object.values(r).some(v=>String(v||'').toLowerCase().includes(q)));
+    }
+    // Update driveoff count and table
+    const doEl=document.getElementById('driveoffCount');if(doEl)doEl.textContent=doRows.length+' 条';
+    const doTbody=document.getElementById('incBody');
+    if(doTbody)doTbody.innerHTML=!doRows.length?`<tr class="empty-row"><td colspan="9">暂无逃跑记录</td></tr>`:doRows.map(r=>`<tr>
+      <td class="td-mono">${formatDateAU(r.Date)}</td><td class="td-mono">${r.Time||'—'}</td>
+      <td class="td-main">${esc(r.Station||'—')}</td>
+      <td class="td-mono" style="color:var(--danger);font-weight:600">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
+      <td class="td-mono">${esc(r.Plate||'—')}</td><td>${esc(r.FuelType||'—')}</td>
+      <td>${esc(r.SubmittedBy||'—')}</td>
+      <td>${r.PoliceReported?`<span class="badge badge-blue">${esc(r.PoliceReported)}</span>`:'—'}</td>
+      <td><button class="filter-btn" style="padding:3px 8px;font-size:10px" onclick="showIncidentDetail(${JSON.stringify(JSON.stringify({...r,_type:'driveoff',_label:'Drive Off'}))})">详情</button></td>
+    </tr>`).join('');
+    // Update unpaid count and table
+    const ufEl=document.getElementById('unpaidCount');if(ufEl)ufEl.textContent=ufRows.length+' 条';
+    const ufTbody=document.getElementById('unpaidBody');
+    if(ufTbody)ufTbody.innerHTML=!ufRows.length?`<tr class="empty-row"><td colspan="9">暂无未付记录</td></tr>`:ufRows.map(r=>`<tr>
+      <td class="td-mono">${formatDateAU(r.Date)}</td><td class="td-mono">${r.Time||'—'}</td>
+      <td class="td-main">${esc(r.Station||'—')}</td>
+      <td class="td-mono" style="color:var(--warn);font-weight:600">${r.Amount?'$'+Number(r.Amount).toFixed(2):'—'}</td>
+      <td class="td-mono">${esc(r.Plate||'—')}</td><td>${esc(r.FuelType||'—')}</td>
+      <td>${esc(r.SubmittedBy||'—')}</td>
+      <td class="td-mono">${esc(r.RecordID||'—')}</td>
+      <td><button class="filter-btn" style="padding:3px 8px;font-size:10px" onclick="showIncidentDetail(${JSON.stringify(JSON.stringify({...r,_type:'unpaid',_label:'未付油费'}))})">详情</button></td>
+    </tr>`).join('');
+    // Keep source for pagination count display only
+    source=[...doRows.map(r=>({...r,_type:'driveoff'})),...ufRows.map(r=>({...r,_type:'unpaid'}))];
   }
   if(mod==='roster') source=filterByRange(cache.roster||[],'Date',moduleRanges.roster);
   if(mod==='cash'){
@@ -1750,6 +1895,12 @@ function filterTable(mod){
     source=(cache.cigarette||[]).filter(r=>{const d=toLocalDateKey(r.Date||r.SubmittedAt||'');return d>=cgFrom&&d<=cgTo;});
     const cgEl=document.getElementById('cigStationFilter');
     if(cgEl&&cgEl.value) source=filterByStation(source,'Station',cgEl.value);
+  }
+  if(mod==='newspaper'){
+    const{from:nFrom,to:nTo}=getRangeDates(moduleRanges.newspaper);
+    source=(cache.newspaper||[]).filter(r=>{const d=toLocalDateKey(r.Date||r.SubmittedAt||'');return d>=nFrom&&d<=nTo;});
+    const nEl=document.getElementById('newspaperStationFilter');
+    if(nEl&&nEl.value) source=filterByStation(source,'Station',nEl.value);
   }
 
   if(q){
@@ -1772,17 +1923,21 @@ function renderTablePage(mod){
   if(mod==='temperature') html=renderTemperatureRows(pageRows);
   if(mod==='maintenance') html=renderMaintenanceRows(pageRows);
   if(mod==='fuel') html=''; // handled by renderFuel directly
-  if(mod==='incidents') html=renderIncidentRows(pageRows);
+  if(mod==='incidents') html=''; // incidents tables are rendered directly in filterTable
   if(mod==='roster') html=renderRosterRows(pageRows);
   if(mod==='cash') html=renderCashRows(pageRows);
   if(mod==='cigarette') html=renderCigaretteRows(pageRows);
+  if(mod==='newspaper') html=renderNewspaperRows(pageRows);
 
   if(mod!=='fuel'){
     // Map module name to actual tbody id
-    const bodyIds={temperature:'tempBody',maintenance:'maintBody',incidents:'incBody',roster:'rosterBody',cash:'cashBody',cigarette:'cigBody'};
+    const bodyIds={temperature:'tempBody',maintenance:'maintBody',incidents:'incBody',roster:'rosterBody',cash:'cashBody',cigarette:'cigBody',newspaper:'newspaperBody'};
     const tbodyId=bodyIds[mod]||(mod+'Body');
-    const tbody=document.getElementById(tbodyId);
-    if(tbody) tbody.innerHTML=html;
+    // incidents tables are managed directly by renderIncidents/filterTable, skip here
+    if(mod!=='incidents'){
+      const tbody=document.getElementById(tbodyId);
+      if(tbody) tbody.innerHTML=html;
+    }
   }
 
   // pagination
@@ -1929,6 +2084,47 @@ function renderCigaretteRows(rows){
     <td>${esc(r.SubmittedBy||'—')}</td>
     <td>${esc(r.Product||'—')}</td>
     <td class="td-mono" style="font-weight:600;color:var(--accent2)">${r.Quantity||'—'}</td>
+  </tr>`).join('');
+}
+
+
+// ══════════════════════════════════════════
+// NEWSPAPER MODULE
+// ══════════════════════════════════════════
+function renderNewspaper(station){
+  const{from,to}=getRangeDates(moduleRanges.newspaper);
+  let rows=(cache.newspaper||[]).filter(r=>{
+    const d=toLocalDateKey(r.Date||r.SubmittedAt||'');
+    return d>=from&&d<=to;
+  });
+  if(station) rows=filterByStation(rows,'Station',station);
+
+  // Flatten: each row in Newspaper sheet = one paper title per record
+  const totalReturns=rows.reduce((s,r)=>s+Number(r.ReturnQty||r.returnQty||0),0);
+  const uniqueDays=new Set(rows.map(r=>toLocalDateKey(r.Date||r.SubmittedAt||''))).size;
+  const uniquePapers=new Set(rows.map(r=>r.PaperName||r.paperName||'')).size;
+
+  document.getElementById('newspaperStats').innerHTML=`
+    <div class="stat-card stat-blue"><div class="stat-card-stripe" style="background:var(--accent2)"></div><span class="stat-card-icon">📋</span><div class="stat-card-value">${rows.length}</div><div class="stat-card-label">退货记录条数</div></div>
+    <div class="stat-card stat-green"><div class="stat-card-stripe" style="background:var(--accent)"></div><span class="stat-card-icon">📰</span><div class="stat-card-value">${totalReturns}</div><div class="stat-card-label">总退货数量</div></div>
+    <div class="stat-card stat-gold"><div class="stat-card-stripe" style="background:var(--gold)"></div><span class="stat-card-icon">📆</span><div class="stat-card-value">${uniqueDays}</div><div class="stat-card-label">提交天数</div></div>
+  `;
+
+  document.getElementById('newspaperCount').textContent=rows.length+' 条';
+  tableState.newspaper.filtered=rows;
+  tableState.newspaper.page=1;
+  renderTablePage('newspaper');
+}
+
+function renderNewspaperRows(rows){
+  if(!rows.length) return `<tr class="empty-row"><td colspan="6">暂无退货记录</td></tr>`;
+  return rows.map(r=>`<tr>
+    <td class="td-mono">${formatDateAU(r.Date||r.SubmittedAt)}</td>
+    <td class="td-main">${esc(r.Station||'—')}</td>
+    <td>${esc(r.SubmittedBy||r.StaffName||r.staffName||'—')}</td>
+    <td>${esc(r.PaperName||r.paperName||'—')}</td>
+    <td class="td-mono" style="font-weight:600;color:var(--accent)">${r.ReturnQty||r.returnQty||'—'}</td>
+    <td style="color:var(--muted)">${esc(r.Notes||r.notes||'')}</td>
   </tr>`).join('');
 }
 
