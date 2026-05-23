@@ -376,7 +376,6 @@ tr:hover td{background:rgba(255,255,255,.015)}
             <option>BP Flemington</option>
             <option>Liberty Golden Square</option>
           </select>
-          <button class="refresh-btn" onclick="loadDashboard()">↻ 刷新</button>
         </div>
 
         <div class="stats-grid" style="grid-template-columns:1fr 1fr" id="dashStats">
@@ -1416,10 +1415,10 @@ async function loadModule(mod){
   const stationEl=document.getElementById(stationFilterIds[mod]||(mod+'StationFilter'));
   const station=stationEl?stationEl.value:'';
 
-  // If dashboard data is already cached AND has enough days, use it directly
+  // If dashboard data is already cached, use it directly to avoid repeated Apps Script calls.
+  // This keeps module pages stable even when Apps Script is cold or slow.
   const neededDays=Math.max(rangeToDays(moduleRanges[mod]||'month'),31);
-  const cachedDays=cache.dashboard?cache.dashboard.periodDays||0:0;
-  if(cache.dashboard && cachedDays>=neededDays){
+  if(cache.dashboard){
     const data=cache.dashboard;
     if(mod==='temperature'){cache.temperature=data.temperature||[];renderTemperature(station);return;}
     if(mod==='maintenance'){cache.maintenance=data.maintenance||[];cache._openMaint=data.openMaintenance||[];renderMaintenance(station);return;}
