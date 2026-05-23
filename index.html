@@ -6,439 +6,416 @@
 <title>Staff Portal — Aries Petroleum</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --bg: #0f1117;
-  --surface: #181c25;
-  --surface2: #1f2433;
-  --border: #2a3044;
-  --border2: #353f58;
-  --accent: #4ade80;
-  --accent2: #22d3ee;
-  --warn: #fb923c;
-  --danger: #f87171;
-  --purple: #a78bfa;
-  --text: #e8eaf0;
-  --muted: #7a8299;
-  --mono: 'DM Mono', monospace;
-  --sans: 'Sora', sans-serif;
+:root{
+  --sinopec-red:#E60012;
+  --sinopec-red-dark:#B8000E;
+  --bp-green:#00A651;
+  --bp-green-dark:#007A3D;
+  --liberty-blue:#003DA5;
+  --liberty-blue-dark:#002A73;
+  --liberty-red:#CE1126;
+
+  --bg:#F4F6F8;
+  --surface:#FFFFFF;
+  --surface-soft:#F8FAFC;
+  --border:#DDE3EA;
+  --border-strong:#C9D2DD;
+
+  --text:#142033;
+  --muted:#667085;
+  --label:#344054;
+
+  --danger-light:#FFF1F2;
+  --green-light:#ECFDF3;
+  --blue-light:#EFF6FF;
+  --orange-light:#FFF7ED;
+  --purple-light:#FAF5FF;
+
+  --radius:16px;
+  --radius-sm:10px;
+  --sans:'DM Sans',sans-serif;
+  --mono:'DM Mono',monospace;
+  --shadow:0 4px 18px rgba(15,23,42,.08);
+  --shadow-sm:0 2px 8px rgba(15,23,42,.06);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: var(--sans);
-  min-height: 100vh;
-  padding-bottom: 48px;
+body{
+  font-family:var(--sans);
+  background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);
+  color:var(--text);
+  min-height:100vh;
+  padding-bottom:48px;
 }
 
-.header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+/* ── HEADER ── */
+.header{
+  background:linear-gradient(135deg,var(--sinopec-red) 0%,var(--liberty-blue) 100%);
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 6px 20px rgba(0,0,0,.18);
 }
 
-.header-left { display: flex; align-items: center; gap: 10px; }
+.header-left{display:flex;align-items:center;gap:10px}
 
-.logo-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 10px var(--accent);
-  animation: pulse 2.5s ease-in-out infinite;
-  flex-shrink: 0;
+.header-logo{
+  width:32px;height:32px;
+  background:rgba(255,255,255,.16);
+  border:1px solid rgba(255,255,255,.24);
+  border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;flex-shrink:0;
 }
 
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+.brand{
+  font-family:var(--mono);
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:.12em;
+  color:#fff;
+}
+.brand span{color:rgba(255,255,255,.7)}
 
-.brand { font-size: 13px; font-weight: 700; letter-spacing: .08em; }
-.brand span { color: var(--muted); font-weight: 400; }
-
-.lang-toggle {
-  display: flex;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
+.lang-toggle{
+  display:flex;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.22);
+  border-radius:9px;
+  overflow:hidden;
 }
 
-.lang-btn {
-  padding: 4px 10px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--muted);
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  transition: all .15s;
-  letter-spacing: .04em;
+.lang-btn{
+  padding:6px 10px;
+  font-family:var(--mono);
+  font-size:11px;
+  color:#fff;
+  cursor:pointer;
+  border:none;
+  background:transparent;
+  font-weight:600;
 }
+.lang-btn.active{background:#fff;color:var(--liberty-blue)}
 
-.lang-btn.active { background: var(--border2); color: var(--text); }
+/* ── SCREENS ── */
+.screen{display:none}
+.screen.active{display:block}
 
-.screen { display: none; }
-.screen.active { display: block; }
-
+/* ── WRAPPERS ── */
 .confirm-wrap,
 .station-wrap,
-.menu-wrap {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: 28px 16px 20px;
+.menu-wrap{
+  max-width:480px;
+  margin:0 auto;
+  padding:24px 16px 20px;
 }
 
+/* ── EYEBROW / HEADING ── */
 .confirm-eyebrow,
 .station-eyebrow,
 .menu-date,
-.section-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 8px;
+.section-label{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.13em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:8px;
+  font-weight:700;
 }
 
 .confirm-heading,
-.station-heading {
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1.3;
-  margin-bottom: 28px;
+.station-heading{
+  font-size:22px;
+  font-weight:800;
+  line-height:1.3;
+  margin-bottom:24px;
+  color:var(--text);
 }
 
 .confirm-heading span,
 .station-heading span,
-.menu-greeting span { color: var(--accent2); }
+.menu-greeting span{color:var(--sinopec-red)}
 
-.confirm-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 20px;
-  margin-bottom: 14px;
+/* ── CONFIRM CARD ── */
+.confirm-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:18px;
+  margin-bottom:14px;
+  box-shadow:var(--shadow-sm);
 }
 
-.confirm-card-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 10px;
+.confirm-card-label{
+  font-family:var(--mono);
+  font-size:10px;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:10px;
+  font-weight:600;
 }
 
-.confirm-station-name {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 4px;
+.confirm-station-name{
+  font-size:17px;
+  font-weight:800;
+  margin-bottom:4px;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
-.confirm-station-loc {
-  font-size: 12px;
-  color: var(--muted);
+.confirm-station-dot{
+  display:inline-block;
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--bp-green);
+  box-shadow:0 0 6px var(--bp-green);
+  flex-shrink:0;
 }
 
-.confirm-station-dot {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 8px var(--accent);
-  margin-right: 8px;
+.confirm-station-loc{
+  font-size:12px;
+  color:var(--muted);
+  margin-left:16px;
 }
 
-.btn-row { display: flex; flex-direction: column; gap: 10px; }
+/* ── BUTTONS ── */
+.btn-row{display:flex;flex-direction:column;gap:10px}
 
-.btn {
-  width: 100%;
-  border: none;
-  border-radius: 10px;
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 600;
-  padding: 14px;
-  cursor: pointer;
-  letter-spacing: .02em;
-  transition: opacity .18s, transform .1s;
+.btn{
+  width:100%;
+  border:none;
+  border-radius:var(--radius-sm);
+  font-family:var(--sans);
+  font-size:14px;
+  font-weight:800;
+  padding:14px;
+  cursor:pointer;
+  transition:opacity .15s,transform .1s;
+  text-align:center;
+}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+
+.btn-primary{
+  background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));
+  color:#fff;
+  box-shadow:0 4px 14px rgba(230,0,18,.22);
 }
 
-.btn:active { transform: scale(.98); }
-
-.btn-primary { background: var(--accent); color: #071a0d; }
-
-.btn-secondary {
-  background: var(--surface2);
-  color: var(--muted);
-  border: 1px solid var(--border);
+.btn-secondary{
+  background:var(--surface);
+  color:var(--label);
+  border:1.5px solid var(--border);
 }
 
-.station-sub {
-  font-size: 13px;
-  color: var(--muted);
+/* ── STATION SCREEN ── */
+.station-sub{
+  font-size:13px;
+  color:var(--muted);
+  margin-bottom:18px;
 }
 
-.station-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.station-list{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 
-.station-opt {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 14px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: all .18s;
+.station-opt{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:13px 16px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  transition:all .18s;
+  box-shadow:var(--shadow-sm);
 }
 
-.station-opt:hover {
-  background: var(--surface2);
-  border-color: var(--border2);
-  transform: translateX(3px);
+.station-opt:hover{
+  border-color:var(--sinopec-red);
+  box-shadow:0 0 0 3px rgba(230,0,18,.08);
+  transform:translateX(2px);
 }
 
-.station-opt-left { display: flex; align-items: center; gap: 12px; }
+.station-opt-left{display:flex;align-items:center;gap:12px}
 
-.station-brand-dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
+.station-brand-dot{
+  width:36px;height:36px;
+  border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+  flex-shrink:0;
 }
 
-.dot-sinopec { background: rgba(34,211,238,.1); }
-.dot-bp { background: rgba(74,222,128,.1); }
-.dot-liberty { background: rgba(251,146,60,.1); }
+.dot-sinopec{background:#FFF1F2;color:var(--sinopec-red)}
+.dot-bp{background:#ECFDF3;color:var(--bp-green-dark)}
+.dot-liberty{background:#EFF6FF;color:var(--liberty-blue)}
 
-.station-opt-name {
-  font-size: 14px;
-  font-weight: 600;
+.station-opt-name{font-size:14px;font-weight:700;color:var(--text)}
+.station-opt-loc{font-size:11px;color:var(--muted);margin-top:2px}
+.station-opt-arrow{color:var(--border-strong);font-size:16px;font-weight:700}
+
+/* ── STATION BAR ── */
+.station-bar{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:18px;
+  box-shadow:var(--shadow-sm);
 }
 
-.station-opt-loc {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
+.sbar-left{display:flex;align-items:center;gap:10px}
+
+.sbar-dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--bp-green);
+  box-shadow:0 0 6px var(--bp-green);
+  flex-shrink:0;
 }
 
-.station-opt-arrow {
-  color: var(--border2);
-  font-size: 16px;
+.sbar-name{font-size:13px;font-weight:700;color:var(--text)}
+.sbar-date{font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--mono)}
+
+.sbar-change{
+  font-size:11px;
+  color:var(--liberty-blue);
+  cursor:pointer;
+  border:1px solid rgba(0,61,165,.25);
+  padding:5px 12px;
+  border-radius:7px;
+  font-family:var(--mono);
+  background:var(--blue-light);
+  white-space:nowrap;
+  font-weight:600;
 }
 
-.station-bar {
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
+/* ── MENU ── */
+.menu-greeting{
+  font-size:20px;
+  font-weight:800;
+  margin-bottom:20px;
+  line-height:1.3;
+  color:var(--text);
 }
 
-.sbar-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.menu-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:22px;
 }
 
-.sbar-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 6px var(--accent);
+.menu-card{
+  background:var(--surface);
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:15px 13px 13px;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transition:all .18s;
+  box-shadow:var(--shadow-sm);
 }
 
-.sbar-name {
-  font-size: 13px;
-  font-weight: 600;
+.menu-card:hover{
+  border-color:var(--border-strong);
+  box-shadow:var(--shadow);
+  transform:translateY(-2px);
 }
 
-.sbar-date {
-  font-size: 11px;
-  color: var(--muted);
-  margin-top: 2px;
-  font-family: var(--mono);
+.menu-card:active{transform:scale(.98)}
+
+.card-stripe{
+  position:absolute;top:0;left:0;
+  width:100%;height:4px;
 }
 
-.sbar-change {
-  font-size: 11px;
-  color: var(--accent2);
-  cursor: pointer;
-  border: 1px solid rgba(34,211,238,.2);
-  padding: 5px 11px;
-  border-radius: 6px;
-  font-family: var(--mono);
-  background: rgba(34,211,238,.06);
-  white-space: nowrap;
+.stripe-green{background:var(--bp-green)}
+.stripe-red{background:var(--sinopec-red)}
+.stripe-orange{background:#F97316}
+.stripe-blue{background:var(--liberty-blue)}
+.stripe-purple{background:#7C3AED}
+
+.card-icon{font-size:24px;margin-bottom:10px;display:block}
+
+.card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:3px}
+.card-sub{font-size:11px;color:var(--muted);line-height:1.4}
+
+.card-badge{
+  position:absolute;top:10px;right:9px;
+  font-family:var(--mono);font-size:9px;font-weight:700;
+  letter-spacing:.06em;padding:2px 6px;border-radius:4px;
 }
 
-.menu-greeting {
-  font-size: 20px;
-  font-weight: 700;
-  margin-bottom: 22px;
-  line-height: 1.3;
+.badge-daily{background:#ECFDF3;color:var(--bp-green-dark);border:1px solid #BBF7D0}
+.badge-incident{background:#FFF1F2;color:var(--sinopec-red);border:1px solid #FECDD3}
+.badge-ops{background:var(--purple-light);color:#7C3AED;border:1px solid #DDD6FE}
+
+/* ── MAINTENANCE ALERT ── */
+.maintenance-alert{
+  background:var(--orange-light);
+  border:1.5px solid #FED7AA;
+  border-radius:var(--radius-sm);
+  padding:13px;
+  margin-bottom:14px;
+  cursor:pointer;
+  box-shadow:var(--shadow-sm);
 }
 
-.menu-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 24px;
+.maintenance-alert-top{
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
 }
 
-.menu-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px 14px 14px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: all .18s;
+.maintenance-alert-icon{
+  width:24px;height:24px;border-radius:50%;
+  background:#F97316;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;flex-shrink:0;
 }
 
-.menu-card:hover {
-  background: var(--surface2);
-  border-color: var(--border2);
-  transform: translateY(-2px);
+.maintenance-alert-title{
+  font-size:12px;font-weight:800;
+  color:#C2410C;
+  letter-spacing:.04em;text-transform:uppercase;
 }
 
-.card-stripe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  border-radius: 12px 12px 0 0;
+.maintenance-alert-body{
+  font-size:13px;color:var(--label);line-height:1.55;
 }
 
-.stripe-green { background: linear-gradient(90deg, var(--accent), transparent); }
-.stripe-red { background: linear-gradient(90deg, var(--danger), transparent); }
-.stripe-orange { background: linear-gradient(90deg, var(--warn), transparent); }
-.stripe-blue { background: linear-gradient(90deg, var(--accent2), transparent); }
-.stripe-purple { background: linear-gradient(90deg, var(--purple), transparent); }
-
-.card-icon {
-  font-size: 24px;
-  margin-bottom: 10px;
-  display: block;
+.maintenance-alert-time{
+  margin-top:4px;font-size:11px;
+  color:var(--muted);font-family:var(--mono);
 }
 
-.card-title {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 3px;
-}
-
-.card-sub {
-  font-size: 11px;
-  color: var(--muted);
-  line-height: 1.4;
-}
-
-.card-badge {
-  position: absolute;
-  top: 12px;
-  right: 10px;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 500;
-  letter-spacing: .06em;
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.badge-daily {
-  background: rgba(74,222,128,.1);
-  color: var(--accent);
-  border: 1px solid rgba(74,222,128,.2);
-}
-
-.badge-incident {
-  background: rgba(248,113,113,.1);
-  color: var(--danger);
-  border: 1px solid rgba(248,113,113,.2);
-}
-
-.badge-ops {
-  background: rgba(167,139,250,.1);
-  color: var(--purple);
-  border: 1px solid rgba(167,139,250,.2);
-}
-
-.maintenance-alert {
-  background: rgba(251,146,60,.08);
-  border: 1px solid rgba(251,146,60,.25);
-  border-radius: 12px;
-  padding: 14px;
-  margin-bottom: 14px;
-  cursor: pointer;
-}
-
-.maintenance-alert-top {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.maintenance-alert-icon {
-  color: var(--warn);
-  font-weight: 700;
-}
-
-.maintenance-alert-title {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--warn);
-  letter-spacing: .04em;
-  text-transform: uppercase;
-}
-
-.maintenance-alert-body {
-  font-size: 13px;
-  color: var(--text);
-  line-height: 1.5;
-}
-
-.maintenance-alert-time {
-  margin-top: 4px;
-  font-size: 11px;
-  color: var(--muted);
-  font-family: var(--mono);
-}
-
-.footer {
-  text-align: center;
-  padding: 24px 20px 0;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--border2);
-  letter-spacing: .06em;
+/* ── FOOTER ── */
+.footer{
+  text-align:center;
+  padding:24px 20px 0;
+  font-family:var(--mono);
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:.08em;
 }
 </style>
 </head>
@@ -447,7 +424,7 @@ body {
 
 <div class="header">
   <div class="header-left">
-    <div class="logo-dot"></div>
+    <div class="header-logo">⛽</div>
     <div class="brand">ARIES <span>STAFF</span></div>
   </div>
   <div class="lang-toggle">
@@ -460,7 +437,6 @@ body {
   <div class="confirm-wrap">
     <div class="confirm-eyebrow" id="cf-eyebrow"></div>
     <div class="confirm-heading" id="cf-heading"></div>
-
     <div class="confirm-card">
       <div class="confirm-card-label" id="cf-label"></div>
       <div class="confirm-station-name">
@@ -469,7 +445,6 @@ body {
       </div>
       <div class="confirm-station-loc" id="cf-loc">—</div>
     </div>
-
     <div class="btn-row">
       <button class="btn btn-primary" id="cf-continue-btn" onclick="confirmStation()"></button>
       <button class="btn btn-secondary" id="cf-change-btn" onclick="showScreen('station')"></button>
@@ -479,11 +454,9 @@ body {
 
 <div class="screen" id="screen-station">
   <div class="station-wrap">
-    <div class="station-hero">
-      <div class="station-eyebrow" id="s-eyebrow"></div>
-      <div class="station-heading" id="s-heading"></div>
-      <div class="station-sub" id="s-sub"></div>
-    </div>
+    <div class="station-eyebrow" id="s-eyebrow"></div>
+    <div class="station-heading" id="s-heading"></div>
+    <div class="station-sub" id="s-sub"></div>
     <div class="station-list" id="station-list"></div>
   </div>
 </div>
@@ -516,7 +489,6 @@ body {
         <div class="card-title" id="c-temp-t"></div>
         <div class="card-sub" id="c-temp-s"></div>
       </div>
-
       <div class="menu-card" onclick="go('cigarette.html')">
         <div class="card-stripe stripe-orange"></div>
         <span class="card-badge badge-daily" id="b-d2"></span>
@@ -524,7 +496,6 @@ body {
         <div class="card-title" id="c-cig-t"></div>
         <div class="card-sub" id="c-cig-s"></div>
       </div>
-
       <div class="menu-card" onclick="go('newspaper.html')">
         <div class="card-stripe stripe-blue"></div>
         <span class="card-badge badge-daily" id="b-d3"></span>
@@ -532,7 +503,6 @@ body {
         <div class="card-title" id="c-news-t"></div>
         <div class="card-sub" id="c-news-s"></div>
       </div>
-
       <div class="menu-card" onclick="go('cash.html')">
         <div class="card-stripe stripe-purple"></div>
         <span class="card-badge badge-daily" id="b-d4"></span>
@@ -540,7 +510,6 @@ body {
         <div class="card-title" id="c-cash-t"></div>
         <div class="card-sub" id="c-cash-s"></div>
       </div>
-
       <div class="menu-card" onclick="goExternal('https://fuel.ariespetroleum.com.au/')">
         <div class="card-stripe stripe-blue"></div>
         <span class="card-badge badge-daily" id="b-d5"></span>
@@ -559,7 +528,6 @@ body {
         <div class="card-title" id="c-refund-t"></div>
         <div class="card-sub" id="c-refund-s"></div>
       </div>
-
       <div class="menu-card" onclick="go('unpaid-fuel.html')">
         <div class="card-stripe stripe-red"></div>
         <span class="card-badge badge-incident" id="b-i2"></span>
@@ -567,7 +535,6 @@ body {
         <div class="card-title" id="c-uf-t"></div>
         <div class="card-sub" id="c-uf-s"></div>
       </div>
-
       <div class="menu-card" onclick="go('driveoff.html')">
         <div class="card-stripe stripe-red"></div>
         <span class="card-badge badge-incident" id="b-i3"></span>
@@ -586,7 +553,6 @@ body {
         <div class="card-title" id="c-maint-t"></div>
         <div class="card-sub" id="c-maint-s"></div>
       </div>
-
       <div class="menu-card" onclick="go('roster.html')">
         <div class="card-stripe stripe-purple"></div>
         <span class="card-badge badge-ops" id="b-o2"></span>
@@ -636,7 +602,7 @@ const STRINGS = {
     greet: { morning:'morning', afternoon:'afternoon', evening:'evening' },
     maintenanceAlert: 'Maintenance In Progress',
     maintenanceAlertClick: 'Tap here to complete final record',
-    maintenanceSyncFail: 'Could not sync maintenance status. Local reminder may still appear.',
+    maintenanceSyncFail: 'Could not sync maintenance status.',
     cards: {
       temp: { t:'Temperature Log', s:'Morning / Afternoon / Night' },
       cig: { t:'Cigarette Stock', s:'End of shift count' },
@@ -694,10 +660,7 @@ let station = localStorage.getItem('ap_station') || '';
 let openMaintenanceJobs = [];
 
 function t() { return STRINGS[lang]; }
-
-function stationData(name) {
-  return STATIONS.find(s => s.name === name) || null;
-}
+function stationData(name) { return STATIONS.find(s => s.name === name) || null; }
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -708,21 +671,17 @@ function showScreen(id) {
 function setLang(l) {
   lang = l;
   localStorage.setItem('ap_lang', l);
-
   document.querySelectorAll('.lang-btn').forEach(b => {
-    b.classList.toggle(
-      'active',
+    b.classList.toggle('active',
       (l === 'en' && b.textContent === 'EN') ||
       (l === 'zh' && b.textContent === '中文')
     );
   });
-
   applyLang();
 }
 
 function applyLang() {
   const s = t();
-
   document.title = s.pageTitle;
 
   document.getElementById('cf-eyebrow').textContent = s.cfEyebrow;
@@ -752,16 +711,16 @@ function applyLang() {
   ['b-i1','b-i2','b-i3'].forEach(id => document.getElementById(id).textContent = s.bIncident);
   ['b-o1','b-o2'].forEach(id => document.getElementById(id).textContent = s.bOps);
 
-  setCard('temp', 'c-temp-t', 'c-temp-s');
-  setCard('cig', 'c-cig-t', 'c-cig-s');
-  setCard('news', 'c-news-t', 'c-news-s');
-  setCard('cash', 'c-cash-t', 'c-cash-s');
-  setCard('fuel', 'c-fuel-t', 'c-fuel-s');
-  setCard('refund', 'c-refund-t', 'c-refund-s');
-  setCard('uf', 'c-uf-t', 'c-uf-s');
-  setCard('do', 'c-do-t', 'c-do-s');
-  setCard('maintenance', 'c-maint-t', 'c-maint-s');
-  setCard('roster', 'c-roster-t', 'c-roster-s');
+  setCard('temp','c-temp-t','c-temp-s');
+  setCard('cig','c-cig-t','c-cig-s');
+  setCard('news','c-news-t','c-news-s');
+  setCard('cash','c-cash-t','c-cash-s');
+  setCard('fuel','c-fuel-t','c-fuel-s');
+  setCard('refund','c-refund-t','c-refund-s');
+  setCard('uf','c-uf-t','c-uf-s');
+  setCard('do','c-do-t','c-do-s');
+  setCard('maintenance','c-maint-t','c-maint-s');
+  setCard('roster','c-roster-t','c-roster-s');
 
   document.getElementById('footer-txt').textContent = s.footer;
 
@@ -778,12 +737,10 @@ function setCard(key, titleId, subId) {
 function buildStationList() {
   const box = document.getElementById('station-list');
   box.innerHTML = '';
-
   STATIONS.forEach(st => {
     const div = document.createElement('div');
     div.className = 'station-opt';
     div.onclick = () => selectStation(st.name);
-
     div.innerHTML = `
       <div class="station-opt-left">
         <div class="station-brand-dot ${st.cls}">${st.icon}</div>
@@ -794,7 +751,6 @@ function buildStationList() {
       </div>
       <div class="station-opt-arrow">›</div>
     `;
-
     box.appendChild(div);
   });
 }
@@ -812,33 +768,21 @@ function confirmStation() {
   loadOpenMaintenance();
 }
 
-function go(page) {
-  window.location.href = page;
-}
-
-function goExternal(url) {
-  window.location.href = url;
-}
+function go(page) { window.location.href = page; }
+function goExternal(url) { window.location.href = url; }
 
 function updateDateGreeting() {
   const now = new Date();
-
   const dateStr = now.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-AU', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+    weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
   });
-
   document.getElementById('sbar-date').textContent = dateStr;
   document.getElementById('m-date').textContent = dateStr.toUpperCase();
 
   const hour = now.getHours();
   let g = 'morning';
-
   if (hour >= 12 && hour < 18) g = 'afternoon';
   if (hour >= 18 || hour < 5) g = 'evening';
-
   document.getElementById('m-greeting').innerHTML = t().greeting(t().greet[g]);
 }
 
@@ -848,78 +792,52 @@ async function loadOpenMaintenance() {
     renderMaintenanceAlerts();
     return;
   }
-
   try {
     const url = `${WEB_APP_URL}?action=getOpenMaintenance&station=${encodeURIComponent(station)}&t=${Date.now()}`;
     const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
     const data = await res.json();
-
     if (data && data.success && Array.isArray(data.jobs)) {
       openMaintenanceJobs = data.jobs;
     } else {
       openMaintenanceJobs = getLocalOpenMaintenanceJobs();
     }
-
-  } catch (e) {
+  } catch(e) {
     openMaintenanceJobs = getLocalOpenMaintenanceJobs();
   }
-
   renderMaintenanceAlerts();
 }
 
 function getLocalOpenMaintenanceJobs() {
   if (!station) return [];
-
   const jobs = [];
-
   Object.keys(localStorage).forEach(key => {
     if (!key.startsWith('ap_open_maintenance_')) return;
-
     try {
       const job = JSON.parse(localStorage.getItem(key));
       if (!job) return;
-
-      if (job.station === station || key === 'ap_open_maintenance_' + station) {
-        jobs.push(job);
-      }
-    } catch (e) {}
+      if (job.station === station || key === 'ap_open_maintenance_' + station) jobs.push(job);
+    } catch(e) {}
   });
-
   return jobs;
 }
 
 function renderMaintenanceAlerts() {
   const box = document.getElementById('maintenance-alerts');
   if (!box) return;
-
   const jobs = openMaintenanceJobs || [];
   const s = t();
-
-  if (!jobs.length) {
-    box.innerHTML = '';
-    return;
-  }
-
+  if (!jobs.length) { box.innerHTML = ''; return; }
   box.innerHTML = jobs.map(job => `
     <div class="maintenance-alert" onclick="go('maintenance.html')">
       <div class="maintenance-alert-top">
         <div class="maintenance-alert-icon">!</div>
         <div class="maintenance-alert-title">${s.maintenanceAlert}</div>
       </div>
-
       <div class="maintenance-alert-body">
-        <div>
-          <strong>${escapeHtml(job.companyName || job.CompanyName || 'Contractor')}</strong>
-          — ${escapeHtml(job.equipmentDisplay || job.EquipmentDisplay || job.equipment || job.Equipment || 'Equipment')}
-        </div>
-
-        <div class="maintenance-alert-time">
-          Arrived ${escapeHtml(job.arrivalTime || job.ArrivalTime || '--:--')}
-        </div>
-
-        <div class="maintenance-alert-time">
-          ${s.maintenanceAlertClick}
-        </div>
+        <div><strong>${escapeHtml(job.companyName || job.CompanyName || 'Contractor')}</strong>
+        — ${escapeHtml(job.equipmentDisplay || job.EquipmentDisplay || job.equipment || job.Equipment || 'Equipment')}</div>
+        <div class="maintenance-alert-time">Arrived ${escapeHtml(job.arrivalTime || job.ArrivalTime || '--:--')}</div>
+        <div class="maintenance-alert-time">${s.maintenanceAlertClick}</div>
       </div>
     </div>
   `).join('');
@@ -927,15 +845,12 @@ function renderMaintenanceAlerts() {
 
 function escapeHtml(str) {
   return String(str || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 document.querySelectorAll('.lang-btn').forEach(b => {
-  b.classList.toggle(
-    'active',
+  b.classList.toggle('active',
     (lang === 'en' && b.textContent === 'EN') ||
     (lang === 'zh' && b.textContent === '中文')
   );
@@ -950,11 +865,7 @@ if (station) {
   showScreen('station');
 }
 
-setInterval(() => {
-  if (station) {
-    loadOpenMaintenance();
-  }
-}, 60000);
+setInterval(() => { if (station) loadOpenMaintenance(); }, 60000);
 </script>
 
 </body>
