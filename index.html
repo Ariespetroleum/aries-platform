@@ -355,6 +355,7 @@ body{
 .stripe-orange{background:#F97316}
 .stripe-blue{background:var(--liberty-blue)}
 .stripe-purple{background:#7C3AED}
+.stripe-pink{background:#DB2777}
 
 .card-icon{font-size:24px;margin-bottom:10px;display:block}
 
@@ -480,6 +481,7 @@ body{
     <div class="menu-date" id="m-date"></div>
     <div class="menu-greeting" id="m-greeting"></div>
 
+    <!-- DAILY FORMS -->
     <div class="section-label" id="m-label-daily"></div>
     <div class="menu-grid">
       <div class="menu-card" onclick="go('temperature.html')">
@@ -519,6 +521,9 @@ body{
       </div>
     </div>
 
+    <!-- INCIDENT REPORTS -->
+    <!-- Row 1: Refund | Complaint -->
+    <!-- Row 2: Unpaid Fuel | Drive Off -->
     <div class="section-label" id="m-label-incident"></div>
     <div class="menu-grid">
       <div class="menu-card" onclick="go('refund.html')">
@@ -527,6 +532,13 @@ body{
         <span class="card-icon">↩️</span>
         <div class="card-title" id="c-refund-t"></div>
         <div class="card-sub" id="c-refund-s"></div>
+      </div>
+      <div class="menu-card" onclick="go('complaint.html')">
+        <div class="card-stripe stripe-pink"></div>
+        <span class="card-badge badge-incident" id="b-i4"></span>
+        <span class="card-icon">📋</span>
+        <div class="card-title" id="c-cmp-t"></div>
+        <div class="card-sub" id="c-cmp-s"></div>
       </div>
       <div class="menu-card" onclick="go('unpaid-fuel.html')">
         <div class="card-stripe stripe-red"></div>
@@ -544,6 +556,7 @@ body{
       </div>
     </div>
 
+    <!-- OPERATIONS -->
     <div class="section-label" id="m-label-ops"></div>
     <div class="menu-grid">
       <div class="menu-card" onclick="go('maintenance.html')">
@@ -571,13 +584,13 @@ body{
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
 
 const STATIONS = [
-  { name:'Sinopec Frankston', loc:'Frankston, VIC', cls:'dot-sinopec', icon:'⛽' },
-  { name:'Sinopec Thomastown', loc:'Thomastown, VIC', cls:'dot-sinopec', icon:'⛽' },
-  { name:'Sinopec Shepparton', loc:'Shepparton, VIC', cls:'dot-sinopec', icon:'⛽' },
-  { name:'Sinopec Ballarat', loc:'Ballarat, VIC', cls:'dot-sinopec', icon:'⛽' },
-  { name:'BP Clayton South', loc:'Clayton South, VIC', cls:'dot-bp', icon:'⛽' },
-  { name:'BP Flemington', loc:'Flemington, VIC', cls:'dot-bp', icon:'⛽' },
-  { name:'Liberty Golden Square', loc:'Golden Square, VIC', cls:'dot-liberty', icon:'⛽' }
+  { name:'Sinopec Frankston',   loc:'Frankston, VIC',     cls:'dot-sinopec', icon:'⛽' },
+  { name:'Sinopec Thomastown',  loc:'Thomastown, VIC',    cls:'dot-sinopec', icon:'⛽' },
+  { name:'Sinopec Shepparton',  loc:'Shepparton, VIC',    cls:'dot-sinopec', icon:'⛽' },
+  { name:'Sinopec Ballarat',    loc:'Ballarat, VIC',      cls:'dot-sinopec', icon:'⛽' },
+  { name:'BP Clayton South',    loc:'Clayton South, VIC', cls:'dot-bp',      icon:'⛽' },
+  { name:'BP Flemington',       loc:'Flemington, VIC',    cls:'dot-bp',      icon:'⛽' },
+  { name:'Liberty Golden Square',loc:'Golden Square, VIC',cls:'dot-liberty', icon:'⛽' }
 ];
 
 const STRINGS = {
@@ -604,16 +617,17 @@ const STRINGS = {
     maintenanceAlertClick: 'Tap here to complete final record',
     maintenanceSyncFail: 'Could not sync maintenance status.',
     cards: {
-      temp: { t:'Temperature Log', s:'Morning / Afternoon / Night' },
-      cig: { t:'Cigarette Stock', s:'End of shift count' },
-      news: { t:'Newspaper Returns', s:'Daily return record' },
-      cash: { t:'Cash Reconciliation', s:'Shift end settlement' },
-      fuel: { t:'Fuel & Dips', s:'Daily fuel dips & fuel management' },
-      refund: { t:'Refund Record', s:'Refund reason & receipt photo' },
-      uf: { t:'Unpaid Fuel', s:'Customer left details' },
-      do: { t:'Drive Off', s:'Unpaid fuel — no ID left' },
-      maintenance: { t:'Maintenance Record', s:'Contractor arrival & completion' },
-      roster: { t:'View Roster', s:'Check your upcoming shifts' }
+      temp:        { t:'Temperature Log',      s:'Morning / Afternoon / Night' },
+      cig:         { t:'Cigarette Stock',      s:'End of shift count' },
+      news:        { t:'Newspaper Returns',    s:'Daily return record' },
+      cash:        { t:'Cash Reconciliation',  s:'Shift end settlement' },
+      fuel:        { t:'Fuel & Dips',          s:'Daily fuel dips & fuel management' },
+      refund:      { t:'Refund Record',        s:'Refund reason & receipt photo' },
+      complaint:   { t:'Complaint Log',        s:'Customer complaint or staff finding' },
+      uf:          { t:'Unpaid Fuel',          s:'Customer left details' },
+      do:          { t:'Drive Off',            s:'Unpaid fuel — no ID left' },
+      maintenance: { t:'Maintenance Record',   s:'Contractor arrival & completion' },
+      roster:      { t:'View Roster',          s:'Check your upcoming shifts' }
     },
     footer: 'ARIES PETROLEUM · STAFF PORTAL'
   },
@@ -640,27 +654,28 @@ const STRINGS = {
     maintenanceAlertClick: '点击这里完成最终登记',
     maintenanceSyncFail: '无法同步维修状态，可能只显示本机提醒。',
     cards: {
-      temp: { t:'温度记录', s:'早班 / 午班 / 夜班' },
-      cig: { t:'香烟库存盘点', s:'班次结束时填写' },
-      news: { t:'报纸退货记录', s:'每日退回登记' },
-      cash: { t:'收银对账', s:'班次结算' },
-      fuel: { t:'Fuel & Dips', s:'每日油量测量与燃油管理' },
-      refund: { t:'退款登记', s:'退款原因与小票照片' },
-      uf: { t:'欠款燃油登记', s:'客户留下了信息' },
-      do: { t:'Drive Off 登记', s:'逃单——无客户信息' },
-      maintenance: { t:'维修登记', s:'维修到场与离场完成记录' },
-      roster: { t:'查看排班', s:'查看自己接下来的上班时间' }
+      temp:        { t:'温度记录',       s:'早班 / 午班 / 夜班' },
+      cig:         { t:'香烟库存盘点',   s:'班次结束时填写' },
+      news:        { t:'报纸退货记录',   s:'每日退回登记' },
+      cash:        { t:'收银对账',       s:'班次结算' },
+      fuel:        { t:'Fuel & Dips',   s:'每日油量测量与燃油管理' },
+      refund:      { t:'退款登记',       s:'退款原因与小票照片' },
+      complaint:   { t:'投诉记录',       s:'客人投诉或员工发现的问题' },
+      uf:          { t:'欠款燃油登记',   s:'客户留下了信息' },
+      do:          { t:'Drive Off 登记', s:'逃单——无客户信息' },
+      maintenance: { t:'维修登记',       s:'维修到场与离场完成记录' },
+      roster:      { t:'查看排班',       s:'查看自己接下来的上班时间' }
     },
     footer: 'ARIES PETROLEUM · 员工端'
   }
 };
 
-let lang = localStorage.getItem('ap_lang') || 'en';
+let lang    = localStorage.getItem('ap_lang')    || 'en';
 let station = localStorage.getItem('ap_station') || '';
 let openMaintenanceJobs = [];
 
-function t() { return STRINGS[lang]; }
-function stationData(name) { return STATIONS.find(s => s.name === name) || null; }
+function t()            { return STRINGS[lang]; }
+function stationData(n) { return STATIONS.find(s => s.name === n) || null; }
 
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -684,43 +699,44 @@ function applyLang() {
   const s = t();
   document.title = s.pageTitle;
 
-  document.getElementById('cf-eyebrow').textContent = s.cfEyebrow;
-  document.getElementById('cf-heading').innerHTML = s.cfHeading(station || '—');
-  document.getElementById('cf-label').textContent = s.cfLabel;
+  document.getElementById('cf-eyebrow').textContent      = s.cfEyebrow;
+  document.getElementById('cf-heading').innerHTML        = s.cfHeading(station || '—');
+  document.getElementById('cf-label').textContent        = s.cfLabel;
   document.getElementById('cf-continue-btn').textContent = s.cfContinue;
-  document.getElementById('cf-change-btn').textContent = s.cfChange;
+  document.getElementById('cf-change-btn').textContent   = s.cfChange;
 
   const sd = stationData(station);
   document.getElementById('cf-name').textContent = station || '—';
-  document.getElementById('cf-loc').textContent = sd ? sd.loc : '';
+  document.getElementById('cf-loc').textContent  = sd ? sd.loc : '';
 
   document.getElementById('s-eyebrow').textContent = s.sEyebrow;
-  document.getElementById('s-heading').innerHTML = s.sHeading;
-  document.getElementById('s-sub').textContent = s.sSub;
+  document.getElementById('s-heading').innerHTML   = s.sHeading;
+  document.getElementById('s-sub').textContent     = s.sSub;
 
   buildStationList();
 
   document.getElementById('sbar-change').textContent = s.sbarChange;
-  document.getElementById('sbar-name').textContent = station || '—';
+  document.getElementById('sbar-name').textContent   = station || '—';
 
-  document.getElementById('m-label-daily').textContent = s.mLabelDaily;
+  document.getElementById('m-label-daily').textContent    = s.mLabelDaily;
   document.getElementById('m-label-incident').textContent = s.mLabelIncident;
-  document.getElementById('m-label-ops').textContent = s.mLabelOps;
+  document.getElementById('m-label-ops').textContent      = s.mLabelOps;
 
   ['b-d1','b-d2','b-d3','b-d4','b-d5'].forEach(id => document.getElementById(id).textContent = s.bDaily);
-  ['b-i1','b-i2','b-i3'].forEach(id => document.getElementById(id).textContent = s.bIncident);
+  ['b-i1','b-i2','b-i3','b-i4'].forEach(id => document.getElementById(id).textContent = s.bIncident);
   ['b-o1','b-o2'].forEach(id => document.getElementById(id).textContent = s.bOps);
 
-  setCard('temp','c-temp-t','c-temp-s');
-  setCard('cig','c-cig-t','c-cig-s');
-  setCard('news','c-news-t','c-news-s');
-  setCard('cash','c-cash-t','c-cash-s');
-  setCard('fuel','c-fuel-t','c-fuel-s');
-  setCard('refund','c-refund-t','c-refund-s');
-  setCard('uf','c-uf-t','c-uf-s');
-  setCard('do','c-do-t','c-do-s');
-  setCard('maintenance','c-maint-t','c-maint-s');
-  setCard('roster','c-roster-t','c-roster-s');
+  setCard('temp',        'c-temp-t',   'c-temp-s');
+  setCard('cig',         'c-cig-t',    'c-cig-s');
+  setCard('news',        'c-news-t',   'c-news-s');
+  setCard('cash',        'c-cash-t',   'c-cash-s');
+  setCard('fuel',        'c-fuel-t',   'c-fuel-s');
+  setCard('refund',      'c-refund-t', 'c-refund-s');
+  setCard('complaint',   'c-cmp-t',    'c-cmp-s');
+  setCard('uf',          'c-uf-t',     'c-uf-s');
+  setCard('do',          'c-do-t',     'c-do-s');
+  setCard('maintenance', 'c-maint-t',  'c-maint-s');
+  setCard('roster',      'c-roster-t', 'c-roster-s');
 
   document.getElementById('footer-txt').textContent = s.footer;
 
@@ -731,7 +747,7 @@ function applyLang() {
 function setCard(key, titleId, subId) {
   const c = t().cards[key];
   document.getElementById(titleId).textContent = c.t;
-  document.getElementById(subId).textContent = c.s;
+  document.getElementById(subId).textContent   = c.s;
 }
 
 function buildStationList() {
@@ -768,21 +784,21 @@ function confirmStation() {
   loadOpenMaintenance();
 }
 
-function go(page) { window.location.href = page; }
+function go(page)        { window.location.href = page; }
 function goExternal(url) { window.location.href = url; }
 
 function updateDateGreeting() {
   const now = new Date();
   const dateStr = now.toLocaleDateString(lang === 'zh' ? 'zh-CN' : 'en-AU', {
-    weekday: 'long', year: 'numeric', month: 'short', day: 'numeric'
+    weekday:'long', year:'numeric', month:'short', day:'numeric'
   });
   document.getElementById('sbar-date').textContent = dateStr;
-  document.getElementById('m-date').textContent = dateStr.toUpperCase();
+  document.getElementById('m-date').textContent    = dateStr.toUpperCase();
 
   const hour = now.getHours();
   let g = 'morning';
   if (hour >= 12 && hour < 18) g = 'afternoon';
-  if (hour >= 18 || hour < 5) g = 'evening';
+  if (hour >= 18 || hour < 5)  g = 'evening';
   document.getElementById('m-greeting').innerHTML = t().greeting(t().greet[g]);
 }
 
@@ -794,13 +810,11 @@ async function loadOpenMaintenance() {
   }
   try {
     const url = `${WEB_APP_URL}?action=getOpenMaintenance&station=${encodeURIComponent(station)}&t=${Date.now()}`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(5000) });
+    const res  = await fetch(url, { signal: AbortSignal.timeout(5000) });
     const data = await res.json();
-    if (data && data.success && Array.isArray(data.jobs)) {
-      openMaintenanceJobs = data.jobs;
-    } else {
-      openMaintenanceJobs = getLocalOpenMaintenanceJobs();
-    }
+    openMaintenanceJobs = (data && data.success && Array.isArray(data.jobs))
+      ? data.jobs
+      : getLocalOpenMaintenanceJobs();
   } catch(e) {
     openMaintenanceJobs = getLocalOpenMaintenanceJobs();
   }
@@ -814,8 +828,7 @@ function getLocalOpenMaintenanceJobs() {
     if (!key.startsWith('ap_open_maintenance_')) return;
     try {
       const job = JSON.parse(localStorage.getItem(key));
-      if (!job) return;
-      if (job.station === station || key === 'ap_open_maintenance_' + station) jobs.push(job);
+      if (job && (job.station === station || key === 'ap_open_maintenance_' + station)) jobs.push(job);
     } catch(e) {}
   });
   return jobs;
@@ -834,9 +847,9 @@ function renderMaintenanceAlerts() {
         <div class="maintenance-alert-title">${s.maintenanceAlert}</div>
       </div>
       <div class="maintenance-alert-body">
-        <div><strong>${escapeHtml(job.companyName || job.CompanyName || 'Contractor')}</strong>
-        — ${escapeHtml(job.equipmentDisplay || job.EquipmentDisplay || job.equipment || job.Equipment || 'Equipment')}</div>
-        <div class="maintenance-alert-time">Arrived ${escapeHtml(job.arrivalTime || job.ArrivalTime || '--:--')}</div>
+        <div><strong>${escapeHtml(job.companyName||job.CompanyName||'Contractor')}</strong>
+        — ${escapeHtml(job.equipmentDisplay||job.EquipmentDisplay||job.equipment||job.Equipment||'Equipment')}</div>
+        <div class="maintenance-alert-time">Arrived ${escapeHtml(job.arrivalTime||job.ArrivalTime||'--:--')}</div>
         <div class="maintenance-alert-time">${s.maintenanceAlertClick}</div>
       </div>
     </div>
@@ -844,11 +857,12 @@ function renderMaintenanceAlerts() {
 }
 
 function escapeHtml(str) {
-  return String(str || '')
+  return String(str||'')
     .replace(/&/g,'&amp;').replace(/</g,'&lt;')
     .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── INIT ──
 document.querySelectorAll('.lang-btn').forEach(b => {
   b.classList.toggle('active',
     (lang === 'en' && b.textContent === 'EN') ||
