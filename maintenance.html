@@ -9,537 +9,97 @@
 
 <style>
 :root{
-  --sinopec-red:#E60012;
-  --sinopec-red-dark:#B8000E;
-  --bp-green:#00A651;
-  --bp-green-dark:#007A3D;
-  --liberty-blue:#003DA5;
-  --liberty-blue-dark:#002A73;
+  --sinopec-red:#E60012;--sinopec-red-dark:#B8000E;
+  --bp-green:#00A651;--bp-green-dark:#007A3D;
+  --liberty-blue:#003DA5;--liberty-blue-dark:#002A73;
   --liberty-red:#CE1126;
-
-  --bg:#F4F6F8;
-  --surface:#FFFFFF;
-  --surface2:#F8FAFC;
-  --surface3:#EEF2F6;
-  --border:#DDE3EA;
-  --border2:#C9D2DD;
-
-  --accent:var(--bp-green);
-  --accent2:var(--liberty-blue);
-  --warn:#E60012;
-  --danger:#B8000E;
-
-  --text:#142033;
-  --muted:#667085;
-  --label:#344054;
-
-  --mono:'DM Mono',monospace;
-  --sans:'Sora',sans-serif;
-
-  --ok-bg:#ECFDF3;
-  --ok-border:#B7E4C7;
-  --warn-bg:#FFF1F2;
-  --warn-border:#FDA4AF;
-  --blue-bg:#EFF6FF;
-  --blue-border:#BFDBFE;
-
-  --radius:16px;
-  --radius-sm:10px;
-  --shadow:0 4px 18px rgba(15,23,42,.08);
-  --shadow-sm:0 2px 8px rgba(15,23,42,.06);
+  --bg:#F4F6F8;--surface:#FFFFFF;--surface2:#F8FAFC;--surface3:#EEF2F6;
+  --border:#DDE3EA;--border2:#C9D2DD;
+  --accent:var(--bp-green);--accent2:var(--liberty-blue);
+  --warn:#E60012;--danger:#B8000E;
+  --text:#142033;--muted:#667085;--label:#344054;
+  --mono:'DM Mono',monospace;--sans:'Sora',sans-serif;
+  --ok-bg:#ECFDF3;--ok-border:#B7E4C7;
+  --warn-bg:#FFF1F2;--warn-border:#FDA4AF;
+  --blue-bg:#EFF6FF;--blue-border:#BFDBFE;
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 4px 18px rgba(15,23,42,.08);--shadow-sm:0 2px 8px rgba(15,23,42,.06);
 }
-
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-
-body{
-  background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);
-  color:var(--text);
-  font-family:var(--sans);
-  font-size:14px;
-  min-height:100vh;
-  padding-bottom:56px;
-}
-
-.header{
-  background:linear-gradient(135deg,var(--sinopec-red) 0%,var(--liberty-blue) 100%);
-  color:#fff;
-  border-bottom:none;
-  padding:15px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:100;
-  box-shadow:0 6px 20px rgba(0,0,0,.18);
-}
-
+body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;padding-bottom:56px}
+.header{background:linear-gradient(135deg,var(--sinopec-red) 0%,var(--liberty-blue) 100%);color:#fff;padding:15px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 6px 20px rgba(0,0,0,.18)}
 .header-left{display:flex;align-items:center;gap:10px}
-
-.back-btn{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  color:rgba(255,255,255,.86);
-  font-size:13px;
-  cursor:pointer;
-  padding:6px 10px 6px 0;
-  border-right:1px solid rgba(255,255,255,.24);
-  margin-right:2px;
-  white-space:nowrap;
-}
-
+.back-btn{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.86);font-size:13px;cursor:pointer;padding:6px 10px 6px 0;border-right:1px solid rgba(255,255,255,.24);margin-right:2px;white-space:nowrap}
 .back-btn:hover{color:#fff}
 .back-arrow{font-size:15px}
-.back-label{
-  font-family:var(--mono);
-  font-size:11px;
-  letter-spacing:.04em;
-  font-weight:600;
-}
-
+.back-label{font-family:var(--mono);font-size:11px;letter-spacing:.04em;font-weight:600}
 .header-title{font-size:14px;font-weight:800;color:#fff}
-.header-sub{
-  font-size:10px;
-  color:rgba(255,255,255,.82);
-  font-family:var(--mono);
-  margin-top:1px;
-  letter-spacing:.07em;
-  text-transform:uppercase;
-}
-
-.lang-toggle{
-  display:flex;
-  background:rgba(255,255,255,.14);
-  border:1px solid rgba(255,255,255,.22);
-  border-radius:9px;
-  overflow:hidden;
-}
-
-.lang-btn{
-  padding:6px 10px;
-  font-family:var(--mono);
-  font-size:11px;
-  font-weight:700;
-  color:#fff;
-  cursor:pointer;
-  border:none;
-  background:transparent;
-}
-
-.lang-btn.active{
-  background:#fff;
-  color:var(--liberty-blue);
-}
-
-.no-station{
-  display:none;
-  background:var(--warn-bg);
-  border-bottom:1px solid var(--warn-border);
-  padding:12px 16px;
-  text-align:center;
-}
-
+.header-sub{font-size:10px;color:rgba(255,255,255,.82);font-family:var(--mono);margin-top:1px;letter-spacing:.07em;text-transform:uppercase}
+.lang-toggle{display:flex;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:9px;overflow:hidden}
+.lang-btn{padding:6px 10px;font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;cursor:pointer;border:none;background:transparent}
+.lang-btn.active{background:#fff;color:var(--liberty-blue)}
+.no-station{display:none;background:var(--warn-bg);border-bottom:1px solid var(--warn-border);padding:12px 16px;text-align:center}
 .no-station.show{display:block}
-.no-station-msg{
-  font-size:13px;
-  color:var(--sinopec-red-dark);
-  margin-bottom:8px;
-  font-weight:600;
-}
-
-.no-station-link{
-  display:inline-block;
-  background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));
-  color:#fff;
-  font-size:12px;
-  font-weight:800;
-  padding:8px 16px;
-  border-radius:9px;
-  text-decoration:none;
-}
-
-.station-bar{
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  padding:9px 16px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  box-shadow:var(--shadow-sm);
-}
-
-.station-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--bp-green);
-  box-shadow:0 0 0 4px rgba(0,166,81,.12);
-  flex-shrink:0;
-}
-
-.station-name{
-  font-family:var(--mono);
-  font-size:11px;
-  color:var(--muted);
-}
-
-.station-name span{
-  color:var(--text);
-  font-weight:700;
-}
-
-.badge{
-  margin-left:auto;
-  font-family:var(--mono);
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:.08em;
-  padding:3px 8px;
-  border-radius:999px;
-  background:var(--blue-bg);
-  color:var(--liberty-blue);
-  border:1px solid var(--blue-border);
-}
-
-.container{
-  max-width:560px;
-  margin:0 auto;
-  padding:20px 16px;
-}
-
+.no-station-msg{font-size:13px;color:var(--sinopec-red-dark);margin-bottom:8px;font-weight:600}
+.no-station-link{display:inline-block;background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));color:#fff;font-size:12px;font-weight:800;padding:8px 16px;border-radius:9px;text-decoration:none}
+.station-bar{background:#fff;border-bottom:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-sm)}
+.station-dot{width:7px;height:7px;border-radius:50%;background:var(--bp-green);box-shadow:0 0 0 4px rgba(0,166,81,.12);flex-shrink:0}
+.station-name{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.station-name span{color:var(--text);font-weight:700}
+.badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.08em;padding:3px 8px;border-radius:999px;background:var(--blue-bg);color:var(--liberty-blue);border:1px solid var(--blue-border)}
+.container{max-width:560px;margin:0 auto;padding:20px 16px}
 .screen{display:none}
 .screen.active{display:block}
-
-.form-header{
-  margin-bottom:18px;
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:16px;
-  box-shadow:var(--shadow-sm);
-}
-
-.form-title{
-  font-size:19px;
-  font-weight:800;
-  margin-bottom:4px;
-  color:var(--text);
-}
-
-.form-sub{
-  font-size:13px;
-  color:var(--muted);
-  line-height:1.55;
-}
-
-.section{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  margin-bottom:14px;
-  box-shadow:var(--shadow-sm);
-}
-
-.section-header{
-  padding:12px 14px;
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
-.section-title{
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  font-family:var(--mono);
-  color:var(--label);
-}
-
-.section-body{
-  padding:14px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:13px;
-}
-
+.form-header{margin-bottom:18px;background:#fff;border:1px solid var(--border);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow-sm)}
+.form-title{font-size:19px;font-weight:800;margin-bottom:4px;color:var(--text)}
+.form-sub{font-size:13px;color:var(--muted);line-height:1.55}
+.section{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.section-header{padding:12px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.section-title{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.section-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:13px}
 .field.full{grid-column:1/-1}
-
-.field label{
-  display:block;
-  font-size:10px;
-  color:var(--muted);
-  letter-spacing:.07em;
-  text-transform:uppercase;
-  margin-bottom:6px;
-  font-family:var(--mono);
-  font-weight:700;
-}
-
-.field input,.field select,.field textarea{
-  width:100%;
-  background:#fff;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text);
-  font-family:var(--sans);
-  font-size:13px;
-  padding:10px 12px;
-  outline:none;
-  transition:border-color .2s,box-shadow .2s;
-  -webkit-appearance:none;
-}
-
-.field input:focus,.field select:focus,.field textarea:focus{
-  border-color:var(--liberty-blue);
-  box-shadow:0 0 0 3px rgba(0,61,165,.10);
-}
-
-.field input[readonly]{
-  background:var(--surface2);
-  color:var(--muted);
-}
-
+.field label{display:block;font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;font-family:var(--mono);font-weight:700}
+.field input,.field select,.field textarea{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.10)}
+.field input[readonly]{background:var(--surface2);color:var(--muted)}
 .field select option{background:#fff;color:var(--text)}
 .field textarea{resize:vertical;min-height:82px;line-height:1.5}
-
-.notice{
-  background:var(--blue-bg);
-  border:1px solid var(--blue-border);
-  border-radius:12px;
-  padding:12px 14px;
-  margin-bottom:14px;
-  color:#1E3A8A;
-  font-size:12px;
-  line-height:1.6;
-}
-
-.open-card{
-  background:var(--warn-bg);
-  border:1px solid var(--warn-border);
-  border-left:4px solid var(--sinopec-red);
-  border-radius:14px;
-  padding:14px;
-  margin-bottom:14px;
-  box-shadow:var(--shadow-sm);
-}
-
-.open-title{
-  font-size:15px;
-  font-weight:800;
-  color:var(--sinopec-red-dark);
-  margin-bottom:8px;
-}
-
-.open-sub{
-  font-size:12px;
-  color:var(--label);
-  line-height:1.6;
-  margin-bottom:10px;
-}
-
-.open-row{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  border-top:1px solid rgba(230,0,18,.13);
-  padding-top:8px;
-  margin-top:8px;
-}
-
-.open-key{
-  font-size:11px;
-  color:var(--muted);
-  font-family:var(--mono);
-}
-
-.open-val{
-  font-size:12px;
-  font-weight:700;
-  text-align:right;
-  color:var(--text);
-}
-
-.alert{
-  display:none;
-  border-radius:10px;
-  padding:10px 14px;
-  font-size:12px;
-  margin-bottom:14px;
-  line-height:1.5;
-}
-
+.open-card{background:var(--warn-bg);border:1px solid var(--warn-border);border-left:4px solid var(--sinopec-red);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.open-card.remote{border-left-color:var(--liberty-blue);background:var(--blue-bg);border-color:var(--blue-border)}
+.open-title{font-size:15px;font-weight:800;color:var(--sinopec-red-dark);margin-bottom:8px}
+.open-card.remote .open-title{color:var(--liberty-blue)}
+.open-sub{font-size:12px;color:var(--label);line-height:1.6;margin-bottom:10px}
+.open-row{display:flex;justify-content:space-between;gap:12px;border-top:1px solid rgba(230,0,18,.13);padding-top:8px;margin-top:8px}
+.open-card.remote .open-row{border-top-color:rgba(0,61,165,.13)}
+.open-key{font-size:11px;color:var(--muted);font-family:var(--mono)}
+.open-val{font-size:12px;font-weight:700;text-align:right;color:var(--text)}
+.alert{display:none;border-radius:10px;padding:10px 14px;font-size:12px;margin-bottom:14px;line-height:1.5}
 .alert.show{display:block}
-
-.btn-wrap{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-top:6px;
-}
-
-.btn{
-  width:100%;
-  border:none;
-  border-radius:12px;
-  font-family:var(--sans);
-  font-size:14px;
-  font-weight:800;
-  padding:14px;
-  cursor:pointer;
-  transition:opacity .15s,transform .1s;
-}
-
+.btn-wrap{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.btn{width:100%;border:none;border-radius:12px;font-family:var(--sans);font-size:14px;font-weight:800;padding:14px;cursor:pointer;transition:opacity .15s,transform .1s}
 .btn:active{transform:scale(.985)}
 .btn:disabled{opacity:.55;cursor:not-allowed}
-
-.btn-primary{
-  background:linear-gradient(135deg,var(--liberty-blue),var(--liberty-blue-dark));
-  color:#fff;
-  box-shadow:0 4px 14px rgba(0,61,165,.22);
-}
-
-.btn-warn{
-  background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));
-  color:#fff;
-  box-shadow:0 4px 14px rgba(230,0,18,.22);
-}
-
-.btn-secondary{
-  background:#fff;
-  color:var(--label);
-  border:1.5px solid var(--border);
-}
-
+.btn-primary{background:linear-gradient(135deg,var(--liberty-blue),var(--liberty-blue-dark));color:#fff;box-shadow:0 4px 14px rgba(0,61,165,.22)}
+.btn-warn{background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));color:#fff;box-shadow:0 4px 14px rgba(230,0,18,.22)}
+.btn-secondary{background:#fff;color:var(--label);border:1.5px solid var(--border)}
 .btn-secondary:hover{border-color:var(--border2);color:var(--text)}
-
-.confirm-section{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  margin-bottom:12px;
-  box-shadow:var(--shadow-sm);
-}
-
-.confirm-section-title{
-  padding:10px 14px;
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  font-family:var(--mono);
-  color:var(--label);
-}
-
-.confirm-row{
-  display:flex;
-  padding:10px 14px;
-  border-bottom:1px solid var(--border);
-  gap:12px;
-}
-
+.confirm-section{background:#fff;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.confirm-section-title{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.confirm-row{display:flex;padding:10px 14px;border-bottom:1px solid var(--border);gap:12px}
 .confirm-row:last-child{border-bottom:none}
-
-.confirm-key{
-  font-size:11px;
-  color:var(--muted);
-  font-family:var(--mono);
-  width:42%;
-  flex-shrink:0;
-  font-weight:700;
-}
-
-.confirm-val{
-  font-size:13px;
-  font-weight:600;
-  flex:1;
-  word-break:break-word;
-  color:var(--text);
-}
-
+.confirm-key{font-size:11px;color:var(--muted);font-family:var(--mono);width:42%;flex-shrink:0;font-weight:700}
+.confirm-val{font-size:13px;font-weight:600;flex:1;word-break:break-word;color:var(--text)}
 .success-wrap{text-align:center;padding:56px 20px}
-
-.success-icon{
-  width:64px;
-  height:64px;
-  background:var(--ok-bg);
-  border:1px solid var(--ok-border);
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0 auto 18px;
-  font-size:28px;
-  color:var(--bp-green-dark);
-  font-weight:800;
-}
-
-.success-title{
-  font-size:20px;
-  font-weight:800;
-  margin-bottom:8px;
-  color:var(--bp-green-dark);
-}
-
-.success-sub{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.7;
-  margin-bottom:12px;
-}
-
-.success-ref{
-  font-family:var(--mono);
-  font-size:16px;
-  color:var(--liberty-blue);
-  font-weight:800;
-  margin:12px 0 24px;
-}
-
-.loading-overlay{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:200;
-  background:rgba(15,23,42,.42);
-  backdrop-filter:blur(4px);
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:16px;
-}
-
+.success-icon{width:64px;height:64px;background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;color:var(--bp-green-dark);font-weight:800}
+.success-title{font-size:20px;font-weight:800;margin-bottom:8px;color:var(--bp-green-dark)}
+.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:12px}
+.success-ref{font-family:var(--mono);font-size:16px;color:var(--liberty-blue);font-weight:800;margin:12px 0 24px}
+.loading-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.42);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:16px}
 .loading-overlay.show{display:flex}
-
-.spinner{
-  width:36px;
-  height:36px;
-  border:3px solid rgba(0,61,165,.18);
-  border-top-color:var(--liberty-blue);
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-}
-
+.spinner{width:36px;height:36px;border:3px solid rgba(0,61,165,.18);border-top-color:var(--liberty-blue);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-.loading-text{
-  font-size:13px;
-  color:var(--label);
-  font-family:var(--mono);
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:6px 12px;
-  box-shadow:var(--shadow-sm);
-}
-
+.loading-text{font-size:13px;color:var(--label);font-family:var(--mono);background:#fff;border:1px solid var(--border);border-radius:999px;padding:6px 12px;box-shadow:var(--shadow-sm)}
+.fetch-status{font-size:11px;color:var(--muted);font-family:var(--mono);text-align:center;padding:8px;margin-bottom:10px}
 @media(max-width:520px){
   .section-body{grid-template-columns:1fr}
   .header{padding:13px 14px}
@@ -641,22 +201,68 @@ let station = localStorage.getItem('ap_station') || '';
 let lang = localStorage.getItem('ap_lang') || 'en';
 const openedAt = new Date();
 
-function openKey(){return 'ap_open_maintenance_' + station}
-function getOpenJobs(){
+// ── LOCAL STORAGE ──
+function openKey(){ return 'ap_open_maintenance_' + station; }
+function getLocalJobs(){
   try{
-    const data=JSON.parse(localStorage.getItem(openKey())||'[]');
-    if(Array.isArray(data))return data;
-    return data?[data]:[];
-  }catch(e){return []}
+    const data = JSON.parse(localStorage.getItem(openKey()) || '[]');
+    if(Array.isArray(data)) return data;
+    return data ? [data] : [];
+  }catch(e){ return []; }
 }
 function addOpenJob(j){
-  const jobs=getOpenJobs();
+  const jobs = getLocalJobs();
   jobs.push(j);
-  localStorage.setItem(openKey(),JSON.stringify(jobs));
+  localStorage.setItem(openKey(), JSON.stringify(jobs));
 }
 function removeOpenJob(ref){
-  const jobs=getOpenJobs().filter(j=>j.referenceNo!==ref);
-  localStorage.setItem(openKey(),JSON.stringify(jobs));
+  const jobs = getLocalJobs().filter(j => j.referenceNo !== ref);
+  localStorage.setItem(openKey(), JSON.stringify(jobs));
+}
+
+// ── FETCH REMOTE OPEN JOBS FROM SHEET ──
+// Merges remote IN_PROGRESS records with local ones (deduplicates by referenceNo)
+async function fetchRemoteOpenJobs(){
+  if(!station || !SHEET_URL) return [];
+  try{
+    const url = `${SHEET_URL}?action=getOpenMaintenance&station=${encodeURIComponent(station)}&pin=8888`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const data = await res.json();
+    if(data.success && Array.isArray(data.jobs)){
+      return data.jobs.map(j => ({
+        formType: 'maintenanceArrival',
+        status: 'IN_PROGRESS',
+        referenceNo: j.ReferenceNo || j.referenceNo || '',
+        submittedAt: j.SubmittedAt || j.submittedAt || '',
+        station: j.Station || j.station || station,
+        companyName: j.CompanyName || j.companyName || '',
+        contactPerson: j.ContactPerson || j.contactPerson || '',
+        phone: j.Phone || j.phone || '',
+        email: j.Email || j.email || '',
+        arrivalTime: j.ArrivalTime || j.arrivalTime || '',
+        equipment: j.Equipment || j.equipment || '',
+        specificEquipment: j.SpecificEquipment || j.specificEquipment || '',
+        equipmentDisplay: j.EquipmentDisplay || j.equipmentDisplay || j.Equipment || j.equipment || '',
+        initialDescription: j.InitialDescription || j.initialDescription || '',
+        siteContactArrival: j.SiteContactArrival || j.siteContactArrival || '',
+        _fromRemote: true
+      }));
+    }
+  }catch(e){}
+  return [];
+}
+
+// Merge local + remote, deduplicate by referenceNo
+function mergeJobs(local, remote){
+  const seen = new Set(local.map(j => j.referenceNo));
+  const merged = [...local];
+  for(const r of remote){
+    if(r.referenceNo && !seen.has(r.referenceNo)){
+      merged.push(r);
+      seen.add(r.referenceNo);
+    }
+  }
+  return merged;
 }
 
 const S = {
@@ -674,10 +280,11 @@ const S = {
     siteContactComplete:'Completed By / Site Staff',notes:'Notes',completeReview:'Review & Submit →',
     cfTitle:'Review & Submit',cfSub:'Check maintenance details before submitting.',cfBasicTitle:'Maintenance Visit Details',cfEdit:'← Edit',cfSubmit:'Submit Completed Record',
     succTitle:'Record Completed',succMsg:'Maintenance visit record has been completed.',succNew:'New Maintenance Record',succHome:'← Back to Portal',
-    submitting:'Submitting…',savingArrival:'Saving arrival record…',
+    submitting:'Submitting…',savingArrival:'Saving arrival record…',fetchingJobs:'Checking for open jobs…',
     errCompany:'Please enter company name.',errContact:'Please enter contact person.',errPhone:'Please enter phone number.',errArrival:'Please enter arrival time.',errEquipment:'Please select equipment / area.',errOtherEquipment:'Please enter specific equipment.',errInitial:'Please enter initial description.',
     errDeparture:'Please enter departure time.',errFixed:'Please select whether issue was fixed.',errFollowup:'Please select whether follow up is required.',errWork:'Please describe work completed.',errFollowupReason:'Please enter follow-up / unfinished reason.',
-    fieldRef:'Reference No.',fieldCompany:'Company',fieldContact:'Contact',fieldPhone:'Phone',fieldArrival:'Arrival Time',fieldDeparture:'Departure Time',fieldEquipment:'Equipment / Area',fieldInitial:'Initial Description',fieldWork:'Work Completed',fieldFixed:'Issue Fixed',fieldFollowup:'Follow Up Required',fieldFollowupReason:'Follow Up Reason',fieldNotes:'Notes',na:'—'
+    fieldRef:'Reference No.',fieldCompany:'Company',fieldContact:'Contact',fieldPhone:'Phone',fieldArrival:'Arrival Time',fieldDeparture:'Departure Time',fieldEquipment:'Equipment / Area',fieldInitial:'Initial Description',fieldWork:'Work Completed',fieldFixed:'Issue Fixed',fieldFollowup:'Follow Up Required',fieldFollowupReason:'Follow Up Reason',fieldNotes:'Notes',na:'—',
+    remoteJobLabel:'⚠ Unfinished Record (from system)',localJobLabel:'⚠ Maintenance In Progress'
   },
   zh:{
     pageTitle:'维修到场登记 — Aries Petroleum',hBack:'首页',hTitle:'维修到场登记',hSub:'维修 / 保养记录',
@@ -693,110 +300,135 @@ const S = {
     siteContactComplete:'完成人 / 现场员工',notes:'备注',completeReview:'核对并提交 →',
     cfTitle:'确认提交',cfSub:'提交前请核对维修记录。',cfBasicTitle:'维修到场信息',cfEdit:'← 返回修改',cfSubmit:'确认提交完成记录',
     succTitle:'记录已完成',succMsg:'维修到场记录已完成。',succNew:'新建维修记录',succHome:'← 返回首页',
-    submitting:'提交中…',savingArrival:'正在保存到场记录…',
+    submitting:'提交中…',savingArrival:'正在保存到场记录…',fetchingJobs:'正在检查未完成工单…',
     errCompany:'请填写公司名称。',errContact:'请填写联系人。',errPhone:'请填写电话号码。',errArrival:'请填写到场时间。',errEquipment:'请选择维修设备 / 区域。',errOtherEquipment:'请填写具体设备。',errInitial:'请填写初步说明。',
     errDeparture:'请填写离开时间。',errFixed:'请选择是否已修好。',errFollowup:'请选择是否需要跟进。',errWork:'请填写完成内容。',errFollowupReason:'请填写跟进 / 未完成原因。',
-    fieldRef:'参考编号',fieldCompany:'公司',fieldContact:'联系人',fieldPhone:'电话',fieldArrival:'到场时间',fieldDeparture:'离开时间',fieldEquipment:'维修设备 / 区域',fieldInitial:'初步说明',fieldWork:'完成内容',fieldFixed:'是否修好',fieldFollowup:'是否需要跟进',fieldFollowupReason:'跟进原因',fieldNotes:'备注',na:'—'
+    fieldRef:'参考编号',fieldCompany:'公司',fieldContact:'联系人',fieldPhone:'电话',fieldArrival:'到场时间',fieldDeparture:'离开时间',fieldEquipment:'维修设备 / 区域',fieldInitial:'初步说明',fieldWork:'完成内容',fieldFixed:'是否修好',fieldFollowup:'是否需要跟进',fieldFollowupReason:'跟进原因',fieldNotes:'备注',na:'—',
+    remoteJobLabel:'⚠ 未完成工单（来自系统）',localJobLabel:'⚠ 维修仍在进行中'
   }
 };
 
-function t(){return S[lang]}
-function setText(id,v){const el=document.getElementById(id);if(el)el.textContent=v}
+function t(){ return S[lang]; }
+function setText(id,v){ const el=document.getElementById(id); if(el) el.textContent=v; }
 
 function setLang(l){
-  lang=l;localStorage.setItem('ap_lang',l);
+  lang=l; localStorage.setItem('ap_lang',l);
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',(l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文')));
   applyLang();
 }
 
 function applyLang(){
-  const L=t();document.title=L.pageTitle;
-  setText('h-back',L.hBack);setText('h-title',L.hTitle);setText('h-sub',L.hSub);setText('ns-msg',L.nsMsg);setText('ns-link',L.nsLink);setText('badge',L.badge);
-  setText('arrival-title',L.arrivalTitle);setText('arrival-sub',L.arrivalSub);setText('arrival-section-title',L.arrivalSection);
-  setText('l-recordcreated',L.recordCreated);setText('l-company',L.company);setText('l-contact',L.contact);setText('l-phone',L.phone);setText('l-email',L.email);setText('l-arrival',L.arrival);setText('l-equipment',L.equipment);setText('l-other-equipment',L.otherEquipment);setText('l-initial',L.initial);setText('l-sitecontact-arrival',L.siteContactArrival);setText('arrival-submit',L.arrivalSubmit);
-  setText('reminder-title',L.reminderTitle);setText('reminder-msg',L.reminderMsg);setText('reminder-complete',L.reminderComplete);setText('reminder-home',L.reminderHome);
-  setText('complete-title',L.completeTitle);setText('complete-sub',L.completeSub);setText('complete-section-title',L.completeSection);
-  setText('l-departure',L.departure);setText('l-fixed',L.fixed);setText('l-followup',L.followup);setText('l-work',L.work);setText('l-followupreason',L.followupReason);setText('l-sitecontact-complete',L.siteContactComplete);setText('l-notes',L.notes);setText('complete-review',L.completeReview);
-  setText('cf-title',L.cfTitle);setText('cf-sub',L.cfSub);setText('cf-basic-title',L.cfBasicTitle);setText('cf-edit-btn',L.cfEdit);setText('cf-submit-btn',L.cfSubmit);
-  setText('succ-title',L.succTitle);setText('succ-msg',L.succMsg);setText('succ-new',L.succNew);setText('succ-home',L.succHome);
-  if(station)document.getElementById('station-display').innerHTML=`<span>${escapeHtml(station)}</span>`;
+  const L=t(); document.title=L.pageTitle;
+  setText('h-back',L.hBack); setText('h-title',L.hTitle); setText('h-sub',L.hSub);
+  setText('ns-msg',L.nsMsg); setText('ns-link',L.nsLink); setText('badge',L.badge);
+  setText('arrival-title',L.arrivalTitle); setText('arrival-sub',L.arrivalSub); setText('arrival-section-title',L.arrivalSection);
+  setText('l-recordcreated',L.recordCreated); setText('l-company',L.company); setText('l-contact',L.contact);
+  setText('l-phone',L.phone); setText('l-email',L.email); setText('l-arrival',L.arrival);
+  setText('l-equipment',L.equipment); setText('l-other-equipment',L.otherEquipment);
+  setText('l-initial',L.initial); setText('l-sitecontact-arrival',L.siteContactArrival);
+  setText('arrival-submit',L.arrivalSubmit);
+  setText('reminder-title',L.reminderTitle); setText('reminder-msg',L.reminderMsg);
+  setText('reminder-complete',L.reminderComplete); setText('reminder-home',L.reminderHome);
+  setText('complete-title',L.completeTitle); setText('complete-sub',L.completeSub);
+  setText('complete-section-title',L.completeSection);
+  setText('l-departure',L.departure); setText('l-fixed',L.fixed); setText('l-followup',L.followup);
+  setText('l-work',L.work); setText('l-followupreason',L.followupReason);
+  setText('l-sitecontact-complete',L.siteContactComplete); setText('l-notes',L.notes);
+  setText('complete-review',L.completeReview);
+  setText('cf-title',L.cfTitle); setText('cf-sub',L.cfSub); setText('cf-basic-title',L.cfBasicTitle);
+  setText('cf-edit-btn',L.cfEdit); setText('cf-submit-btn',L.cfSubmit);
+  setText('succ-title',L.succTitle); setText('succ-msg',L.succMsg);
+  setText('succ-new',L.succNew); setText('succ-home',L.succHome);
+  if(station) document.getElementById('station-display').innerHTML=`<span>${escapeHtml(station)}</span>`;
   document.getElementById('f-recordcreated').value=formatDateTime(openedAt);
-  renderStart();
+  initStart();
 }
 
-function fmtTime(d){return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
-function formatDateTime(d){return d.toLocaleDateString(lang==='en'?'en-AU':'zh-CN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+' '+d.toLocaleTimeString(lang==='en'?'en-AU':'zh-CN',{hour:'2-digit',minute:'2-digit'})}
-function val(id){return document.getElementById(id).value.trim()}
-function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');window.scrollTo(0,0)}
+function fmtTime(d){ return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+function formatDateTime(d){ return d.toLocaleDateString(lang==='en'?'en-AU':'zh-CN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+' '+d.toLocaleTimeString(lang==='en'?'en-AU':'zh-CN',{hour:'2-digit',minute:'2-digit'}); }
+function val(id){ return document.getElementById(id).value.trim(); }
+function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById('screen-'+id).classList.add('active'); window.scrollTo(0,0); }
 
-function renderStart(){
-  if(!station)return;
-  const jobs=getOpenJobs();
-  const L=t();
-  if(jobs.length){
-    const cards=jobs.map(job=>`
+// ── INIT: fetch remote + local then render ──
+async function initStart(){
+  if(!station) return;
+  const L = t();
+  // Show loading indicator in start screen
+  document.getElementById('screen-start').innerHTML = `<div class="fetch-status">${L.fetchingJobs}</div>`;
+  showScreen('start');
+
+  const local = getLocalJobs();
+  const remote = await fetchRemoteOpenJobs();
+  const allJobs = mergeJobs(local, remote);
+
+  renderStart(allJobs);
+}
+
+function renderStart(jobs){
+  if(!station) return;
+  const L = t();
+  if(jobs && jobs.length){
+    const cards = jobs.map(job => `
       ${openJobHtml(job)}
       <div class="btn-wrap" style="margin-bottom:14px">
         <button class="btn btn-warn" onclick="showCompleteFromOpen('${escapeAttr(job.referenceNo)}')">${L.reminderComplete}</button>
       </div>`).join('');
-    document.getElementById('screen-start').innerHTML=`
+    document.getElementById('screen-start').innerHTML = `
       <div class="form-header"><div class="form-title">${L.reminderTitle}</div><div class="form-sub">${L.reminderMsg}</div></div>
       ${cards}
       <button class="btn btn-secondary" onclick="showScreen('arrival')">${L.succNew}</button>`;
     showScreen('start');
-  }else{
+  } else {
     showScreen('arrival');
   }
 }
 
 function openJobHtml(job){
-  const L=t();
-  return `<div class="open-card"><div class="open-title">⚠ ${L.reminderTitle}</div><div class="open-sub">${escapeHtml(job.companyName)} — ${escapeHtml(job.equipmentDisplay)}</div><div class="open-row"><div class="open-key">${L.fieldRef}</div><div class="open-val">${escapeHtml(job.referenceNo)}</div></div><div class="open-row"><div class="open-key">${L.fieldContact}</div><div class="open-val">${escapeHtml(job.contactPerson)}</div></div><div class="open-row"><div class="open-key">${L.fieldArrival}</div><div class="open-val">${escapeHtml(job.arrivalTime)}</div></div></div>`;
+  const L = t();
+  const isRemote = job._fromRemote;
+  const cardClass = isRemote ? 'open-card remote' : 'open-card';
+  const titleLabel = isRemote ? L.remoteJobLabel : L.localJobLabel;
+  return `<div class="${cardClass}">
+    <div class="open-title">${titleLabel}</div>
+    <div class="open-sub">${escapeHtml(job.companyName||'—')} — ${escapeHtml(job.equipmentDisplay||'—')}</div>
+    <div class="open-row"><div class="open-key">${L.fieldRef}</div><div class="open-val">${escapeHtml(job.referenceNo||'—')}</div></div>
+    <div class="open-row"><div class="open-key">${L.fieldContact}</div><div class="open-val">${escapeHtml(job.contactPerson||'—')}</div></div>
+    <div class="open-row"><div class="open-key">${L.fieldArrival}</div><div class="open-val">${escapeHtml(job.arrivalTime||'—')}</div></div>
+  </div>`;
 }
 
-function toggleOtherEquipment(){document.getElementById('other-equipment-wrap').style.display=val('f-equipment')==='Other'?'block':'none'}
-function toggleFollowupReason(){const show=val('f-fixed')==='No'||val('f-fixed')==='Partially'||val('f-followup')==='Yes';document.getElementById('followup-reason-wrap').style.display=show?'block':'none'}
+function toggleOtherEquipment(){ document.getElementById('other-equipment-wrap').style.display=val('f-equipment')==='Other'?'block':'none'; }
+function toggleFollowupReason(){ const show=val('f-fixed')==='No'||val('f-fixed')==='Partially'||val('f-followup')==='Yes'; document.getElementById('followup-reason-wrap').style.display=show?'block':'none'; }
 
 function submitArrival(){
   const L=t();
   hideAlert('alert-arrival');
-
-  if(!val('f-company'))return showAlert('alert-arrival',L.errCompany);
-  if(!val('f-contact'))return showAlert('alert-arrival',L.errContact);
-  if(!val('f-phone'))return showAlert('alert-arrival',L.errPhone);
-  if(!val('f-arrival'))return showAlert('alert-arrival',L.errArrival);
-  if(!val('f-equipment'))return showAlert('alert-arrival',L.errEquipment);
-  if(val('f-equipment')==='Other'&&!val('f-other-equipment'))return showAlert('alert-arrival',L.errOtherEquipment);
-  if(!val('f-initial'))return showAlert('alert-arrival',L.errInitial);
+  if(!val('f-company')) return showAlert('alert-arrival',L.errCompany);
+  if(!val('f-contact')) return showAlert('alert-arrival',L.errContact);
+  if(!val('f-phone')) return showAlert('alert-arrival',L.errPhone);
+  if(!val('f-arrival')) return showAlert('alert-arrival',L.errArrival);
+  if(!val('f-equipment')) return showAlert('alert-arrival',L.errEquipment);
+  if(val('f-equipment')==='Other'&&!val('f-other-equipment')) return showAlert('alert-arrival',L.errOtherEquipment);
+  if(!val('f-initial')) return showAlert('alert-arrival',L.errInitial);
 
   const ref='MT-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.floor(Math.random()*9000+1000);
   const equipmentDisplay=val('f-equipment')==='Other'?val('f-other-equipment'):val('f-equipment');
 
   const job={
-    formType:'maintenanceArrival',
-    status:'IN_PROGRESS',
-    referenceNo:ref,
-    submittedAt:new Date().toISOString(),
-    openedAt:openedAt.toISOString(),
-    station:station,
-    lang:lang,
-    companyName:val('f-company'),
-    contactPerson:val('f-contact'),
-    phone:val('f-phone'),
-    email:val('f-email'),
-    arrivalTime:val('f-arrival'),
-    equipment:val('f-equipment'),
-    specificEquipment:val('f-other-equipment'),
-    equipmentDisplay:equipmentDisplay,
-    initialDescription:val('f-initial'),
+    formType:'maintenanceArrival',status:'IN_PROGRESS',referenceNo:ref,
+    submittedAt:new Date().toISOString(),openedAt:openedAt.toISOString(),
+    station,lang,
+    companyName:val('f-company'),contactPerson:val('f-contact'),
+    phone:val('f-phone'),email:val('f-email'),arrivalTime:val('f-arrival'),
+    equipment:val('f-equipment'),specificEquipment:val('f-other-equipment'),
+    equipmentDisplay,initialDescription:val('f-initial'),
     siteContactArrival:val('f-sitecontact-arrival')
   };
 
   addOpenJob(job);
-
   document.getElementById('loadingOverlay').classList.remove('show');
   document.getElementById('reminder-ref').textContent='Ref: '+ref;
-  document.getElementById('reminder-complete').onclick=function(){showCompleteFromOpen(ref)};
+  document.getElementById('reminder-complete').onclick=function(){ showCompleteFromOpen(ref); };
   showScreen('reminder');
 
   if(SHEET_URL){
@@ -804,78 +436,101 @@ function submitArrival(){
   }
 }
 
+// currentJob holds the job being completed (works for both local and remote)
+let currentJob = null;
+
 function showCompleteFromOpen(ref){
-  const jobs=getOpenJobs();
-  let job=jobs.find(j=>j.referenceNo===ref);
-  if(!job&&jobs.length){
-    job=jobs[jobs.length-1];
-    ref=job.referenceNo;
+  // First check local
+  let job = getLocalJobs().find(j => j.referenceNo === ref);
+
+  // If not local, check if it was a remote job stored in the start screen data
+  if(!job){
+    // Re-fetch from DOM isn't reliable — store remote jobs in memory
+    job = _remoteJobsCache.find(j => j.referenceNo === ref);
   }
-  if(!job){renderStart();return}
-  document.getElementById('open-job-card').innerHTML=openJobHtml(job);
-  document.getElementById('open-job-card').dataset.ref=ref;
-  document.getElementById('f-departure').value=fmtTime(new Date());
+
+  // Fallback: use last local job
+  if(!job){
+    const local = getLocalJobs();
+    if(local.length){ job = local[local.length-1]; ref = job.referenceNo; }
+  }
+
+  if(!job){ initStart(); return; }
+
+  currentJob = job;
+  document.getElementById('open-job-card').innerHTML = openJobHtml(job);
+  document.getElementById('open-job-card').dataset.ref = ref;
+  document.getElementById('f-departure').value = fmtTime(new Date());
   showScreen('complete');
+}
+
+// Cache remote jobs in memory so showCompleteFromOpen can find them
+let _remoteJobsCache = [];
+
+// Override initStart to cache remote jobs
+const _origInitStart = initStart;
+async function initStart(){
+  if(!station) return;
+  const L = t();
+  document.getElementById('screen-start').innerHTML = `<div class="fetch-status">${L.fetchingJobs}</div>`;
+  showScreen('start');
+
+  const local = getLocalJobs();
+  const remote = await fetchRemoteOpenJobs();
+  _remoteJobsCache = remote;
+  const allJobs = mergeJobs(local, remote);
+  renderStart(allJobs);
 }
 
 function goReview(){
   const L=t();
   hideAlert('alert-complete');
-  if(!val('f-departure'))return showAlert('alert-complete',L.errDeparture);
-  if(!val('f-fixed'))return showAlert('alert-complete',L.errFixed);
-  if(!val('f-followup'))return showAlert('alert-complete',L.errFollowup);
-  if(!val('f-work'))return showAlert('alert-complete',L.errWork);
+  if(!val('f-departure')) return showAlert('alert-complete',L.errDeparture);
+  if(!val('f-fixed')) return showAlert('alert-complete',L.errFixed);
+  if(!val('f-followup')) return showAlert('alert-complete',L.errFollowup);
+  if(!val('f-work')) return showAlert('alert-complete',L.errWork);
   const need=val('f-fixed')==='No'||val('f-fixed')==='Partially'||val('f-followup')==='Yes';
-  if(need&&!val('f-followupreason'))return showAlert('alert-complete',L.errFollowupReason);
+  if(need&&!val('f-followupreason')) return showAlert('alert-complete',L.errFollowupReason);
   buildConfirm();
   showScreen('confirm');
 }
 
 function buildConfirm(){
   const L=t();
-  const ref=document.getElementById('open-job-card').dataset.ref;
-  const jobs=getOpenJobs();
-  const job=jobs.find(j=>j.referenceNo===ref);
-  if(!job){renderStart();return}
+  const job = currentJob;
+  if(!job){ initStart(); return; }
   const rows=[
     [L.fieldRef,job.referenceNo],[L.fieldCompany,job.companyName],[L.fieldContact,job.contactPerson],[L.fieldPhone,job.phone],
     [L.fieldArrival,job.arrivalTime],[L.fieldDeparture,val('f-departure')],[L.fieldEquipment,job.equipmentDisplay],
-    [L.fieldInitial,job.initialDescription],[L.fieldWork,val('f-work')],[L.fieldFixed,val('f-fixed')],[L.fieldFollowup,val('f-followup')],
-    [L.fieldFollowupReason,val('f-followupreason')||L.na],[L.fieldNotes,val('f-notes')||L.na]
+    [L.fieldInitial,job.initialDescription],[L.fieldWork,val('f-work')],[L.fieldFixed,val('f-fixed')],
+    [L.fieldFollowup,val('f-followup')],[L.fieldFollowupReason,val('f-followupreason')||L.na],[L.fieldNotes,val('f-notes')||L.na]
   ];
   document.getElementById('confirm-body').innerHTML=rows.map(([k,v])=>`<div class="confirm-row"><div class="confirm-key">${escapeHtml(k)}</div><div class="confirm-val">${escapeHtml(v)}</div></div>`).join('');
 }
 
 function submitComplete(){
-  const L=t();
-  const ref=document.getElementById('open-job-card').dataset.ref;
-  const jobs=getOpenJobs();
-  const job=jobs.find(j=>j.referenceNo===ref);
-  if(!job){renderStart();return}
+  const job = currentJob;
+  if(!job){ initStart(); return; }
 
   const payload={
     ...job,
-    formType:'maintenanceRecord',
-    status:'COMPLETED',
+    formType:'maintenanceRecord',status:'COMPLETED',
     completedAt:new Date().toISOString(),
-    departureTime:val('f-departure'),
-    workCompleted:val('f-work'),
-    issueFixed:val('f-fixed'),
-    followUpRequired:val('f-followup'),
+    departureTime:val('f-departure'),workCompleted:val('f-work'),
+    issueFixed:val('f-fixed'),followUpRequired:val('f-followup'),
     followUpReason:val('f-followupreason'),
     siteContactComplete:val('f-sitecontact-complete'),
     notes:val('f-notes')
   };
 
-  onSuccess(job.referenceNo);
-  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-}
+  // Remove from local storage (remote ones won't be there but that's fine)
+  removeOpenJob(job.referenceNo);
+  currentJob = null;
 
-function onSuccess(ref){
-  document.getElementById('loadingOverlay').classList.remove('show');
-  removeOpenJob(ref);
-  document.getElementById('succ-ref').textContent='Ref: '+ref;
+  document.getElementById('succ-ref').textContent='Ref: '+job.referenceNo;
   showScreen('success');
+
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
 }
 
 function clearAndNew(){
@@ -888,12 +543,14 @@ function clearAndNew(){
   document.getElementById('other-equipment-wrap').style.display='none';
   showScreen('arrival');
 }
-function showAlert(id,msg){const a=document.getElementById(id);a.style.background='var(--warn-bg)';a.style.border='1px solid var(--warn-border)';a.style.color='var(--warn)';a.textContent=msg;a.classList.add('show');a.scrollIntoView({behavior:'smooth',block:'center'})}
-function hideAlert(id){const el=document.getElementById(id);if(el)el.classList.remove('show')}
-function escapeHtml(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
-function escapeAttr(str){return escapeHtml(str).replace(/'/g,'&#39;')}
-function goPortal(){window.location.href='index.html'}
 
+function showAlert(id,msg){ const a=document.getElementById(id); a.style.background='var(--warn-bg)'; a.style.border='1px solid var(--warn-border)'; a.style.color='var(--warn)'; a.textContent=msg; a.classList.add('show'); a.scrollIntoView({behavior:'smooth',block:'center'}); }
+function hideAlert(id){ const el=document.getElementById(id); if(el) el.classList.remove('show'); }
+function escapeHtml(str){ return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function escapeAttr(str){ return escapeHtml(str).replace(/'/g,'&#39;'); }
+function goPortal(){ window.location.href='index.html'; }
+
+// Init
 if(!station){
   document.getElementById('no-station-bar').classList.add('show');
   document.getElementById('station-bar').style.display='none';
