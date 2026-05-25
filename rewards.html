@@ -171,6 +171,13 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
     <div class="page-eyebrow" id="s-eyebrow">Rewards Portal</div>
     <div class="page-heading" id="s-heading">Select your <span>station</span></div>
     <div class="page-sub" id="s-sub">You will only see pending items from your station.</div>
+    <div class="fg" style="margin-bottom:16px">
+      <label class="flabel" id="lbl-staff-name">Your Name <span style="color:var(--sinopec-red)">*</span></label>
+      <input type="text" id="staff-name-input" placeholder="e.g. Sarah" autocomplete="name"
+             style="padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:15px;width:100%;font-family:var(--sans);outline:none"
+             oninput="document.getElementById('staff-name-err').style.display='none'">
+      <div id="staff-name-err" style="display:none;color:var(--sinopec-red);font-size:12px;margin-top:5px;font-weight:600"></div>
+    </div>
     <div class="station-list" id="station-list"></div>
   </div>
 </div>
@@ -202,6 +209,11 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
 
     <!-- PENDING TAB -->
     <div id="pane-pending">
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+        <button id="refresh-btn" onclick="refreshPending()" style="font-size:11px;font-weight:700;font-family:var(--mono);padding:6px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--liberty-blue);cursor:pointer">
+          ↺ <span id="refresh-lbl">Refresh</span>
+        </button>
+      </div>
       <div id="pending-loading" class="loading">
         <span class="spinner"></span><span id="loading-txt">Loading…</span>
       </div>
@@ -215,9 +227,9 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
         <div class="search-box-title" id="search-coffee-title">☕ Coffee Progress</div>
         <div class="fg">
           <label class="flabel" id="lbl-coffee-phone">Customer Mobile</label>
-          <input type="tel" id="coffee-phone" placeholder="04xx xxx xxx" inputmode="tel">
+          <input type="tel" id="coffee-phone" placeholder="04xx xxx xxx" inputmode="tel" onkeydown="if(event.key==='Enter')searchCoffee()">
         </div>
-        <button class="search-btn" id="coffee-search-btn" onclick="searchCoffee()">
+        <button class="search-btn" id="coffee-search-btn" onclick="searchCoffee()" onkeydown="if(event.key==='Enter')searchCoffee()">
           <span id="coffee-search-lbl">Search</span>
         </button>
         <div id="coffee-result"></div>
@@ -227,7 +239,7 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
         <div class="search-box-title" id="search-wash-title">🚗 Wash Reward Progress</div>
         <div class="fg">
           <label class="flabel" id="lbl-wash-phone">Customer Mobile</label>
-          <input type="tel" id="wash-phone" placeholder="04xx xxx xxx" inputmode="tel">
+          <input type="tel" id="wash-phone" placeholder="04xx xxx xxx" inputmode="tel" onkeydown="if(event.key==='Enter')searchWash()">
         </div>
         <button class="search-btn" id="wash-search-btn" onclick="searchWash()">
           <span id="wash-search-lbl">Search</span>
@@ -239,7 +251,7 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
         <div class="search-box-title" id="search-monthly-title">💳 Monthly Membership</div>
         <div class="fg">
           <label class="flabel" id="lbl-plate">Plate Number</label>
-          <input type="text" id="search-plate" placeholder="e.g. ABC123" style="text-transform:uppercase;font-family:var(--mono);font-size:16px;letter-spacing:.08em;font-weight:700" autocomplete="off">
+          <input type="text" id="search-plate" placeholder="e.g. ABC123" style="text-transform:uppercase;font-family:var(--mono);font-size:16px;letter-spacing:.08em;font-weight:700" autocomplete="off" onkeydown="if(event.key==='Enter')searchPlate()">
         </div>
         <button class="search-btn" id="plate-search-btn" onclick="searchPlate()">
           <span id="plate-search-lbl">Search</span>
@@ -272,7 +284,8 @@ const S = {
     sEyebrow:'Rewards Portal', sHeading:'Select your <span>station</span>',
     sSub:'You will only see pending items from your station.',
     sbarChange:'Change', sbarSub:'Rewards Portal',
-    tabPending:'Pending', tabSearch:'Search',
+    lblStaffName:'Your Name', errStaffName:'Please enter your name before selecting a station.',
+    tabPending:'Pending', tabSearch:'Search', refreshLbl:'Refresh',
     loading:'Loading…',
     sectionCoffee:'☕ Coffee — Pending Confirmation',
     sectionWash:'🚗 Car Wash — Pending Confirmation',
@@ -304,7 +317,8 @@ const S = {
     sEyebrow:'会员奖励管理', sHeading:'选择您的<span>站点</span>',
     sSub:'只显示您站点的待确认记录。',
     sbarChange:'更改', sbarSub:'会员奖励管理',
-    tabPending:'待确认', tabSearch:'查询',
+    lblStaffName:'您的姓名', errStaffName:'请先填写您的姓名再选择站点。',
+    tabPending:'待确认', tabSearch:'查询', refreshLbl:'刷新',
     loading:'加载中…',
     sectionCoffee:'☕ 咖啡 — 待确认',
     sectionWash:'🚗 洗车 — 待确认',
@@ -334,8 +348,9 @@ const S = {
   }
 };
 
-let lang    = localStorage.getItem('ap_lang')    || 'en';
-let station = localStorage.getItem('ap_station') || '';
+let lang      = localStorage.getItem('ap_lang')     || 'en';
+let station   = localStorage.getItem('ap_station')  || '';
+let staffName = localStorage.getItem('ap_staff_name') || '';
 let activeTab = 'pending';
 
 function t(){ return S[lang]; }
@@ -356,17 +371,22 @@ function showScreen(id){
 
 function applyLang(){
   const L=t();
+  const nameInput=document.getElementById('staff-name-input');
+  if(nameInput&&staffName&&!nameInput.value) nameInput.value=staffName;
+  const lblName=document.getElementById('lbl-staff-name');
+  if(lblName) lblName.innerHTML=L.lblStaffName+' <span style="color:var(--sinopec-red)">*</span>';
   document.getElementById('s-eyebrow').textContent  = L.sEyebrow;
   document.getElementById('s-heading').innerHTML    = L.sHeading;
   document.getElementById('s-sub').textContent      = L.sSub;
   buildStationList();
   const sd = STATIONS.find(s=>s.key===station);
   document.getElementById('sbar-name').textContent  = sd?sd.display:(station||'—');
-  document.getElementById('sbar-sub').textContent   = L.sbarSub;
+  document.getElementById('sbar-sub').textContent   = staffName ? staffName+' · '+L.sbarSub : L.sbarSub;
   document.getElementById('sbar-change').textContent= L.sbarChange;
   document.getElementById('tab-pending-lbl').textContent = L.tabPending;
   document.getElementById('tab-search-lbl').textContent  = L.tabSearch;
   document.getElementById('loading-txt').textContent     = L.loading;
+  const rl=document.getElementById('refresh-lbl'); if(rl) rl.textContent=L.refreshLbl;
   document.getElementById('search-coffee-title').textContent  = L.searchCoffeeTitle;
   document.getElementById('search-wash-title').textContent    = L.searchWashTitle;
   document.getElementById('search-monthly-title').textContent = L.searchMonthlyTitle;
@@ -399,6 +419,16 @@ function buildStationList(){
 }
 
 function selectStation(key){
+  const nameInput=document.getElementById('staff-name-input');
+  const nameVal=(nameInput?nameInput.value.trim():'');
+  if(!nameVal){
+    const errEl=document.getElementById('staff-name-err');
+    if(errEl){ errEl.textContent=t().errStaffName; errEl.style.display='block'; }
+    if(nameInput) nameInput.focus();
+    return;
+  }
+  staffName=nameVal;
+  localStorage.setItem('ap_staff_name', staffName);
   station=key; localStorage.setItem('ap_station',key);
   applyLang();
   showScreen('portal');
@@ -414,6 +444,12 @@ function switchTab(tab){
 }
 
 // ── LOAD PENDING ──
+function refreshPending(){
+  const rb=document.getElementById('refresh-btn');
+  if(rb) rb.disabled=true;
+  loadPending();
+}
+
 async function loadPending(){
   document.getElementById('pending-loading').style.display='block';
   document.getElementById('pending-content').style.display='none';
@@ -432,6 +468,9 @@ function renderPending(data){
   const coffees = (data.coffeePending||[]);
   const washes  = (data.washPending||[]);
   const total   = coffees.length+washes.length;
+  // update refresh btn
+  const rb=document.getElementById('refresh-btn');
+  if(rb) rb.disabled=false;
 
   const countEl=document.getElementById('pending-count');
   countEl.textContent=total;
@@ -518,7 +557,7 @@ function renderPending(data){
 
 // ── ACTIONS ──
 async function apiPost(body){
-  const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({...body,token:API_TOKEN,staffName:station})});
+  const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({...body,token:API_TOKEN,staffName:staffName||station})});
   return r.json();
 }
 
@@ -683,8 +722,10 @@ document.querySelectorAll('.lang-btn').forEach(b=>{
   b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
 });
 applyLang();
-if(station){ showScreen('portal'); loadPending(); }
-else         showScreen('station');
+const _ni=document.getElementById('staff-name-input');
+if(_ni&&staffName) _ni.value=staffName;
+if(station&&staffName){ showScreen('portal'); loadPending(); }
+else showScreen('station');
 </script>
 </body>
 </html>
