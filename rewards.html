@@ -165,19 +165,12 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
   </div>
 </div>
 
-<!-- ══ STATION SELECT ══ -->
+<!-- ══ STATION SELECT (fallback if no ap_station) ══ -->
 <div class="screen" id="screen-station">
   <div class="station-wrap">
     <div class="page-eyebrow" id="s-eyebrow">Rewards Portal</div>
     <div class="page-heading" id="s-heading">Select your <span>station</span></div>
     <div class="page-sub" id="s-sub">You will only see pending items from your station.</div>
-    <div class="fg" style="margin-bottom:16px">
-      <label class="flabel" id="lbl-staff-name">Your Name <span style="color:var(--sinopec-red)">*</span></label>
-      <input type="text" id="staff-name-input" placeholder="e.g. Sarah" autocomplete="name"
-             style="padding:11px 13px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:15px;width:100%;font-family:var(--sans);outline:none"
-             oninput="document.getElementById('staff-name-err').style.display='none'">
-      <div id="staff-name-err" style="display:none;color:var(--sinopec-red);font-size:12px;margin-top:5px;font-weight:600"></div>
-    </div>
     <div class="station-list" id="station-list"></div>
   </div>
 </div>
@@ -265,6 +258,23 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
 
 <div class="toast" id="toast"></div>
 
+<!-- Staff name modal -->
+<div id="name-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#fff;border-radius:16px;padding:22px 20px;width:100%;max-width:320px;box-shadow:0 12px 40px rgba(0,0,0,.2)">
+    <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px" id="modal-title">Your Name</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:14px" id="modal-sub">Enter your name for the record</div>
+    <input type="text" id="modal-name-input" placeholder="e.g. Sarah"
+      autocomplete="name"
+      style="width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;font-family:var(--sans);outline:none;margin-bottom:12px"
+      onkeydown="if(event.key==='Enter') resolveNameModal()">
+    <div id="modal-err" style="display:none;color:var(--sinopec-red);font-size:12px;font-weight:600;margin-bottom:10px"></div>
+    <div style="display:flex;gap:8px">
+      <button onclick="cancelNameModal()" style="flex:1;padding:11px;border:1.5px solid var(--border);border-radius:9px;background:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--sans)" id="modal-cancel">Cancel</button>
+      <button onclick="resolveNameModal()" style="flex:2;padding:11px;border:none;border-radius:9px;background:linear-gradient(135deg,var(--liberty-blue),var(--liberty-blue-dark));color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:var(--sans)" id="modal-confirm">Confirm →</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const API_URL   = 'https://script.google.com/macros/s/AKfycbyNP1svcMCkS6mdSJhXW2PhTxWRlBrG19s-_cNSFntuLiEjIAPyI8nDVe3SsjQDaEX3/exec';
 const API_TOKEN = 'aries_rewards_2026_v1';
@@ -284,7 +294,7 @@ const S = {
     sEyebrow:'Rewards Portal', sHeading:'Select your <span>station</span>',
     sSub:'You will only see pending items from your station.',
     sbarChange:'Change', sbarSub:'Rewards Portal',
-    lblStaffName:'Your Name', errStaffName:'Please enter your name before selecting a station.',
+    modalTitle:'Your Name', modalSub:'Enter your name for the record', modalCancel:'Cancel', modalConfirm:'Confirm →', modalErr:'Please enter your name.',
     tabPending:'Pending', tabSearch:'Search', refreshLbl:'Refresh',
     loading:'Loading…',
     sectionCoffee:'☕ Coffee — Pending Confirmation',
@@ -317,7 +327,7 @@ const S = {
     sEyebrow:'会员奖励管理', sHeading:'选择您的<span>站点</span>',
     sSub:'只显示您站点的待确认记录。',
     sbarChange:'更改', sbarSub:'会员奖励管理',
-    lblStaffName:'您的姓名', errStaffName:'请先填写您的姓名再选择站点。',
+    modalTitle:'您的姓名', modalSub:'请输入姓名以便记录', modalCancel:'取消', modalConfirm:'确认 →', modalErr:'请输入您的姓名。',
     tabPending:'待确认', tabSearch:'查询', refreshLbl:'刷新',
     loading:'加载中…',
     sectionCoffee:'☕ 咖啡 — 待确认',
@@ -348,9 +358,8 @@ const S = {
   }
 };
 
-let lang      = localStorage.getItem('ap_lang')     || 'en';
-let station   = localStorage.getItem('ap_station')  || '';
-let staffName = localStorage.getItem('ap_staff_name') || '';
+let lang      = localStorage.getItem('ap_lang') || 'en';
+let station   = localStorage.getItem('ap_station') || '';
 let activeTab = 'pending';
 
 function t(){ return S[lang]; }
@@ -371,17 +380,13 @@ function showScreen(id){
 
 function applyLang(){
   const L=t();
-  const nameInput=document.getElementById('staff-name-input');
-  if(nameInput&&staffName&&!nameInput.value) nameInput.value=staffName;
-  const lblName=document.getElementById('lbl-staff-name');
-  if(lblName) lblName.innerHTML=L.lblStaffName+' <span style="color:var(--sinopec-red)">*</span>';
   document.getElementById('s-eyebrow').textContent  = L.sEyebrow;
   document.getElementById('s-heading').innerHTML    = L.sHeading;
   document.getElementById('s-sub').textContent      = L.sSub;
   buildStationList();
   const sd = STATIONS.find(s=>s.key===station);
   document.getElementById('sbar-name').textContent  = sd?sd.display:(station||'—');
-  document.getElementById('sbar-sub').textContent   = staffName ? staffName+' · '+L.sbarSub : L.sbarSub;
+  document.getElementById('sbar-sub').textContent   = L.sbarSub;
   document.getElementById('sbar-change').textContent= L.sbarChange;
   document.getElementById('tab-pending-lbl').textContent = L.tabPending;
   document.getElementById('tab-search-lbl').textContent  = L.tabSearch;
@@ -419,16 +424,6 @@ function buildStationList(){
 }
 
 function selectStation(key){
-  const nameInput=document.getElementById('staff-name-input');
-  const nameVal=(nameInput?nameInput.value.trim():'');
-  if(!nameVal){
-    const errEl=document.getElementById('staff-name-err');
-    if(errEl){ errEl.textContent=t().errStaffName; errEl.style.display='block'; }
-    if(nameInput) nameInput.focus();
-    return;
-  }
-  staffName=nameVal;
-  localStorage.setItem('ap_staff_name', staffName);
   station=key; localStorage.setItem('ap_station',key);
   applyLang();
   showScreen('portal');
@@ -556,8 +551,8 @@ function renderPending(data){
 }
 
 // ── ACTIONS ──
-async function apiPost(body){
-  const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({...body,token:API_TOKEN,staffName:staffName||station})});
+async function apiPost(body, staffName){
+  const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({...body,token:API_TOKEN,staffName:staffName||'Staff'})});
   return r.json();
 }
 
@@ -565,9 +560,11 @@ function setActions(id,html){ document.getElementById('actions-'+id).innerHTML=h
 
 async function confirmCoffee(id){
   const L=t();
+  const name=await promptStaffName();
+  if(!name) return;
   setActions(id,`<button class="action-btn btn-confirm" disabled>${L.confirming}</button>`);
   try{
-    const res=await apiPost({action:'confirmCoffee',id});
+    const res=await apiPost({action:'confirmCoffee',id},name);
     if(res.success){ setActions(id,`<button class="action-btn btn-done" disabled>${L.doneBtn}</button>`); showToast(L.toastConfirmed,'success'); }
     else{ setActions(id,renderActions(id)); showToast(res.error||L.toastErr,'error'); }
   }catch(e){ setActions(id,renderActions(id)); showToast(L.toastErr,'error'); }
@@ -575,9 +572,11 @@ async function confirmCoffee(id){
 
 async function rejectCoffee(id){
   const L=t();
+  const name=await promptStaffName();
+  if(!name) return;
   setActions(id,`<button class="action-btn btn-reject" disabled>${L.rejecting}</button>`);
   try{
-    const res=await apiPost({action:'rejectCoffee',id});
+    const res=await apiPost({action:'rejectCoffee',id},name);
     if(res.success){ setActions(id,`<button class="action-btn btn-rejected-done" disabled>${L.rejectedBtn}</button>`); showToast(L.toastRejected); }
     else{ setActions(id,renderActions(id)); showToast(res.error||L.toastErr,'error'); }
   }catch(e){ setActions(id,renderActions(id)); showToast(L.toastErr,'error'); }
@@ -585,9 +584,11 @@ async function rejectCoffee(id){
 
 async function confirmWash(id){
   const L=t();
+  const name=await promptStaffName();
+  if(!name) return;
   setActions(id,`<button class="action-btn btn-confirm" disabled>${L.confirming}</button>`);
   try{
-    const res=await apiPost({action:'confirmWash',id});
+    const res=await apiPost({action:'confirmWash',id},name);
     if(res.success){ setActions(id,`<button class="action-btn btn-done" disabled>${L.doneBtn}</button>`); showToast(L.toastConfirmed,'success'); }
     else if(res.error==='already_washed'){ setActions(id,renderWashActions(id)); showToast(L.alreadyWashed,'error'); }
     else{ setActions(id,renderWashActions(id)); showToast(res.error||L.toastErr,'error'); }
@@ -596,9 +597,11 @@ async function confirmWash(id){
 
 async function rejectWash(id){
   const L=t();
+  const name=await promptStaffName();
+  if(!name) return;
   setActions(id,`<button class="action-btn btn-reject" disabled>${L.rejecting}</button>`);
   try{
-    const res=await apiPost({action:'rejectWash',id});
+    const res=await apiPost({action:'rejectWash',id},name);
     if(res.success){ setActions(id,`<button class="action-btn btn-rejected-done" disabled>${L.rejectedBtn}</button>`); showToast(L.toastRejected); }
     else{ setActions(id,renderWashActions(id)); showToast(res.error||L.toastErr,'error'); }
   }catch(e){ setActions(id,renderWashActions(id)); showToast(L.toastErr,'error'); }
@@ -705,6 +708,45 @@ async function searchPlate(){
   }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
 }
 
+// ── STAFF NAME MODAL ──
+let _nameResolve = null;
+
+function promptStaffName(){
+  return new Promise(resolve=>{
+    _nameResolve=resolve;
+    const L=t();
+    const modal=document.getElementById('name-modal');
+    const input=document.getElementById('modal-name-input');
+    document.getElementById('modal-title').textContent  = L.modalTitle  || 'Your Name';
+    document.getElementById('modal-sub').textContent    = L.modalSub    || 'Enter your name for the record';
+    document.getElementById('modal-cancel').textContent = L.modalCancel || 'Cancel';
+    document.getElementById('modal-confirm').textContent= L.modalConfirm|| 'Confirm →';
+    document.getElementById('modal-err').style.display='none';
+    input.value='';
+    modal.style.display='flex';
+    setTimeout(()=>input.focus(),80);
+  });
+}
+
+function resolveNameModal(){
+  const input=document.getElementById('modal-name-input');
+  const val=input.value.trim();
+  const L=t();
+  if(!val){
+    const err=document.getElementById('modal-err');
+    err.textContent=L.modalErr||'Please enter your name.';
+    err.style.display='block';
+    return;
+  }
+  document.getElementById('name-modal').style.display='none';
+  if(_nameResolve){ _nameResolve(val); _nameResolve=null; }
+}
+
+function cancelNameModal(){
+  document.getElementById('name-modal').style.display='none';
+  if(_nameResolve){ _nameResolve(null); _nameResolve=null; }
+}
+
 // ── TOAST ──
 function showToast(msg, type=''){
   const el=document.getElementById('toast');
@@ -722,9 +764,7 @@ document.querySelectorAll('.lang-btn').forEach(b=>{
   b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
 });
 applyLang();
-const _ni=document.getElementById('staff-name-input');
-if(_ni&&staffName) _ni.value=staffName;
-if(station&&staffName){ showScreen('portal'); loadPending(); }
+if(station){ showScreen('portal'); loadPending(); }
 else showScreen('station');
 </script>
 </body>
