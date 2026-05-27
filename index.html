@@ -28,6 +28,11 @@ body{font-family:var(--sans);background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F
 .header-logo{width:32px;height:32px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .brand{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;color:#fff}
 .brand span{color:rgba(255,255,255,.7)}
+.header-right{display:flex;align-items:center;gap:8px}
+.staff-chip{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:4px 10px 4px 4px;cursor:pointer;transition:background .2s}
+.staff-chip:hover{background:rgba(255,255,255,.25)}
+.staff-chip-avatar{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.9);color:var(--sinopec-red);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.staff-chip-name{font-family:var(--mono);font-size:11px;color:#fff;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lang-toggle{display:flex;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:9px;overflow:hidden}
 .lang-btn{padding:6px 10px;font-family:var(--mono);font-size:11px;color:#fff;cursor:pointer;border:none;background:transparent;font-weight:600}
 .lang-btn.active{background:#fff;color:var(--liberty-blue)}
@@ -64,7 +69,7 @@ body{font-family:var(--sans);background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F
 .sbar-name{font-size:13px;font-weight:700;color:var(--text)}
 .sbar-date{font-size:11px;color:var(--muted);margin-top:2px;font-family:var(--mono)}
 .sbar-change{font-size:11px;color:var(--liberty-blue);cursor:pointer;border:1px solid rgba(0,61,165,.25);padding:5px 12px;border-radius:7px;font-family:var(--mono);background:var(--blue-light);white-space:nowrap;font-weight:600}
-.menu-greeting{font-size:20px;font-weight:800;margin-bottom:20px;line-height:1.3;color:var(--text)}
+.menu-greeting{font-size:20px;font-weight:800;margin-bottom:20px;line-height:1.4;color:var(--text)}
 .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:22px}
 .menu-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:15px 13px 13px;cursor:pointer;position:relative;overflow:hidden;transition:all .18s;box-shadow:var(--shadow-sm)}
 .menu-card:hover{border-color:var(--border-strong);box-shadow:var(--shadow);transform:translateY(-2px)}
@@ -88,19 +93,50 @@ body{font-family:var(--sans);background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F
 .maintenance-alert-title{font-size:12px;font-weight:800;color:#C2410C;letter-spacing:.04em;text-transform:uppercase}
 .maintenance-alert-body{font-size:13px;color:var(--label);line-height:1.55}
 .maintenance-alert-time{margin-top:4px;font-size:11px;color:var(--muted);font-family:var(--mono)}
+/* Name modal */
+.name-overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;padding:24px}
+.name-card{background:var(--surface);border-radius:var(--radius);padding:28px 24px;width:100%;max-width:360px;box-shadow:0 20px 60px rgba(0,0,0,.2);text-align:center}
+.name-card-icon{font-size:36px;margin-bottom:12px}
+.name-card-title{font-size:18px;font-weight:800;margin-bottom:6px;color:var(--text)}
+.name-card-sub{font-size:13px;color:var(--muted);margin-bottom:22px;line-height:1.5}
+.name-input{width:100%;background:var(--surface-soft);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-size:16px;font-family:var(--sans);color:var(--text);outline:none;text-align:center;margin-bottom:14px;transition:border-color .2s}
+.name-input:focus{border-color:var(--sinopec-red);box-shadow:0 0 0 3px rgba(230,0,18,.1)}
+.name-input::placeholder{color:var(--muted)}
+.name-btn{width:100%;border:none;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));color:#fff;font-family:var(--sans);font-size:14px;font-weight:800;padding:13px;cursor:pointer;transition:opacity .15s}
+.name-btn:hover{opacity:.9}
+.name-btn:disabled{opacity:.45;cursor:not-allowed}
+.name-skip{display:block;margin-top:10px;font-size:12px;color:var(--muted);cursor:pointer;text-decoration:underline;text-underline-offset:2px;background:none;border:none;width:100%;font-family:var(--sans)}
 .footer{text-align:center;padding:24px 20px 0;font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.08em}
 </style>
 </head>
 <body>
+
+<!-- Name modal -->
+<div class="name-overlay" id="name-overlay" style="display:none">
+  <div class="name-card">
+    <div class="name-card-icon">👋</div>
+    <div class="name-card-title" id="nm-title">What's your name?</div>
+    <div class="name-card-sub" id="nm-sub">We'll remember you for this session so you don't have to type it every time.</div>
+    <input class="name-input" id="name-input" type="text" placeholder="Your name..." autocomplete="off" autocorrect="off" spellcheck="false"/>
+    <button class="name-btn" id="name-btn" onclick="saveName()">Let's go →</button>
+    <button class="name-skip" id="name-skip" onclick="skipName()">Skip for now</button>
+  </div>
+</div>
 
 <div class="header">
   <div class="header-left">
     <div class="header-logo">⛽</div>
     <div class="brand">ARIES <span>STAFF</span></div>
   </div>
-  <div class="lang-toggle">
-    <button class="lang-btn active" onclick="setLang('en')">EN</button>
-    <button class="lang-btn" onclick="setLang('zh')">中文</button>
+  <div class="header-right">
+    <div class="staff-chip" id="staff-chip" onclick="promptName()" style="display:none">
+      <div class="staff-chip-avatar" id="staff-chip-avatar">?</div>
+      <span class="staff-chip-name" id="staff-chip-name">—</span>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+    </div>
   </div>
 </div>
 
@@ -258,7 +294,6 @@ body{font-family:var(--sans);background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F
 <script>
 const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
 
-// Station key = simple location name (matches reward.html customer selections)
 const STATIONS = [
   { key:'Frankston',     display:'Frankston',      loc:'Frankston, VIC',      cls:'dot-sinopec', icon:'⛽' },
   { key:'Thomastown',    display:'Thomastown',     loc:'Thomastown, VIC',     cls:'dot-sinopec', icon:'⛽' },
@@ -268,6 +303,54 @@ const STATIONS = [
   { key:'Flemington',    display:'Flemington',     loc:'Flemington, VIC',     cls:'dot-bp',      icon:'⛽' },
   { key:'Bendigo',       display:'Bendigo',        loc:'Golden Square, VIC',  cls:'dot-liberty', icon:'⛽' }
 ];
+
+// ── Greeting messages — varied by time of day ─────────────────────────────────
+const GREETINGS = {
+  en: {
+    morning: n => [
+      `Good morning, ${n}! ☀️ Hope you have a great shift today.`,
+      `Rise and shine, ${n}! 🌅 Let's have a good one.`,
+      `Morning ${n}! ☕ Ready to get things done?`,
+    ],
+    afternoon: n => [
+      `Hey ${n}! 👋 How's the afternoon going?`,
+      `Good afternoon, ${n}! 🌤️ Keep up the great work.`,
+      `Hi ${n}! 😊 Hope the day's treating you well.`,
+    ],
+    evening: n => [
+      `Evening, ${n}! 🌙 Thanks for the hard work today.`,
+      `Hey ${n}! 🌆 Almost done — you've got this.`,
+      `Good evening, ${n}! ⭐ Nearly there, hang in there!`,
+    ],
+    noname: [
+      `👋 Hey there! What are you filing today?`,
+      `Welcome back! 😊 What's on the agenda?`,
+      `Hi! Ready to get things done? 💪`,
+    ]
+  },
+  zh: {
+    morning: n => [
+      `早上好，${n}！☀️ 祝你今天班上得顺顺利利～`,
+      `${n}，早安！🌅 今天也要加油哦！`,
+      `早上好 ${n}！☕ 准备好开始了吗？`,
+    ],
+    afternoon: n => [
+      `下午好，${n}！👋 今天怎么样？`,
+      `嗨 ${n}！🌤️ 继续加油，干得不错！`,
+      `${n}，你好！😊 下午也要加油！`,
+    ],
+    evening: n => [
+      `晚上好，${n}！🌙 辛苦了，今天干得好！`,
+      `嗨 ${n}！🌆 快结束啦，坚持一下！`,
+      `${n}，晚上好！⭐ 快收工了，加油！`,
+    ],
+    noname: [
+      `👋 你好！今天填哪个表？`,
+      `欢迎回来！😊 今天怎么样？`,
+      `嗨！准备好了吗？💪`,
+    ]
+  }
+};
 
 const STRINGS = {
   en:{
@@ -286,10 +369,13 @@ const STRINGS = {
     mLabelOps:'🧩 Operations',
     mLabelReward:'🎁 Member Rewards',
     bDaily:'DAILY',bIncident:'INCIDENT',bOps:'OPS',bReward:'REWARDS',
-    greeting:g=>`Good ${g} — <span>what are you filing today?</span>`,
-    greet:{morning:'morning',afternoon:'afternoon',evening:'evening'},
     maintenanceAlert:'Maintenance In Progress',
     maintenanceAlertClick:'Tap here to complete final record',
+    nmTitle:'What\'s your name?',
+    nmSub:'We\'ll remember you so you don\'t have to type it every time.',
+    nmPlaceholder:'Your name...',
+    nmBtn:'Let\'s go →',
+    nmSkip:'Skip for now',
     cards:{
       temp:      {t:'Temperature Log',     s:'Morning / Afternoon / Night'},
       cig:       {t:'Cigarette Stock',     s:'End of shift count'},
@@ -322,10 +408,13 @@ const STRINGS = {
     mLabelOps:'🧩 运营功能',
     mLabelReward:'🎁 会员奖励',
     bDaily:'每日',bIncident:'事故',bOps:'运营',bReward:'奖励',
-    greeting:()=>`您好 — <span>今天填哪个表？</span>`,
-    greet:{morning:'',afternoon:'',evening:''},
     maintenanceAlert:'维修仍在进行中',
     maintenanceAlertClick:'点击这里完成最终登记',
+    nmTitle:'你叫什么名字？',
+    nmSub:'记住你的名字，这样每次填表就不用重新输入了。',
+    nmPlaceholder:'输入你的名字...',
+    nmBtn:'出发 →',
+    nmSkip:'暂时跳过',
     cards:{
       temp:      {t:'温度记录',       s:'早班 / 午班 / 夜班'},
       cig:       {t:'香烟库存盘点',   s:'班次结束时填写'},
@@ -346,10 +435,71 @@ const STRINGS = {
 
 let lang    = localStorage.getItem('ap_lang')    || 'en';
 let station = localStorage.getItem('ap_station') || '';
+// Staff name expires after 6 hours
+function getStaffName(){
+  const name = localStorage.getItem('ap_staff_name') || '';
+  const ts   = parseInt(localStorage.getItem('ap_staff_name_ts') || '0');
+  if (name && ts && (Date.now() - ts) < 4 * 60 * 60 * 1000) return name;
+  // Expired or missing — clear it
+  localStorage.removeItem('ap_staff_name');
+  localStorage.removeItem('ap_staff_name_ts');
+  return '';
+}
+let staffName = getStaffName();
 let openMaintenanceJobs = [];
 
 function t()   { return STRINGS[lang]; }
 function stationByKey(k) { return STATIONS.find(s=>s.key===k)||null; }
+
+// ── Staff name ────────────────────────────────────────────────────────────────
+
+function updateChip(){
+  const chip = document.getElementById('staff-chip');
+  const avatar = document.getElementById('staff-chip-avatar');
+  const nameEl = document.getElementById('staff-chip-name');
+  if (staffName) {
+    chip.style.display = 'flex';
+    avatar.textContent = staffName.charAt(0).toUpperCase();
+    nameEl.textContent = staffName;
+  } else {
+    chip.style.display = 'none';
+  }
+}
+
+function promptName(){
+  const s = t();
+  document.getElementById('nm-title').textContent = s.nmTitle;
+  document.getElementById('nm-sub').textContent   = s.nmSub;
+  const inp = document.getElementById('name-input');
+  inp.placeholder = s.nmPlaceholder;
+  inp.value = staffName || '';
+  document.getElementById('name-btn').textContent  = s.nmBtn;
+  document.getElementById('name-skip').textContent = s.nmSkip;
+  document.getElementById('name-overlay').style.display = 'flex';
+  setTimeout(()=>inp.focus(), 100);
+}
+
+function saveName(){
+  const val = document.getElementById('name-input').value.trim();
+  if (!val) return;
+  staffName = val;
+  localStorage.setItem('ap_staff_name', val);
+  localStorage.setItem('ap_staff_name_ts', String(Date.now()));
+  document.getElementById('name-overlay').style.display = 'none';
+  updateChip();
+  updateDateGreeting();
+}
+
+function skipName(){
+  document.getElementById('name-overlay').style.display = 'none';
+  updateDateGreeting();
+}
+
+document.getElementById('name-input').addEventListener('keydown', e=>{
+  if (e.key === 'Enter') saveName();
+});
+
+// ── Screens ───────────────────────────────────────────────────────────────────
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -438,9 +588,14 @@ function buildStationList(){
 function selectStation(key){
   station=key; localStorage.setItem('ap_station',key);
   applyLang(); showScreen('menu'); loadOpenMaintenance();
+  // Ask for name if not set yet
+  if (!staffName) setTimeout(promptName, 400);
 }
 
-function confirmStation(){ showScreen('menu'); loadOpenMaintenance(); }
+function confirmStation(){
+  showScreen('menu'); loadOpenMaintenance();
+  if (!staffName) setTimeout(promptName, 400);
+}
 
 function go(page)        { window.location.href=page; }
 function goExternal(url) { window.location.href=url;  }
@@ -450,11 +605,19 @@ function updateDateGreeting(){
   const dateStr=now.toLocaleDateString(lang==='zh'?'zh-CN':'en-AU',{weekday:'long',year:'numeric',month:'short',day:'numeric'});
   document.getElementById('sbar-date').textContent=dateStr;
   document.getElementById('m-date').textContent   =dateStr.toUpperCase();
+
   const hour=now.getHours();
-  let g='morning';
-  if(hour>=12&&hour<18) g='afternoon';
-  if(hour>=18||hour<5)  g='evening';
-  document.getElementById('m-greeting').innerHTML=t().greeting(t().greet[g]);
+  const period = hour>=5&&hour<12 ? 'morning' : hour>=12&&hour<18 ? 'afternoon' : 'evening';
+  const G = GREETINGS[lang];
+  let msg;
+  if (staffName) {
+    const options = G[period](staffName);
+    msg = options[Math.floor(Math.random() * options.length)];
+  } else {
+    const options = G.noname;
+    msg = options[Math.floor(Math.random() * options.length)];
+  }
+  document.getElementById('m-greeting').innerHTML = msg;
 }
 
 async function loadOpenMaintenance(){
@@ -503,9 +666,11 @@ function esc(str){
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
+// ── Init ──────────────────────────────────────────────────────────────────────
 document.querySelectorAll('.lang-btn').forEach(b=>{
   b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
 });
+updateChip();
 applyLang();
 if(station){ showScreen('confirm'); loadOpenMaintenance(); }
 else         showScreen('station');
