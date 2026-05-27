@@ -150,6 +150,10 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
 .prog-free-banner{background:var(--green-light);border:1.5px solid #BBF7D0;border-radius:9px;padding:9px 12px;font-size:13px;font-weight:700;color:var(--bp-green-dark);margin-top:10px;text-align:center}
 
 .err-inline{background:var(--danger-light);border:1px solid #FECDD3;border-radius:8px;padding:9px 12px;font-size:12px;color:var(--sinopec-red);font-weight:600;margin-top:10px}
+.redeem-btn{width:100%;margin-top:10px;padding:12px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--bp-green),var(--bp-green-dark));color:#fff;font-size:13px;font-weight:800;cursor:pointer;font-family:var(--sans);box-shadow:0 4px 12px rgba(0,166,81,.22);transition:opacity .15s}
+.redeem-btn:hover{opacity:.9}
+.redeem-btn:disabled{opacity:.45;cursor:not-allowed}
+.redeem-btn-red{background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));box-shadow:0 4px 12px rgba(230,0,18,.22)}
 </style>
 </head>
 <body>
@@ -220,7 +224,7 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
         <div class="search-box-title" id="search-coffee-title">☕ Coffee Progress</div>
         <div class="fg">
           <label class="flabel" id="lbl-coffee-phone">Customer Mobile</label>
-          <input type="tel" id="coffee-phone" placeholder="04xx xxx xxx" inputmode="tel" onkeydown="if(event.key==='Enter')searchCoffee()">
+          <input type="tel" id="coffee-phone" placeholder="04xx xxx xxx" inputmode="tel" maxlength="13" onkeydown="if(event.key==='Enter')searchCoffee()">
         </div>
         <button class="search-btn" id="coffee-search-btn" onclick="searchCoffee()" onkeydown="if(event.key==='Enter')searchCoffee()">
           <span id="coffee-search-lbl">Search</span>
@@ -232,7 +236,7 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
         <div class="search-box-title" id="search-wash-title">🚗 Wash Reward Progress</div>
         <div class="fg">
           <label class="flabel" id="lbl-wash-phone">Customer Mobile</label>
-          <input type="tel" id="wash-phone" placeholder="04xx xxx xxx" inputmode="tel" onkeydown="if(event.key==='Enter')searchWash()">
+          <input type="tel" id="wash-phone" placeholder="04xx xxx xxx" inputmode="tel" maxlength="13" onkeydown="if(event.key==='Enter')searchWash()">
         </div>
         <button class="search-btn" id="wash-search-btn" onclick="searchWash()">
           <span id="wash-search-lbl">Search</span>
@@ -320,8 +324,28 @@ const S = {
     rfTotalWashes:'Total Washes Confirmed',
     freeCoffeeReady:'🎉 Free coffee ready — ask customer to show you the rewards screen.',
     freeWashReady:'🎉 Free wash ready — confirm plate number with customer.',
+    redeemCoffeeBtn:'✓ Mark Free Coffee as Redeemed',
+    redeemWashBtn:'✓ Mark Free Wash as Redeemed',
+    rfRedeemed:'Times Redeemed',
+    freePendingCount:'pending',
+    redeemConfirmCoffee:'Confirm: customer has received their free coffee?',
+    redeemConfirmWash:'Confirm: customer has received their free wash?',
+    redeemSuccess:'Redeemed! Record updated.',
+    redeemErr:'Could not mark as redeemed. Please try again.',
     coffeeProgressLbl: (c,r) => `${c}/5 confirmed · ${r} more for a free coffee`,
     washProgressLbl:   (c,r) => `${c}/3 confirmed · ${r} more for a free wash`,
+    addCoffeeBtn:'☕ + Add Coffee Purchase',
+    addWashBtn:'🚗 + Add Wash',
+    addCoffeeTitle:'Add Coffee Purchase',
+    addWashTitle:'Add Car Wash',
+    addCoffeeSub:'Staff-recorded — counts as confirmed immediately.',
+    addWashSub:'Staff-recorded — counts as confirmed immediately.',
+    addConfirmCoffee:(phone)=>`Add 1 confirmed coffee purchase for ${phone}?`,
+    addConfirmWash:(phone)=>`Add 1 confirmed wash for ${phone}?`,
+    addSuccess:'Added! Progress updated.',
+    addErr:'Could not add. Please try again.',
+    notFoundAddCoffee:'No record found. A new member will be created.',
+    notFoundAddWash:'No record found. A new member will be created.',
   },
   zh:{
     sEyebrow:'会员奖励管理', sHeading:'选择您的<span>站点</span>',
@@ -353,8 +377,28 @@ const S = {
     rfTotalWashes:'已确认总洗车次数',
     freeCoffeeReady:'🎉 免费咖啡已解锁 — 请让顾客出示奖励页面。',
     freeWashReady:'🎉 免费洗车已解锁 — 请核对顾客手机号。',
+    redeemCoffeeBtn:'✓ 标记免费咖啡已领取',
+    redeemWashBtn:'✓ 标记免费洗车已使用',
+    rfRedeemed:'已兑换次数',
+    freePendingCount:'次待兑换',
+    redeemConfirmCoffee:'确认：顾客已领取免费咖啡？',
+    redeemConfirmWash:'确认：顾客已使用免费洗车？',
+    redeemSuccess:'已记录兑换！',
+    redeemErr:'标记失败，请重试。',
     coffeeProgressLbl: (c,r) => `${c}/5 已确认 · 还需 ${r} 次可获免费咖啡`,
     washProgressLbl:   (c,r) => `${c}/3 已确认 · 还需 ${r} 次可获免费洗车`,
+    addCoffeeBtn:'☕ + 登记一杯咖啡',
+    addWashBtn:'🚗 + 登记一次洗车',
+    addCoffeeTitle:'登记咖啡购买',
+    addWashTitle:'登记洗车',
+    addCoffeeSub:'员工直接登记，立即计为已确认。',
+    addWashSub:'员工直接登记，立即计为已确认。',
+    addConfirmCoffee:(phone)=>`确认为 ${phone} 登记一次咖啡购买？`,
+    addConfirmWash:(phone)=>`确认为 ${phone} 登记一次洗车？`,
+    addSuccess:'已登记！进度已更新。',
+    addErr:'登记失败，请重试。',
+    notFoundAddCoffee:'未找到该手机号，将自动建立新会员档案。',
+    notFoundAddWash:'未找到该手机号，将自动建立新会员档案。',
   }
 };
 
@@ -621,17 +665,29 @@ function renderWashActions(id){
 // ── SEARCH ──
 async function searchCoffee(){
   const L=t();
-  const phone=document.getElementById('coffee-phone').value.trim().replace(/\s/g,'');
+  const phone=normalizePhone(document.getElementById('coffee-phone').value);
   const box=document.getElementById('coffee-result');
   if(!phone){ box.innerHTML=`<div class="err-inline">${L.lblCoffeePhone}?</div>`; return; }
   box.innerHTML=`<div class="loading"><span class="spinner"></span>${L.loading}</div>`;
   try{
     const url=`${API_URL}?action=searchCoffee&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
     const res=await fetch(url); const data=await res.json();
-    if(!data.found){ box.innerHTML=`<div class="err-inline">${L.notFound}</div>`; return; }
+
+    // ── New customer: no record yet ──
+    if(!data.found){
+      box.innerHTML=`
+        <div class="result-card">
+          <div class="result-card-title">${L.searchCoffeeTitle}</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px">${L.notFoundAddCoffee}</div>
+          <button class="redeem-btn" onclick="staffAddCoffee('${esc(phone)}',this)">${L.addCoffeeBtn}</button>
+        </div>`;
+      return;
+    }
+
     const c=data.confirmedPurchases||0;
     const mod=c%5; const remaining=5-mod;
-    const rewardReady=c>0&&mod===0;
+    const rewardReady=data.rewardReady||false;
+    const freePending=data.freePending||0;
     let track='';
     for(let i=0;i<5;i++){
       track+=`<div class="prog-dot${i<mod?' lit-green':''}">${i<mod?'✓':i+1}</div>`;
@@ -644,27 +700,47 @@ async function searchCoffee(){
         <div class="result-row"><span class="result-key">${L.rfName}</span><span class="result-val">${esc(data.name||'—')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone||'')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfConfirmed}</span><span class="result-val blue">${c}</span></div>
-        <div class="result-row"><span class="result-key">${L.rfFree}</span><span class="result-val">${data.freeUsed||0}</span></div>
+        <div class="result-row"><span class="result-key">${L.rfRedeemed}</span><span class="result-val">${data.freeRedeemed||0}</span></div>
         <div class="prog-track">${track}</div>
         <div class="prog-lbl">${rewardReady?'':L.coffeeProgressLbl(mod,remaining)}</div>
-        ${rewardReady?`<div class="prog-free-banner">${L.freeCoffeeReady}</div>`:''}
+        ${rewardReady
+          ? `<div class="prog-free-banner">
+               ${L.freeCoffeeReady}
+               ${freePending>1?`<span style="font-size:11px;display:block;margin-top:4px;opacity:.8">(${freePending} ${L.freePendingCount})</span>`:''}
+             </div>
+             <button class="redeem-btn" onclick="redeemCoffee('${esc(phone)}',this)">${L.redeemCoffeeBtn}</button>`
+          : ''}
+        <button class="redeem-btn" style="margin-top:10px;background:linear-gradient(135deg,#0369a1,#075985)"
+          onclick="staffAddCoffee('${esc(phone)}',this)">${L.addCoffeeBtn}</button>
       </div>`;
   }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
 }
 
 async function searchWash(){
   const L=t();
-  const phone=document.getElementById('wash-phone').value.trim().replace(/\s/g,'');
+  const phone=normalizePhone(document.getElementById('wash-phone').value);
   const box=document.getElementById('wash-result');
   if(!phone){ box.innerHTML=`<div class="err-inline">${L.lblWashPhone}?</div>`; return; }
   box.innerHTML=`<div class="loading"><span class="spinner"></span>${L.loading}</div>`;
   try{
     const url=`${API_URL}?action=searchWashReward&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
     const res=await fetch(url); const data=await res.json();
-    if(!data.found){ box.innerHTML=`<div class="err-inline">${L.notFound}</div>`; return; }
+
+    // ── New customer: no record yet ──
+    if(!data.found){
+      box.innerHTML=`
+        <div class="result-card">
+          <div class="result-card-title">${L.searchWashTitle}</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:12px">${L.notFoundAddWash}</div>
+          <button class="redeem-btn redeem-btn-red" onclick="staffAddWash('${esc(phone)}',this)">${L.addWashBtn}</button>
+        </div>`;
+      return;
+    }
+
     const c=data.confirmedWashes||0;
     const mod=c%3; const remaining=3-mod;
-    const rewardReady=c>0&&mod===0;
+    const rewardReady=data.rewardReady||false;
+    const freePending=data.freePending||0;
     let track='';
     for(let i=0;i<3;i++){
       track+=`<div class="prog-dot${i<mod?' lit-red':''}">${i<mod?'✓':i+1}</div>`;
@@ -676,10 +752,18 @@ async function searchWash(){
         <div class="result-card-title">${L.searchWashTitle}</div>
         <div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone||'')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfWashes}</span><span class="result-val red">${c}</span></div>
-        <div class="result-row"><span class="result-key">${L.rfFreeWashes}</span><span class="result-val">${data.freeUsed||0}</span></div>
+        <div class="result-row"><span class="result-key">${L.rfRedeemed}</span><span class="result-val">${data.freeRedeemed||0}</span></div>
         <div class="prog-track">${track}</div>
         <div class="prog-lbl">${rewardReady?'':L.washProgressLbl(mod,remaining)}</div>
-        ${rewardReady?`<div class="prog-free-banner">${L.freeWashReady}</div>`:''}
+        ${rewardReady
+          ? `<div class="prog-free-banner">
+               ${L.freeWashReady}
+               ${freePending>1?`<span style="font-size:11px;display:block;margin-top:4px;opacity:.8">(${freePending} ${L.freePendingCount})</span>`:''}
+             </div>
+             <button class="redeem-btn redeem-btn-red" onclick="redeemWash('${esc(phone)}',this)">${L.redeemWashBtn}</button>`
+          : ''}
+        <button class="redeem-btn redeem-btn-red" style="margin-top:10px;background:linear-gradient(135deg,#b91c1c,#991b1b)"
+          onclick="staffAddWash('${esc(phone)}',this)">${L.addWashBtn}</button>
       </div>`;
   }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
 }
@@ -755,8 +839,107 @@ function showToast(msg, type=''){
   setTimeout(()=>el.classList.remove('show'),2800);
 }
 
+// ── STAFF DIRECT ADD ──
+async function staffAddCoffee(phone, btn){
+  const L=t();
+  if(!confirm(L.addConfirmCoffee(phone))) return;
+  const name=await promptStaffName();
+  if(!name) return;
+  btn.disabled=true; btn.textContent='…';
+  try{
+    const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({
+      action:'staffAddCoffee', phone, station, staffName:name,
+      token:API_TOKEN, date:todayStr()
+    })});
+    const data=await res.json();
+    if(data.success){
+      showToast(L.addSuccess,'success');
+      // Refresh the result card by re-running the search
+      await searchCoffee();
+    } else {
+      btn.disabled=false; btn.textContent=L.addCoffeeBtn;
+      showToast(data.error||L.addErr,'error');
+    }
+  }catch(e){ btn.disabled=false; btn.textContent=L.addCoffeeBtn; showToast(L.addErr,'error'); }
+}
+
+async function staffAddWash(phone, btn){
+  const L=t();
+  if(!confirm(L.addConfirmWash(phone))) return;
+  const name=await promptStaffName();
+  if(!name) return;
+  btn.disabled=true; btn.textContent='…';
+  try{
+    const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({
+      action:'staffAddWash', phone, station, staffName:name,
+      token:API_TOKEN, date:todayStr()
+    })});
+    const data=await res.json();
+    if(data.success){
+      showToast(L.addSuccess,'success');
+      await searchWash();
+    } else {
+      btn.disabled=false; btn.textContent=L.addWashBtn;
+      showToast(data.error||L.addErr,'error');
+    }
+  }catch(e){ btn.disabled=false; btn.textContent=L.addWashBtn; showToast(L.addErr,'error'); }
+}
+
+function todayStr(){
+  const d=new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+
+// ── REDEEM ──
+async function redeemCoffee(phone, btn){
+  const L=t();
+  if(!confirm(L.redeemConfirmCoffee)) return;
+  const name=await promptStaffName();
+  if(!name) return;
+  btn.disabled=true; btn.textContent='…';
+  try{
+    const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'redeemCoffee',phone,token:API_TOKEN,staffName:name})});
+    const data=await res.json();
+    if(data.success){
+      btn.textContent='✓ '+L.redeemSuccess;
+      btn.style.background='var(--bp-green-dark)';
+      showToast(L.redeemSuccess,'success');
+    } else {
+      btn.disabled=false; btn.textContent=L.redeemCoffeeBtn;
+      showToast(L.redeemErr,'error');
+    }
+  }catch(e){ btn.disabled=false; btn.textContent=L.redeemCoffeeBtn; showToast(L.redeemErr,'error'); }
+}
+
+async function redeemWash(phone, btn){
+  const L=t();
+  if(!confirm(L.redeemConfirmWash)) return;
+  const name=await promptStaffName();
+  if(!name) return;
+  btn.disabled=true; btn.textContent='…';
+  try{
+    const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'redeemWash',phone,token:API_TOKEN,staffName:name})});
+    const data=await res.json();
+    if(data.success){
+      btn.textContent='✓ '+L.redeemSuccess;
+      btn.style.background='var(--sinopec-red-dark)';
+      showToast(L.redeemSuccess,'success');
+    } else {
+      btn.disabled=false; btn.textContent=L.redeemWashBtn;
+      showToast(L.redeemErr,'error');
+    }
+  }catch(e){ btn.disabled=false; btn.textContent=L.redeemWashBtn; showToast(L.redeemErr,'error'); }
+}
+
 function esc(str){
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+// Normalize phone: strip spaces, restore leading 0 if Sheets ate it
+function normalizePhone(raw){
+  const s=String(raw||'').replace(/\s/g,'').trim();
+  if(!s) return '';
+  if(/^4\d{8}$/.test(s)) return '0'+s;
+  return s;
 }
 
 // ── INIT ──
