@@ -7,724 +7,102 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --sinopec-red:#E60012;
-  --sinopec-red-dark:#B8000E;
-  --bp-green:#00A651;
-  --bp-green-dark:#007A3D;
-  --liberty-blue:#003DA5;
-  --liberty-blue-dark:#002A73;
-  --liberty-red:#CE1126;
-
-  --bg:#F4F6F8;
-  --surface:#FFFFFF;
-  --surface2:#F8FAFC;
-  --surface3:#EEF2F6;
-  --border:#DDE3EA;
-  --border2:#C9D2DD;
-
-  --accent:var(--bp-green);
-  --accent2:var(--liberty-blue);
-  --warn:var(--sinopec-red);
-  --danger:var(--sinopec-red);
-
-  --text:#142033;
-  --muted:#667085;
-  --label:#344054;
-
-  --mono:'DM Mono',monospace;
-  --sans:'Sora',sans-serif;
-
-  --ok-bg:#ECFDF3;
-  --ok-border:#B7E4C7;
-  --warn-bg:#EFF6FF;
-  --warn-border:#BFDBFE;
-  --danger-bg:#FFF1F2;
-  --danger-border:#FDA4AF;
-
-  --radius:16px;
-  --radius-sm:10px;
-  --shadow:0 4px 18px rgba(15,23,42,.08);
-  --shadow-sm:0 2px 8px rgba(15,23,42,.06);
-}
-
+:root{--sinopec-red:#E60012;--sinopec-red-dark:#B8000E;--bp-green:#00A651;--bp-green-dark:#007A3D;--liberty-blue:#003DA5;--liberty-blue-dark:#002A73;--liberty-red:#CE1126;--bg:#F4F6F8;--surface:#FFFFFF;--surface2:#F8FAFC;--surface3:#EEF2F6;--border:#DDE3EA;--border2:#C9D2DD;--accent:var(--bp-green);--accent2:var(--liberty-blue);--warn:var(--sinopec-red);--danger:var(--sinopec-red);--text:#142033;--muted:#667085;--label:#344054;--mono:'DM Mono',monospace;--sans:'Sora',sans-serif;--ok-bg:#ECFDF3;--ok-border:#B7E4C7;--warn-bg:#EFF6FF;--warn-border:#BFDBFE;--danger-bg:#FFF1F2;--danger-border:#FDA4AF;--radius:16px;--radius-sm:10px;--shadow:0 4px 18px rgba(15,23,42,.08);--shadow-sm:0 2px 8px rgba(15,23,42,.06);}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-
-body{
-  background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);
-  color:var(--text);
-  font-family:var(--sans);
-  font-size:14px;
-  min-height:100vh;
-  padding-bottom:56px;
-}
-
-.header{
-  background:linear-gradient(135deg,var(--sinopec-red) 0%,var(--liberty-blue) 100%);
-  color:#fff;
-  border-bottom:none;
-  padding:14px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:100;
-  box-shadow:0 6px 20px rgba(0,0,0,.18);
-}
-
+body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;padding-bottom:56px}
+.header{background:linear-gradient(135deg,var(--sinopec-red) 0%,var(--liberty-blue) 100%);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 6px 20px rgba(0,0,0,.18)}
 .header-left{display:flex;align-items:center;gap:10px}
-
-.back-btn{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  color:rgba(255,255,255,.88);
-  font-size:13px;
-  cursor:pointer;
-  padding:5px 10px 5px 0;
-  border-right:1px solid rgba(255,255,255,.24);
-  margin-right:2px;
-  transition:opacity .15s;
-  white-space:nowrap;
-}
-
+.back-btn{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.88);font-size:13px;cursor:pointer;padding:5px 10px 5px 0;border-right:1px solid rgba(255,255,255,.24);margin-right:2px;transition:opacity .15s;white-space:nowrap}
 .back-btn:hover{opacity:.8}
-.header-title{font-size:14px;font-weight:800;color:#fff}
-.header-sub{font-size:10px;color:rgba(255,255,255,.82);font-family:var(--mono);margin-top:1px;letter-spacing:.08em}
-
+.header-title{font-size:14px;font-weight:800;color:#fff}.header-sub{font-size:10px;color:rgba(255,255,255,.82);font-family:var(--mono);margin-top:1px;letter-spacing:.08em}
 .header-right{display:flex;align-items:center;gap:10px}
-
-.lang-toggle{
-  display:flex;
-  background:rgba(255,255,255,.14);
-  border:1px solid rgba(255,255,255,.22);
-  border-radius:9px;
-  overflow:hidden;
-}
-
-.lang-btn{
-  padding:5px 10px;
-  font-family:var(--mono);
-  font-size:11px;
-  font-weight:700;
-  color:#fff;
-  cursor:pointer;
-  border:none;
-  background:transparent;
-  transition:all .15s;
-}
-
-.lang-btn.active{
-  background:#fff;
-  color:var(--liberty-blue);
-}
-
-.no-station{
-  display:none;
-  background:var(--danger-bg);
-  border-bottom:1px solid var(--danger-border);
-  padding:12px 16px;
-  text-align:center;
-}
-
+.lang-toggle{display:flex;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:9px;overflow:hidden}
+.lang-btn{padding:5px 10px;font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;cursor:pointer;border:none;background:transparent;transition:all .15s}
+.lang-btn.active{background:#fff;color:var(--liberty-blue)}
+.no-station{display:none;background:var(--danger-bg);border-bottom:1px solid var(--danger-border);padding:12px 16px;text-align:center}
 .no-station.show{display:block}
 .no-station-msg{font-size:13px;color:var(--sinopec-red-dark);margin-bottom:8px;font-weight:700}
-
-.no-station-link{
-  display:inline-block;
-  background:var(--sinopec-red);
-  color:#fff;
-  font-size:12px;
-  font-weight:700;
-  padding:8px 16px;
-  border-radius:9px;
-  text-decoration:none;
-}
-
-.station-bar{
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  padding:9px 16px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  box-shadow:var(--shadow-sm);
-}
-
-.station-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--bp-green);
-  box-shadow:0 0 0 4px rgba(0,166,81,.12);
-  flex-shrink:0;
-}
-
-.station-name{font-family:var(--mono);font-size:11px;color:var(--muted)}
-.station-name span{color:var(--text);font-weight:700}
-
-.daily-badge{
-  margin-left:auto;
-  font-family:var(--mono);
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:.08em;
-  padding:3px 8px;
-  border-radius:6px;
-  background:var(--blue-light,#EFF6FF);
-  color:var(--liberty-blue);
-  border:1px solid #BFDBFE;
-}
-
+.no-station-link{display:inline-block;background:var(--sinopec-red);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:9px;text-decoration:none}
+.station-bar{background:#fff;border-bottom:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-sm)}
+.station-dot{width:7px;height:7px;border-radius:50%;background:var(--bp-green);box-shadow:0 0 0 4px rgba(0,166,81,.12);flex-shrink:0}
+.station-name{font-family:var(--mono);font-size:11px;color:var(--muted)}.station-name span{color:var(--text);font-weight:700}
+.daily-badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.08em;padding:3px 8px;border-radius:6px;background:#EFF6FF;color:var(--liberty-blue);border:1px solid #BFDBFE}
 .container{max-width:540px;margin:0 auto;padding:20px 16px}
 .screen{display:none}.screen.active{display:block}
-
 .form-header{margin-bottom:20px}
 .form-title{font-size:20px;font-weight:800;margin-bottom:4px;color:var(--text)}
 .form-sub{font-size:13px;color:var(--muted);line-height:1.5}
-
-/* ── Date navigator ── */
-.date-nav{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:12px;
-  margin-bottom:14px;
-  box-shadow:var(--shadow-sm);
-}
-
-.nav-btn{
-  width:34px;
-  height:34px;
-  border-radius:10px;
-  border:1.5px solid var(--border);
-  background:#fff;
-  color:var(--label);
-  font-size:16px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:all .15s;
-  flex-shrink:0;
-}
-
+.date-nav{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.nav-btn{width:34px;height:34px;border-radius:10px;border:1.5px solid var(--border);background:#fff;color:var(--label);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
 .nav-btn:hover{border-color:var(--liberty-blue);color:var(--liberty-blue)}
-
-.date-center{flex:1;text-align:center}
-.date-main{font-size:15px;font-weight:800;color:var(--text)}
-.date-sub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
-
-.today-chip{
-  font-size:10px;
-  color:var(--bp-green-dark);
-  font-family:var(--mono);
-  font-weight:800;
-  padding:2px 7px;
-  border:1px solid var(--ok-border);
-  border-radius:5px;
-  background:var(--ok-bg);
-  margin-top:4px;
-  display:inline-block;
-}
-
-.today-btn{
-  font-size:11px;
-  color:var(--liberty-blue);
-  cursor:pointer;
-  font-family:var(--mono);
-  font-weight:700;
-  padding:6px 10px;
-  border:1px solid #BFDBFE;
-  border-radius:7px;
-  background:#EFF6FF;
-  transition:all .15s;
-  white-space:nowrap;
-  flex-shrink:0;
-}
-
+.date-center{flex:1;text-align:center}.date-main{font-size:15px;font-weight:800;color:var(--text)}.date-sub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+.today-chip{font-size:10px;color:var(--bp-green-dark);font-family:var(--mono);font-weight:800;padding:2px 7px;border:1px solid var(--ok-border);border-radius:5px;background:var(--ok-bg);margin-top:4px;display:inline-block}
+.today-btn{font-size:11px;color:var(--liberty-blue);cursor:pointer;font-family:var(--mono);font-weight:700;padding:6px 10px;border:1px solid #BFDBFE;border-radius:7px;background:#EFF6FF;transition:all .15s;white-space:nowrap;flex-shrink:0}
 .today-btn:hover{background:#DBEAFE}
-
-/* ── Week view toggle ── */
-.week-toggle-btn{
-  width:100%;
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:11px 14px;
-  font-size:12px;
-  color:var(--muted);
-  font-family:var(--mono);
-  font-weight:700;
-  cursor:pointer;
-  text-align:center;
-  transition:all .15s;
-  margin-bottom:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  box-shadow:var(--shadow-sm);
-}
-
-.week-toggle-btn:hover{border-color:var(--border2);color:var(--text)}
-.week-toggle-btn.open{border-color:#BFDBFE;color:var(--liberty-blue);background:#EFF6FF}
-
-/* ── Week summary panel ── */
-.week-panel{
-  display:none;
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  margin-bottom:14px;
-  box-shadow:var(--shadow-sm);
-}
-
-.week-panel.show{display:block}
-
-.week-panel-header{
-  padding:9px 10px;
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.week-panel-nav{
-  width:28px;
-  height:28px;
-  border-radius:8px;
-  border:1px solid var(--border);
-  background:#fff;
-  color:var(--label);
-  font-size:13px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:all .15s;
-  flex-shrink:0;
-}
-
+.week-toggle-btn{width:100%;background:#fff;border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:12px;color:var(--muted);font-family:var(--mono);font-weight:700;cursor:pointer;text-align:center;transition:all .15s;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:var(--shadow-sm)}
+.week-toggle-btn:hover{border-color:var(--border2);color:var(--text)}.week-toggle-btn.open{border-color:#BFDBFE;color:var(--liberty-blue);background:#EFF6FF}
+.week-panel{display:none;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow-sm)}.week-panel.show{display:block}
+.week-panel-header{padding:9px 10px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px}
+.week-panel-nav{width:28px;height:28px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--label);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
 .week-panel-nav:hover{border-color:var(--liberty-blue);color:var(--liberty-blue)}
-.week-panel-title{flex:1;text-align:center}
-.week-panel-title-main{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
-.week-panel-title-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px}
-
-.week-panel-this{
-  font-size:10px;
-  color:var(--liberty-blue);
-  font-family:var(--mono);
-  font-weight:700;
-  cursor:pointer;
-  padding:3px 7px;
-  border:1px solid #BFDBFE;
-  border-radius:6px;
-  background:#EFF6FF;
-  transition:all .15s;
-  white-space:nowrap;
-}
-
-.week-panel-this:hover{background:#DBEAFE}
-.week-grid{overflow-x:auto}
-.week-table{width:100%;border-collapse:collapse}
-
-.week-table th{
-  background:var(--surface2);
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:.06em;
-  text-transform:uppercase;
-  font-family:var(--mono);
-  color:var(--muted);
-  padding:7px 8px;
-  text-align:center;
-  border-bottom:1px solid var(--border);
-  white-space:nowrap;
-}
-
+.week-panel-title{flex:1;text-align:center}.week-panel-title-main{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}.week-panel-title-sub{font-size:10px;color:var(--muted);font-family:var(--mono);margin-top:1px}
+.week-panel-this{font-size:10px;color:var(--liberty-blue);font-family:var(--mono);font-weight:700;cursor:pointer;padding:3px 7px;border:1px solid #BFDBFE;border-radius:6px;background:#EFF6FF;transition:all .15s;white-space:nowrap}.week-panel-this:hover{background:#DBEAFE}
+.week-grid{overflow-x:auto}.week-table{width:100%;border-collapse:collapse}
+.week-table th{background:var(--surface2);font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;font-family:var(--mono);color:var(--muted);padding:7px 8px;text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
 .week-table th.paper-th{text-align:left;padding-left:12px;min-width:120px}
-
-.week-table td{
-  padding:8px 8px;
-  border-bottom:1px solid var(--border);
-  text-align:center;
-  font-family:var(--mono);
-  font-size:12px;
-  color:var(--label);
-}
-
-.week-table td.paper-td{text-align:left;padding-left:12px;font-size:12px;font-weight:700;color:var(--text)}
-.week-table td.today-td{background:#EFF6FF;color:var(--liberty-blue)}
-.week-table td.total-td{font-weight:800;color:var(--bp-green-dark)}
-.week-table tr:last-child td{border-bottom:none}
-.week-table tr.total-row td{background:var(--surface2);font-weight:800;color:var(--text);font-size:12px}
-.week-table tr.total-row td.total-grand{color:var(--bp-green-dark)}
-
-/* ── Staff row ── */
+.week-table td{padding:8px 8px;border-bottom:1px solid var(--border);text-align:center;font-family:var(--mono);font-size:12px;color:var(--label)}
+.week-table td.paper-td{text-align:left;padding-left:12px;font-size:12px;font-weight:700;color:var(--text)}.week-table td.today-td{background:#EFF6FF;color:var(--liberty-blue)}.week-table td.total-td{font-weight:800;color:var(--bp-green-dark)}.week-table tr:last-child td{border-bottom:none}.week-table tr.total-row td{background:var(--surface2);font-weight:800;color:var(--text);font-size:12px}.week-table tr.total-row td.total-grand{color:var(--bp-green-dark)}
 .staff-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-
-.field label{
-  display:block;
-  font-size:10px;
-  color:var(--muted);
-  letter-spacing:.07em;
-  text-transform:uppercase;
-  margin-bottom:5px;
-  font-family:var(--mono);
-  font-weight:700;
-}
-
-.field input{
-  width:100%;
-  background:#fff;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text);
-  font-family:var(--sans);
-  font-size:13px;
-  padding:10px 12px;
-  outline:none;
-  transition:border-color .2s,box-shadow .2s;
-  -webkit-appearance:none;
-}
-
-.field input:focus{
-  border-color:var(--liberty-blue);
-  box-shadow:0 0 0 3px rgba(0,61,165,.10);
-}
-
+.field label{display:block;font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono);font-weight:700}
+.field input{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+.field input:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.10)}
 .field.full{grid-column:1/-1}
-
-/* ── Toolbar ── */
-.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.toolbar-label{font-family:var(--mono);font-size:10px;color:var(--muted)}
-
-.manage-btn{
-  font-size:11px;
-  cursor:pointer;
-  font-family:var(--mono);
-  font-weight:700;
-  padding:6px 12px;
-  border-radius:8px;
-  border:1px solid var(--border);
-  background:#fff;
-  color:var(--muted);
-  transition:all .15s;
-  white-space:nowrap;
-}
-
-.manage-btn:hover{border-color:var(--border2);color:var(--text)}
-.manage-btn.active{border-color:var(--danger-border);color:var(--sinopec-red);background:var(--danger-bg)}
-
-.manage-banner{
-  display:none;
-  background:var(--danger-bg);
-  border:1px solid var(--danger-border);
-  border-radius:10px;
-  padding:10px 14px;
-  margin-bottom:12px;
-  font-size:12px;
-  color:var(--sinopec-red-dark);
-  line-height:1.5;
-  font-weight:600;
-}
-
-.manage-banner.show{display:block}
-
-/* ── Daily entry list ── */
-.section{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  margin-bottom:14px;
-  box-shadow:var(--shadow-sm);
-}
-
-.section-header{
-  padding:11px 14px;
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-}
-
-.section-header-left{display:flex;align-items:center;gap:8px}
-.section-icon{font-size:15px}
-.section-title{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
-.section-count{font-family:var(--mono);font-size:10px;color:var(--muted);padding:3px 7px;background:#fff;border:1px solid var(--border);border-radius:6px}
-
-.entry-row{
-  display:flex;
-  align-items:center;
-  padding:11px 14px;
-  border-bottom:1px solid var(--border);
-  gap:10px;
-  transition:background .15s;
-}
-
-.entry-row:last-child{border-bottom:none}
-.entry-row:focus-within{background:var(--surface2)}
-.paper-name{flex:1;font-size:13px;font-weight:700;min-width:0;color:var(--text)}
-.paper-name.custom{color:var(--liberty-blue)}
-
+.staff-hint{font-size:11px;color:var(--liberty-blue);margin-top:4px;cursor:pointer;font-family:var(--mono)}
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.toolbar-label{font-family:var(--mono);font-size:10px;color:var(--muted)}
+.manage-btn{font-size:11px;cursor:pointer;font-family:var(--mono);font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--muted);transition:all .15s;white-space:nowrap}
+.manage-btn:hover{border-color:var(--border2);color:var(--text)}.manage-btn.active{border-color:var(--danger-border);color:var(--sinopec-red);background:var(--danger-bg)}
+.manage-banner{display:none;background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--sinopec-red-dark);line-height:1.5;font-weight:600}.manage-banner.show{display:block}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.section-header{padding:11px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.section-header-left{display:flex;align-items:center;gap:8px}.section-icon{font-size:15px}.section-title{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}.section-count{font-family:var(--mono);font-size:10px;color:var(--muted);padding:3px 7px;background:#fff;border:1px solid var(--border);border-radius:6px}
+.entry-row{display:flex;align-items:center;padding:11px 14px;border-bottom:1px solid var(--border);gap:10px;transition:background .15s}.entry-row:last-child{border-bottom:none}.entry-row:focus-within{background:var(--surface2)}
+.paper-name{flex:1;font-size:13px;font-weight:700;min-width:0;color:var(--text)}.paper-name.custom{color:var(--liberty-blue)}
 .qty-wrap{display:flex;align-items:center;gap:6px;flex-shrink:0}
-
-.qty-btn{
-  width:30px;
-  height:30px;
-  border-radius:8px;
-  border:1.5px solid var(--border);
-  background:#fff;
-  color:var(--label);
-  font-size:16px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:all .15s;
-  flex-shrink:0;
-  line-height:1;
-}
-
+.qty-btn{width:30px;height:30px;border-radius:8px;border:1.5px solid var(--border);background:#fff;color:var(--label);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;line-height:1}
 .qty-btn:hover{border-color:var(--liberty-blue);color:var(--liberty-blue)}
-
-.qty-input{
-  width:54px;
-  background:#fff;
-  border:1.5px solid var(--border);
-  border-radius:8px;
-  color:var(--text);
-  font-family:var(--mono);
-  font-size:14px;
-  font-weight:800;
-  padding:6px;
-  text-align:center;
-  outline:none;
-  transition:border-color .2s,box-shadow .2s;
-  -moz-appearance:textfield;
-}
-
+.qty-input{width:54px;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:14px;font-weight:800;padding:6px;text-align:center;outline:none;transition:border-color .2s,box-shadow .2s;-moz-appearance:textfield}
 .qty-input::-webkit-inner-spin-button{-webkit-appearance:none}
-.qty-input:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.10)}
-.qty-input.filled{border-color:var(--ok-border);background:var(--ok-bg);color:var(--bp-green-dark)}
-
-.delete-btn{
-  width:30px;
-  height:30px;
-  border-radius:8px;
-  border:1px solid var(--danger-border);
-  background:var(--danger-bg);
-  color:var(--sinopec-red);
-  font-size:13px;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:all .15s;
-  flex-shrink:0;
-}
-
-.delete-btn:hover{background:var(--sinopec-red);color:#fff}
-
-.add-row{
-  padding:10px 14px;
-  display:none;
-  gap:8px;
-  align-items:center;
-  border-top:1px solid var(--border);
-  background:var(--surface2);
-}
-
-.add-row.show{display:flex}
-
-.add-input{
-  flex:1;
-  background:#fff;
-  border:1.5px solid var(--border);
-  border-radius:8px;
-  color:var(--text);
-  font-family:var(--sans);
-  font-size:13px;
-  padding:9px 12px;
-  outline:none;
-  transition:border-color .2s,box-shadow .2s;
-}
-
-.add-input:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.10)}
-
-.add-btn{
-  background:var(--liberty-blue);
-  color:#fff;
-  border:none;
-  border-radius:8px;
-  font-family:var(--sans);
-  font-size:12px;
-  font-weight:800;
-  padding:9px 14px;
-  cursor:pointer;
-  white-space:nowrap;
-  transition:opacity .15s;
-  flex-shrink:0;
-}
-
-.add-btn:hover{opacity:.9}
-
-.alert{
-  display:none;
-  border-radius:10px;
-  padding:10px 14px;
-  font-size:12px;
-  margin-bottom:14px;
-  line-height:1.5;
-  font-weight:700;
-}
-
-.alert.show{display:block}
-
+.qty-input:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.10)}.qty-input.filled{border-color:var(--ok-border);background:var(--ok-bg);color:var(--bp-green-dark)}
+.delete-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--danger-border);background:var(--danger-bg);color:var(--sinopec-red);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}.delete-btn:hover{background:var(--sinopec-red);color:#fff}
+.add-row{padding:10px 14px;display:none;gap:8px;align-items:center;border-top:1px solid var(--border);background:var(--surface2)}.add-row.show{display:flex}
+.add-input{flex:1;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--sans);font-size:13px;padding:9px 12px;outline:none;transition:border-color .2s,box-shadow .2s}.add-input:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.10)}
+.add-btn{background:var(--liberty-blue);color:#fff;border:none;border-radius:8px;font-family:var(--sans);font-size:12px;font-weight:800;padding:9px 14px;cursor:pointer;white-space:nowrap;transition:opacity .15s;flex-shrink:0}.add-btn:hover{opacity:.9}
+.alert{display:none;border-radius:10px;padding:10px 14px;font-size:12px;margin-bottom:14px;line-height:1.5;font-weight:700}.alert.show{display:block}
 .btn-wrap{display:flex;flex-direction:column;gap:10px;margin-top:6px}
-
-.btn{
-  width:100%;
-  border:none;
-  border-radius:12px;
-  font-family:var(--sans);
-  font-size:14px;
-  font-weight:800;
-  padding:14px;
-  cursor:pointer;
-  letter-spacing:.02em;
-  transition:opacity .18s,transform .1s;
-}
-
-.btn:active{transform:scale(.985)}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-
-.btn-primary{
-  background:linear-gradient(135deg,var(--bp-green),var(--bp-green-dark));
-  color:#fff;
-  box-shadow:0 4px 14px rgba(0,166,81,.20);
-}
-
-.btn-primary:hover{opacity:.92}
-
-.btn-secondary{
-  background:#fff;
-  color:var(--label);
-  border:1.5px solid var(--border);
-}
-
-.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
+.btn{width:100%;border:none;border-radius:12px;font-family:var(--sans);font-size:14px;font-weight:800;padding:14px;cursor:pointer;letter-spacing:.02em;transition:opacity .18s,transform .1s}
+.btn:active{transform:scale(.985)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:linear-gradient(135deg,var(--bp-green),var(--bp-green-dark));color:#fff;box-shadow:0 4px 14px rgba(0,166,81,.20)}.btn-primary:hover{opacity:.92}
+.btn-secondary{background:#fff;color:var(--label);border:1.5px solid var(--border)}.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
 .note{text-align:center;font-size:11px;color:var(--muted);margin-top:8px}
-
-/* ── Confirm ── */
-.confirm-header{margin-bottom:18px}
-.confirm-title{font-size:20px;font-weight:800;margin-bottom:4px;color:var(--text)}
-.confirm-sub{font-size:13px;color:var(--muted)}
-
-.confirm-section{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  margin-bottom:12px;
-  box-shadow:var(--shadow-sm);
-}
-
-.confirm-section-title{
-  padding:9px 14px;
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  font-family:var(--mono);
-  color:var(--label);
-}
-
-.confirm-row{
-  display:flex;
-  padding:9px 14px;
-  border-bottom:1px solid var(--border);
-  gap:12px;
-  align-items:center;
-}
-
-.confirm-row:last-child{border-bottom:none}
-.confirm-key{font-size:12px;color:var(--label);flex:1;font-weight:600}
-.confirm-val{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--text);flex-shrink:0}
-
+.confirm-header{margin-bottom:18px}.confirm-title{font-size:20px;font-weight:800;margin-bottom:4px;color:var(--text)}.confirm-sub{font-size:13px;color:var(--muted)}
+.confirm-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.confirm-section-title{padding:9px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.confirm-row{display:flex;padding:9px 14px;border-bottom:1px solid var(--border);gap:12px;align-items:center}.confirm-row:last-child{border-bottom:none}
+.confirm-key{font-size:12px;color:var(--label);flex:1;font-weight:600}.confirm-val{font-family:var(--mono);font-size:13px;font-weight:800;color:var(--text);flex-shrink:0}
 .success-wrap{text-align:center;padding:56px 20px}
-
-.success-icon{
-  width:64px;
-  height:64px;
-  background:var(--ok-bg);
-  border:1px solid var(--ok-border);
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0 auto 18px;
-  font-size:28px;
-  color:var(--bp-green-dark);
-  font-weight:800;
-}
-
-.success-title{font-size:20px;font-weight:800;margin-bottom:8px;color:var(--bp-green-dark)}
-.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px}
+.success-icon{width:64px;height:64px;background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;color:var(--bp-green-dark);font-weight:800}
+.success-title{font-size:20px;font-weight:800;margin-bottom:8px;color:var(--bp-green-dark)}.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px}
 .success-actions{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
-
-.loading-overlay{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:200;
-  background:rgba(15,23,42,.45);
-  backdrop-filter:blur(4px);
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:16px;
-}
-
-.loading-overlay.show{display:flex}
-
-.spinner{
-  width:36px;
-  height:36px;
-  border:3px solid var(--border2);
-  border-top-color:var(--bp-green);
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-}
-
+.loading-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.45);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:16px}.loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--bp-green);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{font-size:13px;color:#fff;font-family:var(--mono);font-weight:700}
-
-@media(max-width:420px){
-  .container{padding:18px 12px}
-  .staff-row{grid-template-columns:1fr}
-  .date-nav{gap:6px;padding:10px}
-  .today-btn{padding:6px 8px}
-}
+@media(max-width:420px){.container{padding:18px 12px}.staff-row{grid-template-columns:1fr}.date-nav{gap:6px;padding:10px}.today-btn{padding:6px 8px}}
 </style>
 </head>
 <body>
 
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-  <div class="loading-text" id="loading-text">Submitting…</div>
-</div>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div class="loading-text" id="loading-text">Submitting…</div></div>
 
 <div class="header">
   <div class="header-left">
@@ -732,10 +110,7 @@ body{
       <span style="font-size:15px">←</span>
       <span style="font-family:var(--mono);font-size:11px;letter-spacing:.04em" id="h-back">Portal</span>
     </div>
-    <div>
-      <div class="header-title" id="h-title">Newspaper Returns</div>
-      <div class="header-sub"   id="h-sub">DAILY RECORD</div>
-    </div>
+    <div><div class="header-title" id="h-title">Newspaper Returns</div><div class="header-sub" id="h-sub">DAILY RECORD</div></div>
   </div>
   <div class="header-right">
     <div class="lang-toggle">
@@ -745,742 +120,202 @@ body{
   </div>
 </div>
 
-<div class="no-station" id="no-station-bar">
-  <div class="no-station-msg" id="ns-msg"></div>
-  <a class="no-station-link" href="index.html" id="ns-link"></a>
-</div>
-
-<div class="station-bar" id="station-bar">
-  <div class="station-dot"></div>
-  <div class="station-name" id="station-display"></div>
-  <div class="daily-badge" id="daily-badge">DAILY</div>
-</div>
+<div class="no-station" id="no-station-bar"><div class="no-station-msg" id="ns-msg"></div><a class="no-station-link" href="index.html" id="ns-link"></a></div>
+<div class="station-bar" id="station-bar"><div class="station-dot"></div><div class="station-name" id="station-display"></div><div class="daily-badge" id="daily-badge">DAILY</div></div>
 
 <div class="container">
-
-  <!-- ══ FORM ══ -->
   <div class="screen active" id="screen-form">
+    <div class="form-header"><div class="form-title" id="f-title">Newspaper Returns</div><div class="form-sub" id="f-sub">Enter today's return quantities for each title.</div></div>
 
-    <div class="form-header">
-      <div class="form-title" id="f-title">Newspaper Returns</div>
-      <div class="form-sub"   id="f-sub">Enter today's return quantities for each title.</div>
-    </div>
-
-    <!-- Date navigator -->
     <div class="date-nav">
       <button class="nav-btn" onclick="shiftDay(-1)">←</button>
-      <div class="date-center">
-        <div class="date-main" id="date-main"></div>
-        <div class="date-sub"  id="date-sub"></div>
-        <div id="today-chip-wrap"></div>
-      </div>
+      <div class="date-center"><div class="date-main" id="date-main"></div><div class="date-sub" id="date-sub"></div><div id="today-chip-wrap"></div></div>
       <div class="today-btn" id="today-btn" onclick="goToday()"></div>
       <button class="nav-btn" onclick="shiftDay(1)">→</button>
     </div>
 
-    <!-- Week summary toggle -->
     <button class="week-toggle-btn" id="week-toggle-btn" onclick="toggleWeekPanel()"></button>
-
-    <!-- Week summary panel -->
     <div class="week-panel" id="week-panel">
       <div class="week-panel-header">
         <button class="week-panel-nav" onclick="shiftWeekPanel(-1)">←</button>
-        <div class="week-panel-title">
-          <div class="week-panel-title-main" id="week-panel-label"></div>
-          <div class="week-panel-title-sub"  id="week-panel-dates"></div>
-        </div>
+        <div class="week-panel-title"><div class="week-panel-title-main" id="week-panel-label"></div><div class="week-panel-title-sub" id="week-panel-dates"></div></div>
         <div class="week-panel-this" id="week-panel-this-btn" onclick="weekPanelGoThis()"></div>
         <button class="week-panel-nav" onclick="shiftWeekPanel(1)">→</button>
       </div>
-      <div class="week-grid">
-        <table class="week-table" id="week-table"></table>
-      </div>
+      <div class="week-grid"><table class="week-table" id="week-table"></table></div>
     </div>
 
-    <!-- Staff -->
     <div class="staff-row">
       <div class="field">
         <label id="l-staff">Staff Name *</label>
         <input type="text" id="f-staff" placeholder="Your name">
+        <div id="staff-hint" class="staff-hint" style="display:none"></div>
       </div>
-      <div class="field">
-        <label id="l-notes">Notes</label>
-        <input type="text" id="f-notes" placeholder="Optional">
-      </div>
+      <div class="field"><label id="l-notes">Notes</label><input type="text" id="f-notes" placeholder="Optional"></div>
     </div>
 
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <div class="toolbar-label" id="toolbar-label"></div>
-      <button class="manage-btn" id="manage-btn" onclick="toggleManage()"></button>
-    </div>
+    <div class="toolbar"><div class="toolbar-label" id="toolbar-label"></div><button class="manage-btn" id="manage-btn" onclick="toggleManage()"></button></div>
     <div class="manage-banner" id="manage-banner"></div>
 
-    <!-- Entry list -->
     <div class="section">
-      <div class="section-header">
-        <div class="section-header-left">
-          <span class="section-icon">📰</span>
-          <span class="section-title" id="sec-title">Titles</span>
-        </div>
-        <span class="section-count" id="sec-count"></span>
-      </div>
+      <div class="section-header"><div class="section-header-left"><span class="section-icon">📰</span><span class="section-title" id="sec-title">Titles</span></div><span class="section-count" id="sec-count"></span></div>
       <div id="entry-list"></div>
-      <div class="add-row" id="add-row">
-        <input class="add-input" id="new-paper-input" type="text"
-          onkeydown="if(event.key==='Enter')addPaper()">
-        <button class="add-btn" id="add-btn" onclick="addPaper()">+ Add</button>
-      </div>
+      <div class="add-row" id="add-row"><input class="add-input" id="new-paper-input" type="text" onkeydown="if(event.key==='Enter')addPaper()"><button class="add-btn" id="add-btn" onclick="addPaper()">+ Add</button></div>
     </div>
 
     <div class="alert" id="alertBox"></div>
-    <div class="btn-wrap">
-      <button class="btn btn-primary" id="review-btn" onclick="goReview()"></button>
-    </div>
+    <div class="btn-wrap"><button class="btn btn-primary" id="review-btn" onclick="goReview()"></button></div>
   </div>
 
-  <!-- ══ CONFIRM ══ -->
   <div class="screen" id="screen-confirm">
-    <div class="confirm-header">
-      <div class="confirm-title" id="cf-title"></div>
-      <div class="confirm-sub"   id="cf-sub"></div>
-    </div>
+    <div class="confirm-header"><div class="confirm-title" id="cf-title"></div><div class="confirm-sub" id="cf-sub"></div></div>
     <div class="confirm-section">
       <div class="confirm-section-title" id="cf-info-title"></div>
       <div class="confirm-row"><div class="confirm-key" id="cf-date-label"></div><div class="confirm-val" id="cf-date-val"></div></div>
       <div class="confirm-row"><div class="confirm-key" id="cf-staff-label"></div><div class="confirm-val" id="cf-staff-val"></div></div>
       <div class="confirm-row"><div class="confirm-key" id="cf-station-label"></div><div class="confirm-val" id="cf-station-val"></div></div>
     </div>
-    <div class="confirm-section">
-      <div class="confirm-section-title" id="cf-returns-title"></div>
-      <div id="cf-returns-list"></div>
-    </div>
+    <div class="confirm-section"><div class="confirm-section-title" id="cf-returns-title"></div><div id="cf-returns-list"></div></div>
     <div class="alert" id="cf-alert"></div>
-    <div class="btn-wrap">
-      <button class="btn btn-secondary" id="cf-edit-btn"   onclick="showScreen('form')"></button>
-      <button class="btn btn-primary"   id="cf-submit-btn" onclick="submitForm()"></button>
-    </div>
+    <div class="btn-wrap"><button class="btn btn-secondary" id="cf-edit-btn" onclick="showScreen('form')"></button><button class="btn btn-primary" id="cf-submit-btn" onclick="submitForm()"></button></div>
     <p class="note" id="cf-note"></p>
   </div>
 
-  <!-- ══ SUCCESS ══ -->
   <div class="screen" id="screen-success">
-    <div class="success-wrap">
-      <div class="success-icon">✓</div>
-      <div class="success-title" id="succ-title"></div>
-      <div class="success-sub"   id="succ-msg"></div>
-      <div class="success-actions">
-        <button class="btn btn-secondary" id="succ-again" onclick="resetForm()"></button>
-        <button class="btn btn-secondary" id="succ-home"  onclick="goPortal()"></button>
-      </div>
+    <div class="success-wrap"><div class="success-icon">✓</div><div class="success-title" id="succ-title"></div><div class="success-sub" id="succ-msg"></div>
+      <div class="success-actions"><button class="btn btn-secondary" id="succ-again" onclick="resetForm()"></button><button class="btn btn-secondary" id="succ-home" onclick="goPortal()"></button></div>
     </div>
   </div>
-
 </div>
 
 <script>
-// ══════════════════════════════════════════
-// STATE
-// ══════════════════════════════════════════
-let station    = localStorage.getItem('ap_station') || '';
-let lang       = localStorage.getItem('ap_lang')    || 'en';
-let manageMode = false;
-let weekOpen   = false;
-let dayOffset  = 0;   // 0 = today, -1 = yesterday, etc.
-let weekPanelOffset = 0;  // 0 = this week, -1 = last week, etc.
+let station=localStorage.getItem('ap_station')||'';
+let lang=localStorage.getItem('ap_lang')||'en';
+let manageMode=false,weekOpen=false,dayOffset=0,weekPanelOffset=0;
+const SHEET_URL='https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
+const qtyCache={};
 
-// TODO: Paste your Google Apps Script Web App URL here when backend is ready.
-// Leave blank during HTML/front-end testing.
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
-
-// Week summary is designed to read real historical data from Google Sheets via Apps Script.
-// While SHEET_URL is blank, the page uses local in-page cache for preview only.
-// Future backend actions expected:
-//   GET  ?action=getNewspaperWeeklySummary&station=...&weekOffset=...
-//   POST { formType: 'newspaperReturns', ... }
-
-// qty cache per paper per date: key = `${paperIdx}_${dateStr}`
-const qtyCache = {};
-
-// ══════════════════════════════════════════
-// STRINGS
-// ══════════════════════════════════════════
-const S = {
-  en: {
-    pageTitle: 'Newspaper Returns — Aries Petroleum',
-    hBack:'Portal', hTitle:'Newspaper Returns', hSub:'DAILY RECORD',
-    nsMsgNoStn:'No station selected. Please return to the portal first.',
-    nsLink:'← Go to Portal', dailyBadge:'DAILY',
-    fTitle:'Newspaper Returns',
-    fSub:'Enter today\'s return quantities for each title.',
-    lStaff:'Staff Name *', lNotes:'Notes',
-    todayBtn:'Today',
-    todayChip:'TODAY',
-    weekOpen:'▾ View this week\'s returns', weekClose:'▴ Hide week view',
-    weekPanelThisBtn:'This week',
-    weekPanelHeader:'This Week — Returns Summary',
-    manageOn:'✎ Manage titles', manageOff:'✓ Done managing',
-    manageBanner:'Management mode: delete buttons are visible. Tap "Done managing" when finished.',
-    secTitle:'Titles',
-    secCount: n => `${n} titles`,
-    addPlaceholder:'Add newspaper title…', addBtn:'+ Add',
-    reviewBtn:'Review & Submit →',
-    cfTitle:'Review & Submit', cfSub:'Check all entries before submitting.',
-    cfInfoTitle:'Submission Info', cfReturnsTitle:'Return Quantities',
-    cfDateLabel:'Date', cfStaffLabel:'Staff', cfStationLabel:'Station',
-    cfEdit:'← Edit', cfSubmit:'Submit Returns',
-    cfNote:'Data saved to Google Sheets.',
-    succTitle:'Returns Submitted', succMsg:'Newspaper return data has been recorded.',
-    succAgain:'New Entry', succHome:'← Back to Portal',
-    submitting:'Submitting…',
-    errStaff:'Please enter your name.',
-    errNoData:'Please enter at least one return quantity.',
-    deleteConfirm: n => `Remove "${n}" from this station's list?\nThis cannot be undone.`,
-    duplicateWarning: 'This title already exists.',
-    days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
-    daysFull:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
-    total:'Total',
-  },
-  zh: {
-    pageTitle: '报纸退货记录 — Aries Petroleum',
-    hBack:'首页', hTitle:'报纸退货记录', hSub:'每日记录',
-    nsMsgNoStn:'未选择站点，请先返回首页选择站点。',
-    nsLink:'← 返回首页', dailyBadge:'每日',
-    fTitle:'报纸退货记录',
-    fSub:'填写今天每种报纸的退货数量。',
-    lStaff:'员工姓名 *', lNotes:'备注',
-    todayBtn:'今天',
-    todayChip:'今天',
-    weekOpen:'▾ 查看本周退货汇总', weekClose:'▴ 收起周视图',
-    weekPanelThisBtn:'本周',
-    weekPanelHeader:'本周退货汇总',
-    manageOn:'✎ 管理报纸列表', manageOff:'✓ 完成管理',
-    manageBanner:'当前处于管理模式，删除按钮已显示。完成后请点击"完成管理"。',
-    secTitle:'报纸列表',
-    secCount: n => `${n} 种`,
-    addPlaceholder:'添加报纸名称…', addBtn:'+ 添加',
-    reviewBtn:'核对并提交 →',
-    cfTitle:'确认提交', cfSub:'提交前请核对所有数据。',
-    cfInfoTitle:'提交信息', cfReturnsTitle:'退货数量',
-    cfDateLabel:'日期', cfStaffLabel:'员工', cfStationLabel:'站点',
-    cfEdit:'← 返回修改', cfSubmit:'确认提交',
-    cfNote:'将保存至 Google Sheets。',
-    succTitle:'退货记录已保存', succMsg:'报纸退货数据已记录。',
-    succAgain:'再次填写', succHome:'← 返回首页',
-    submitting:'提交中…',
-    errStaff:'请填写员工姓名。',
-    errNoData:'请至少填写一种报纸的退货数量。',
-    deleteConfirm: n => `从本站点列表中移除"${n}"？\n此操作无法撤销。`,
-    duplicateWarning:'该报纸名称已存在。',
-    days:['周一','周二','周三','周四','周五','周六','周日'],
-    daysFull:['周一','周二','周三','周四','周五','周六','周日'],
-    total:'合计',
-  }
+const S={
+  en:{pageTitle:'Newspaper Returns — Aries Petroleum',hBack:'Portal',hTitle:'Newspaper Returns',hSub:'DAILY RECORD',nsMsgNoStn:'No station selected. Please return to the portal first.',nsLink:'← Go to Portal',dailyBadge:'DAILY',fTitle:'Newspaper Returns',fSub:"Enter today's return quantities for each title.",lStaff:'Staff Name *',lNotes:'Notes',todayBtn:'Today',todayChip:'TODAY',weekOpen:'▾ View this week\'s returns',weekClose:'▴ Hide week view',weekPanelThisBtn:'This week',weekPanelHeader:'This Week — Returns Summary',manageOn:'✎ Manage titles',manageOff:'✓ Done managing',manageBanner:'Management mode: delete buttons are visible. Tap "Done managing" when finished.',secTitle:'Titles',secCount:n=>`${n} titles`,addPlaceholder:'Add newspaper title…',addBtn:'+ Add',reviewBtn:'Review & Submit →',cfTitle:'Review & Submit',cfSub:'Check all entries before submitting.',cfInfoTitle:'Submission Info',cfReturnsTitle:'Return Quantities',cfDateLabel:'Date',cfStaffLabel:'Staff',cfStationLabel:'Station',cfEdit:'← Edit',cfSubmit:'Submit Returns',cfNote:'Data saved to Google Sheets.',succTitle:'Returns Submitted',succMsg:'Newspaper return data has been recorded.',succAgain:'New Entry',succHome:'← Back to Portal',submitting:'Submitting…',errStaff:'Please enter your name.',errNoData:'Please enter at least one return quantity.',deleteConfirm:n=>`Remove "${n}" from this station's list?\nThis cannot be undone.`,duplicateWarning:'This title already exists.',days:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],daysFull:['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],total:'Total',staffHint:'✎ Not you? Tap to change'},
+  zh:{pageTitle:'报纸退货记录 — Aries Petroleum',hBack:'首页',hTitle:'报纸退货记录',hSub:'每日记录',nsMsgNoStn:'未选择站点，请先返回首页选择站点。',nsLink:'← 返回首页',dailyBadge:'每日',fTitle:'报纸退货记录',fSub:'填写今天每种报纸的退货数量。',lStaff:'员工姓名 *',lNotes:'备注',todayBtn:'今天',todayChip:'今天',weekOpen:'▾ 查看本周退货汇总',weekClose:'▴ 收起周视图',weekPanelThisBtn:'本周',weekPanelHeader:'本周退货汇总',manageOn:'✎ 管理报纸列表',manageOff:'✓ 完成管理',manageBanner:'当前处于管理模式，删除按钮已显示。完成后请点击"完成管理"。',secTitle:'报纸列表',secCount:n=>`${n} 种`,addPlaceholder:'添加报纸名称…',addBtn:'+ 添加',reviewBtn:'核对并提交 →',cfTitle:'确认提交',cfSub:'提交前请核对所有数据。',cfInfoTitle:'提交信息',cfReturnsTitle:'退货数量',cfDateLabel:'日期',cfStaffLabel:'员工',cfStationLabel:'站点',cfEdit:'← 返回修改',cfSubmit:'确认提交',cfNote:'将保存至 Google Sheets。',succTitle:'退货记录已保存',succMsg:'报纸退货数据已记录。',succAgain:'再次填写',succHome:'← 返回首页',submitting:'提交中…',errStaff:'请填写员工姓名。',errNoData:'请至少填写一种报纸的退货数量。',deleteConfirm:n=>`从本站点列表中移除"${n}"？\n此操作无法撤销。`,duplicateWarning:'该报纸名称已存在。',days:['周一','周二','周三','周四','周五','周六','周日'],daysFull:['周一','周二','周三','周四','周五','周六','周日'],total:'合计',staffHint:'✎ 不是你？点击更改'}
 };
-function t() { return S[lang]; }
+function t(){return S[lang];}
 
-// ══════════════════════════════════════════
-// PAPERS — per station localStorage
-// ══════════════════════════════════════════
-const DEFAULT_PAPERS = ['Herald Sun','The Age','The Australian'];
-function paperKey() { return `ap_news_${station}`; }
-function loadPapers() {
-  const saved = localStorage.getItem(paperKey());
-  if (saved) { try { return JSON.parse(saved); } catch(e) {} }
-  const list = DEFAULT_PAPERS.map(n => ({ name:n, custom:false }));
-  savePapers(list); return list;
-}
-function savePapers(list) { localStorage.setItem(paperKey(), JSON.stringify(list)); }
-
-// ══════════════════════════════════════════
-// DATE HELPERS
-// ══════════════════════════════════════════
-function getActiveDate() {
-  const d = new Date();
-  d.setDate(d.getDate() + dayOffset);
-  d.setHours(0,0,0,0);
-  return d;
-}
-function dateStr(d) {
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function isToday(d) {
-  const n = new Date();
-  return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();
-}
-function getWeekDates() {
-  const now = new Date(); const day = now.getDay();
-  const mon = new Date(now);
-  mon.setDate(now.getDate()-(day===0?6:day-1)); mon.setHours(0,0,0,0);
-  return Array.from({length:7},(_,i)=>{ const d=new Date(mon); d.setDate(mon.getDate()+i); return d; });
-}
-function formatDisplay(d) {
-  return lang==='en'
-    ? d.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'})
-    : d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});
-}
-function formatShort(d) {
-  return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+// ── Staff autofill ────────────────────────────────────────────────────────────
+function getStaffName(){const name=localStorage.getItem('ap_staff_name')||'';const ts=parseInt(localStorage.getItem('ap_staff_name_ts')||'0');return(name&&ts&&(Date.now()-ts)<4*60*60*1000)?name:'';}
+function initStaffField(){
+  const name=getStaffName();const inp=document.getElementById('f-staff');const hint=document.getElementById('staff-hint');
+  if(name){inp.value=name;inp.readOnly=true;inp.style.background='var(--surface2)';inp.style.color='var(--muted)';hint.textContent=t().staffHint;hint.style.display='block';hint.onclick=()=>{inp.readOnly=false;inp.style.background='';inp.style.color='';inp.value='';hint.style.display='none';inp.focus();};}
+  else{inp.readOnly=false;inp.style.background='';inp.style.color='';hint.style.display='none';}
 }
 
-// ══════════════════════════════════════════
-// LANG
-// ══════════════════════════════════════════
-function setLang(l) {
-  lang=l; localStorage.setItem('ap_lang',l);
-  document.querySelectorAll('.lang-btn').forEach(b=>{
-    b.classList.toggle('active',(l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文'));
-  });
-  applyLang();
+// ── Papers ────────────────────────────────────────────────────────────────────
+const DEFAULT_PAPERS=['Herald Sun','The Age','The Australian'];
+function paperKey(){return `ap_news_${station}`;}
+function loadPapers(){const saved=localStorage.getItem(paperKey());if(saved){try{return JSON.parse(saved);}catch(e){}}const list=DEFAULT_PAPERS.map(n=>({name:n,custom:false}));savePapers(list);return list;}
+function savePapers(list){localStorage.setItem(paperKey(),JSON.stringify(list));}
+
+// ── Date helpers ──────────────────────────────────────────────────────────────
+function getActiveDate(){const d=new Date();d.setDate(d.getDate()+dayOffset);d.setHours(0,0,0,0);return d;}
+function dateStr(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function isToday(d){const n=new Date();return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate();}
+function formatDisplay(d){return lang==='en'?d.toLocaleDateString('en-AU',{weekday:'long',day:'numeric',month:'long'}):d.toLocaleDateString('zh-CN',{month:'long',day:'numeric',weekday:'long'});}
+function formatShort(d){return `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;}
+
+// ── Lang ──────────────────────────────────────────────────────────────────────
+function setLang(l){lang=l;localStorage.setItem('ap_lang',l);document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',(l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文'));});applyLang();}
+
+function applyLang(){
+  const L=t();document.title=L.pageTitle;
+  setText('h-back',L.hBack);setText('h-title',L.hTitle);setText('h-sub',L.hSub);setText('ns-msg',L.nsMsgNoStn);setText('ns-link',L.nsLink);setText('daily-badge',L.dailyBadge);setText('f-title',L.fTitle);setText('f-sub',L.fSub);setText('l-staff',L.lStaff);setText('l-notes',L.lNotes);setText('today-btn',L.todayBtn);setText('review-btn',L.reviewBtn);setText('cf-title',L.cfTitle);setText('cf-sub',L.cfSub);setText('cf-info-title',L.cfInfoTitle);setText('cf-returns-title',L.cfReturnsTitle);setText('cf-date-label',L.cfDateLabel);setText('cf-staff-label',L.cfStaffLabel);setText('cf-station-label',L.cfStationLabel);setText('cf-edit-btn',L.cfEdit);setText('cf-submit-btn',L.cfSubmit);setText('cf-note',L.cfNote);setText('succ-title',L.succTitle);setText('succ-msg',L.succMsg);setText('succ-again',L.succAgain);setText('succ-home',L.succHome);
+  document.getElementById('new-paper-input').placeholder=L.addPlaceholder;setText('add-btn',L.addBtn);
+  if(station) document.getElementById('station-display').innerHTML=`<span>${station}</span>`;
+  const hint=document.getElementById('staff-hint');if(hint&&hint.style.display!=='none') hint.textContent=L.staffHint;
+  const mb=document.getElementById('manage-btn');mb.textContent=manageMode?L.manageOff:L.manageOn;mb.className='manage-btn'+(manageMode?' active':'');setText('manage-banner',L.manageBanner);document.getElementById('manage-banner').className='manage-banner'+(manageMode?' show':'');document.getElementById('add-row').className='add-row'+(manageMode?' show':'');
+  const wb=document.getElementById('week-toggle-btn');wb.textContent=weekOpen?L.weekClose:L.weekOpen;wb.className='week-toggle-btn'+(weekOpen?' open':'');document.getElementById('week-panel').className='week-panel'+(weekOpen?' show':'');setText('week-panel-this-btn',L.weekPanelThisBtn);if(weekOpen) renderWeekPanel();
+  updateDateDisplay();renderList();if(weekOpen) renderWeekPanel();
 }
+function setText(id,val){const el=document.getElementById(id);if(el&&val!==undefined)el.textContent=val;}
 
-function applyLang() {
-  const L = t();
-  document.title = L.pageTitle;
-  setText('h-back',L.hBack); setText('h-title',L.hTitle); setText('h-sub',L.hSub);
-  setText('ns-msg',L.nsMsgNoStn); setText('ns-link',L.nsLink);
-  setText('daily-badge',L.dailyBadge);
-  setText('f-title',L.fTitle); setText('f-sub',L.fSub);
-  setText('l-staff',L.lStaff); setText('l-notes',L.lNotes);
-  setText('today-btn',L.todayBtn);
-  setText('review-btn',L.reviewBtn);
-  setText('cf-title',L.cfTitle); setText('cf-sub',L.cfSub);
-  setText('cf-info-title',L.cfInfoTitle); setText('cf-returns-title',L.cfReturnsTitle);
-  setText('cf-date-label',L.cfDateLabel); setText('cf-staff-label',L.cfStaffLabel);
-  setText('cf-station-label',L.cfStationLabel);
-  setText('cf-edit-btn',L.cfEdit); setText('cf-submit-btn',L.cfSubmit);
-  setText('cf-note',L.cfNote);
-  setText('succ-title',L.succTitle); setText('succ-msg',L.succMsg);
-  setText('succ-again',L.succAgain); setText('succ-home',L.succHome);
-  document.getElementById('new-paper-input').placeholder = L.addPlaceholder;
-  setText('add-btn',L.addBtn);
-  if (station) document.getElementById('station-display').innerHTML = `<span>${station}</span>`;
+// ── Date nav ──────────────────────────────────────────────────────────────────
+function shiftDay(delta){dayOffset+=delta;updateDateDisplay();renderList();if(weekOpen)renderWeekPanel();}
+function goToday(){dayOffset=0;updateDateDisplay();renderList();if(weekOpen)renderWeekPanel();}
+function updateDateDisplay(){const d=getActiveDate();const L=t();setText('date-main',formatDisplay(d));setText('date-sub',dateStr(d));document.getElementById('today-chip-wrap').innerHTML=isToday(d)?`<span class="today-chip">${L.todayChip}</span>`:'';}
 
-  // Manage btn
-  const mb = document.getElementById('manage-btn');
-  mb.textContent = manageMode ? L.manageOff : L.manageOn;
-  mb.className   = 'manage-btn'+(manageMode?' active':'');
-  setText('manage-banner',L.manageBanner);
-  document.getElementById('manage-banner').className = 'manage-banner'+(manageMode?' show':'');
-  document.getElementById('add-row').className = 'add-row'+(manageMode?' show':'');
+// ── Week panel ────────────────────────────────────────────────────────────────
+function toggleWeekPanel(){weekOpen=!weekOpen;if(weekOpen)weekPanelOffset=0;const L=t();const wb=document.getElementById('week-toggle-btn');wb.textContent=weekOpen?L.weekClose:L.weekOpen;wb.className='week-toggle-btn'+(weekOpen?' open':'');document.getElementById('week-panel').className='week-panel'+(weekOpen?' show':'');if(weekOpen)renderWeekPanel();}
+function shiftWeekPanel(delta){weekPanelOffset+=delta;if(weekPanelOffset>0)weekPanelOffset=0;renderWeekPanel();}
+function weekPanelGoThis(){weekPanelOffset=0;renderWeekPanel();}
+function getWeekDatesForPanel(offset){const now=new Date();const day=now.getDay();const mon=new Date(now);mon.setDate(now.getDate()-(day===0?6:day-1)+(offset*7));mon.setHours(0,0,0,0);return Array.from({length:7},(_,i)=>{const d=new Date(mon);d.setDate(mon.getDate()+i);return d;});}
 
-  // Week toggle btn
-  const wb = document.getElementById('week-toggle-btn');
-  wb.textContent = weekOpen ? L.weekClose : L.weekOpen;
-  wb.className   = 'week-toggle-btn'+(weekOpen?' open':'');
-  document.getElementById('week-panel').className = 'week-panel'+(weekOpen?' show':'');
-  setText('week-panel-this-btn', L.weekPanelThisBtn);
-  if (weekOpen) renderWeekPanel();
-
-  updateDateDisplay();
-  renderList();
-  if (weekOpen) renderWeekPanel();
-}
-
-function setText(id,val) {
-  const el=document.getElementById(id);
-  if(el&&val!==undefined) el.textContent=val;
-}
-
-// ══════════════════════════════════════════
-// DATE NAV
-// ══════════════════════════════════════════
-function shiftDay(delta) {
-  dayOffset += delta;
-  updateDateDisplay();
-  renderList();
-  if (weekOpen) renderWeekPanel();
-}
-function goToday() {
-  dayOffset = 0;
-  updateDateDisplay();
-  renderList();
-  if (weekOpen) renderWeekPanel();
-}
-function updateDateDisplay() {
-  const d = getActiveDate();
-  const L = t();
-  setText('date-main', formatDisplay(d));
-  setText('date-sub',  dateStr(d));
-  const chip = document.getElementById('today-chip-wrap');
-  chip.innerHTML = isToday(d) ? `<span class="today-chip">${L.todayChip}</span>` : '';
-}
-
-// ══════════════════════════════════════════
-// WEEK PANEL
-// ══════════════════════════════════════════
-function toggleWeekPanel() {
-  weekOpen = !weekOpen;
-  if (weekOpen) weekPanelOffset = 0;
-  const L = t();
-  const wb = document.getElementById('week-toggle-btn');
-  wb.textContent = weekOpen ? L.weekClose : L.weekOpen;
-  wb.className   = 'week-toggle-btn'+(weekOpen?' open':'');
-  document.getElementById('week-panel').className = 'week-panel'+(weekOpen?' show':'');
-  if (weekOpen) renderWeekPanel();
-}
-
-function shiftWeekPanel(delta) {
-  weekPanelOffset += delta;
-  // Don't allow going into the future beyond this week
-  if (weekPanelOffset > 0) weekPanelOffset = 0;
-  renderWeekPanel();
-}
-
-function weekPanelGoThis() {
-  weekPanelOffset = 0;
-  renderWeekPanel();
-}
-
-function getWeekDatesForPanel(offset) {
-  const now = new Date(); const day = now.getDay();
-  const mon = new Date(now);
-  mon.setDate(now.getDate()-(day===0?6:day-1)+(offset*7));
-  mon.setHours(0,0,0,0);
-  return Array.from({length:7},(_,i)=>{ const d=new Date(mon); d.setDate(mon.getDate()+i); return d; });
-}
-
-async function renderWeekPanel() {
-  const L      = t();
-  const dates  = getWeekDatesForPanel(weekPanelOffset);
-
-  // Header label
-  const isThisWeek = weekPanelOffset === 0;
-  const isLastWeek = weekPanelOffset === -1;
-  const label = isThisWeek
-    ? (lang==='en' ? 'This Week' : '本周')
-    : isLastWeek
-      ? (lang==='en' ? 'Last Week' : '上周')
-      : (lang==='en' ? `${Math.abs(weekPanelOffset)} weeks ago` : `${Math.abs(weekPanelOffset)} 周前`);
-
-  setText('week-panel-label', label);
-  setText('week-panel-dates', `${formatShort(dates[0])} – ${formatShort(dates[6])}`);
-  const thisBtn = document.getElementById('week-panel-this-btn');
-  thisBtn.textContent = L.weekPanelThisBtn;
-  thisBtn.style.display = isThisWeek ? 'none' : '';
-
-  // If Apps Script URL is set, try to load real historical data from Google Sheets.
-  // If the request fails or SHEET_URL is blank, fall back to local preview cache.
-  if (SHEET_URL) {
-    const loaded = await renderWeekPanelFromSheet();
-    if (loaded) return;
-  }
-
+async function renderWeekPanel(){
+  const L=t();const dates=getWeekDatesForPanel(weekPanelOffset);const isThisWeek=weekPanelOffset===0;const isLastWeek=weekPanelOffset===-1;
+  const label=isThisWeek?(lang==='en'?'This Week':'本周'):isLastWeek?(lang==='en'?'Last Week':'上周'):(lang==='en'?`${Math.abs(weekPanelOffset)} weeks ago`:`${Math.abs(weekPanelOffset)} 周前`);
+  setText('week-panel-label',label);setText('week-panel-dates',`${formatShort(dates[0])} – ${formatShort(dates[6])}`);
+  const thisBtn=document.getElementById('week-panel-this-btn');thisBtn.textContent=L.weekPanelThisBtn;thisBtn.style.display=isThisWeek?'none':'';
+  if(SHEET_URL){const loaded=await renderWeekPanelFromSheet();if(loaded)return;}
   renderWeekPanelFromLocalCache();
 }
 
-async function renderWeekPanelFromSheet() {
-  try {
-    const url = `${SHEET_URL}?action=getNewspaperWeeklySummary&station=${encodeURIComponent(station)}&weekOffset=${weekPanelOffset}`;
-    const res = await fetch(url,{signal:AbortSignal.timeout(5000)});
-    const data = await res.json();
-    if (!data || data.success !== true || !Array.isArray(data.items)) return false;
-
-    const L = t();
-    const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-
-    let html = '<thead><tr>';
-    html += `<th class="paper-th">${lang==='en'?'Title':'报纸'}</th>`;
-    days.forEach((key, i) => {
-      html += `<th>${L.days[i]}<br><span style="font-weight:400;font-size:9px">${key}</span></th>`;
-    });
-    html += `<th>${L.total}</th></tr></thead><tbody>`;
-
-    data.items.forEach(item => {
-      html += `<tr><td class="paper-td">${escHtml(item.paperName || '')}</td>`;
-      days.forEach(key => {
-        const v = item[key];
-        html += `<td>${v !== null && v !== undefined && v !== '' ? v : '—'}</td>`;
-      });
-      html += `<td class="total-td">${item.total ? item.total : '—'}</td></tr>`;
-    });
-
-    html += '</tbody>';
-    document.getElementById('week-table').innerHTML = html;
-    return true;
-  } catch (err) {
-    return false;
-  }
+async function renderWeekPanelFromSheet(){
+  try{const url=`${SHEET_URL}?action=getNewspaperWeeklySummary&station=${encodeURIComponent(station)}&weekOffset=${weekPanelOffset}`;const res=await fetch(url,{signal:AbortSignal.timeout(5000)});const data=await res.json();if(!data||data.success!==true||!Array.isArray(data.items))return false;const L=t();const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];let html='<thead><tr>';html+=`<th class="paper-th">${lang==='en'?'Title':'报纸'}</th>`;days.forEach((key,i)=>{html+=`<th>${L.days[i]}<br><span style="font-weight:400;font-size:9px">${key}</span></th>`;});html+=`<th>${L.total}</th></tr></thead><tbody>`;data.items.forEach(item=>{html+=`<tr><td class="paper-td">${escHtml(item.paperName||'')}</td>`;days.forEach(key=>{const v=item[key];html+=`<td>${v!==null&&v!==undefined&&v!==''?v:'—'}</td>`;});html+=`<td class="total-td">${item.total?item.total:'—'}</td></tr>`;});html+='</tbody>';document.getElementById('week-table').innerHTML=html;return true;}catch(err){return false;}
 }
 
-function renderWeekPanelFromLocalCache() {
-  const L      = t();
-  const papers = loadPapers();
-  const dates  = getWeekDatesForPanel(weekPanelOffset);
-
-  let html = '<thead><tr>';
-  html += `<th class="paper-th">${lang==='en'?'Title':'报纸'}</th>`;
-  dates.forEach((d,i) => {
-    const today = isToday(d);
-    html += `<th style="${today?'color:var(--accent2)':''}">${L.days[i]}<br><span style="font-weight:400;font-size:9px">${formatShort(d)}</span></th>`;
-  });
-  html += `<th>${L.total}</th></tr></thead><tbody>`;
-
-  papers.forEach((p,pi) => {
-    let rowTotal = 0;
-    html += `<tr><td class="paper-td">${escHtml(p.name)}</td>`;
-    dates.forEach((d) => {
-      const ds  = dateStr(d);
-      const key = `${pi}_${ds}`;
-      const v   = qtyCache[key] ?? null;
-      const today = isToday(d);
-      html += `<td class="${today?'today-td':''}">${v !== null ? v : '—'}</td>`;
-      if (v !== null) rowTotal += v;
-    });
-    html += `<td class="total-td">${rowTotal > 0 ? rowTotal : '—'}</td></tr>`;
-  });
-
-  html += `<tr class="total-row"><td class="paper-td">${L.total}</td>`;
-  let grandTotal = 0;
-  dates.forEach((d) => {
-    const ds = dateStr(d);
-    let dayTotal = 0;
-    papers.forEach((_,pi) => {
-      const v = qtyCache[`${pi}_${ds}`] ?? null;
-      if (v !== null) dayTotal += v;
-    });
-    grandTotal += dayTotal;
-    const today = isToday(d);
-    html += `<td style="${today?'color:var(--accent2)':''}">${dayTotal > 0 ? dayTotal : '—'}</td>`;
-  });
-  html += `<td class="total-grand">${grandTotal > 0 ? grandTotal : '—'}</td></tr>`;
-  html += '</tbody>';
-  document.getElementById('week-table').innerHTML = html;
+function renderWeekPanelFromLocalCache(){
+  const L=t();const papers=loadPapers();const dates=getWeekDatesForPanel(weekPanelOffset);let html='<thead><tr>';html+=`<th class="paper-th">${lang==='en'?'Title':'报纸'}</th>`;dates.forEach((d,i)=>{const today=isToday(d);html+=`<th style="${today?'color:var(--accent2)':''}">${L.days[i]}<br><span style="font-weight:400;font-size:9px">${formatShort(d)}</span></th>`;});html+=`<th>${L.total}</th></tr></thead><tbody>`;
+  papers.forEach((p,pi)=>{let rowTotal=0;html+=`<tr><td class="paper-td">${escHtml(p.name)}</td>`;dates.forEach(d=>{const ds=dateStr(d);const key=`${pi}_${ds}`;const v=qtyCache[key]??null;const today=isToday(d);html+=`<td class="${today?'today-td':''}">${v!==null?v:'—'}</td>`;if(v!==null)rowTotal+=v;});html+=`<td class="total-td">${rowTotal>0?rowTotal:'—'}</td></tr>`;});
+  html+=`<tr class="total-row"><td class="paper-td">${L.total}</td>`;let grandTotal=0;dates.forEach(d=>{const ds=dateStr(d);let dayTotal=0;papers.forEach((_,pi)=>{const v=qtyCache[`${pi}_${ds}`]??null;if(v!==null)dayTotal+=v;});grandTotal+=dayTotal;const today=isToday(d);html+=`<td style="${today?'color:var(--accent2)':''}">${dayTotal>0?dayTotal:'—'}</td>`;});html+=`<td class="total-grand">${grandTotal>0?grandTotal:'—'}</td></tr></tbody>`;
+  document.getElementById('week-table').innerHTML=html;
 }
 
-// ══════════════════════════════════════════
-// DAILY ENTRY LIST
-// ══════════════════════════════════════════
-function renderList() {
-  const papers = loadPapers();
-  const ds     = dateStr(getActiveDate());
-  const L      = t();
-
-  document.getElementById('entry-list').innerHTML = papers.map((p,pi) => {
-    const key    = `${pi}_${ds}`;
-    const cached = qtyCache[key] ?? '';
-    const filled = cached !== '';
-    const delBtn = manageMode
-      ? `<button class="delete-btn" onclick="deletePaper(${pi})">✕</button>`
-      : '';
-    return `<div class="entry-row">
-      <div class="paper-name${p.custom?' custom':''}">${escHtml(p.name)}</div>
-      <div class="qty-wrap">
-        ${manageMode ? '' : `
-          <button class="qty-btn" onclick="adjustQty(${pi},'${ds}',-1)">−</button>
-          <input class="qty-input${filled?' filled':''}" type="number"
-            id="qty_${pi}" min="0" value="${filled?cached:''}" placeholder="—"
-            oninput="onQtyInput(${pi},'${ds}',this)">
-          <button class="qty-btn" onclick="adjustQty(${pi},'${ds}',1)">+</button>
-        `}
-        ${delBtn}
-      </div>
-    </div>`;
-  }).join('');
-
-  setText('sec-count', L.secCount(papers.length));
+// ── Entry list ────────────────────────────────────────────────────────────────
+function renderList(){
+  const papers=loadPapers();const ds=dateStr(getActiveDate());const L=t();
+  document.getElementById('entry-list').innerHTML=papers.map((p,pi)=>{const key=`${pi}_${ds}`;const cached=qtyCache[key]??'';const filled=cached!=='';const delBtn=manageMode?`<button class="delete-btn" onclick="deletePaper(${pi})">✕</button>`:'';return `<div class="entry-row"><div class="paper-name${p.custom?' custom':''}">${escHtml(p.name)}</div><div class="qty-wrap">${manageMode?'':`<button class="qty-btn" onclick="adjustQty(${pi},'${ds}',-1)">−</button><input class="qty-input${filled?' filled':''}" type="number" id="qty_${pi}" min="0" value="${filled?cached:''}" placeholder="—" oninput="onQtyInput(${pi},'${ds}',this)"><button class="qty-btn" onclick="adjustQty(${pi},'${ds}',1)">+</button>`}${delBtn}</div></div>`;}).join('');
+  setText('sec-count',L.secCount(papers.length));
 }
 
-// ══════════════════════════════════════════
-// QTY
-// ══════════════════════════════════════════
-function getQty(pi, ds) {
-  const el = document.getElementById(`qty_${pi}`);
-  if (el && el.value !== '') return parseInt(el.value)||0;
-  const cached = qtyCache[`${pi}_${ds}`];
-  return cached !== undefined ? cached : null;
+// ── Qty ───────────────────────────────────────────────────────────────────────
+function getQty(pi,ds){const el=document.getElementById(`qty_${pi}`);if(el&&el.value!=='')return parseInt(el.value)||0;const cached=qtyCache[`${pi}_${ds}`];return cached!==undefined?cached:null;}
+function setQty(pi,ds,val){qtyCache[`${pi}_${ds}`]=val;const el=document.getElementById(`qty_${pi}`);if(el){el.value=val;el.className='qty-input filled';}if(weekOpen)renderWeekPanel();}
+function adjustQty(pi,ds,delta){const cur=getQty(pi,ds)??0;setQty(pi,ds,Math.max(0,cur+delta));}
+function onQtyInput(pi,ds,input){if(input.value===''){delete qtyCache[`${pi}_${ds}`];input.className='qty-input';}else{const v=Math.max(0,parseInt(input.value)||0);input.value=v;input.className='qty-input filled';qtyCache[`${pi}_${ds}`]=v;}if(weekOpen)renderWeekPanel();}
+
+// ── Add / Delete ──────────────────────────────────────────────────────────────
+function addPaper(){const input=document.getElementById('new-paper-input');const name=input.value.trim();if(!name)return;const papers=loadPapers();if(papers.some(p=>p.name.toLowerCase()===name.toLowerCase())){input.style.borderColor='var(--danger)';setTimeout(()=>{input.style.borderColor='';},1500);return;}papers.push({name,custom:true});savePapers(papers);input.value='';renderList();if(weekOpen)renderWeekPanel();}
+function deletePaper(pi){const papers=loadPapers();if(!confirm(t().deleteConfirm(papers[pi].name)))return;Object.keys(qtyCache).forEach(k=>{if(k.startsWith(`${pi}_`))delete qtyCache[k];});Object.keys(qtyCache).forEach(k=>{const[p,ds]=k.split('_');if(parseInt(p)>pi){qtyCache[`${parseInt(p)-1}_${ds}`]=qtyCache[k];delete qtyCache[k];}});papers.splice(pi,1);savePapers(papers);renderList();if(weekOpen)renderWeekPanel();}
+function toggleManage(){manageMode=!manageMode;applyLang();}
+
+// ── Review / Submit ───────────────────────────────────────────────────────────
+function goReview(){
+  const L=t();hideAlert('alertBox');const staff=document.getElementById('f-staff').value.trim();if(!staff){showAlert('alertBox',L.errStaff);return;}
+  const papers=loadPapers();const ds=dateStr(getActiveDate());const hasData=papers.some((_,pi)=>getQty(pi,ds)!==null);if(!hasData){showAlert('alertBox',L.errNoData);return;}
+  setText('cf-date-val',formatDisplay(getActiveDate()));setText('cf-staff-val',staff);setText('cf-station-val',station);
+  let rows='';papers.forEach((p,pi)=>{const v=getQty(pi,ds);if(v!==null)rows+=`<div class="confirm-row"><div class="confirm-key">${escHtml(p.name)}</div><div class="confirm-val">${v}</div></div>`;});
+  document.getElementById('cf-returns-list').innerHTML=rows;showScreen('confirm');
+}
+function submitForm(){
+  const L=t();const papers=loadPapers();const d=getActiveDate();const ds=dateStr(d);const staff=document.getElementById('f-staff').value.trim();const notes=document.getElementById('f-notes').value.trim();
+  const items=papers.map((p,pi)=>({paperName:p.name,isCustom:p.custom,qty:getQty(pi,ds)})).filter(x=>x.qty!==null);
+  const payload={formType:'newspaperReturns',submittedAt:new Date().toISOString(),station,lang,date:ds,dayOfWeek:L.daysFull[d.getDay()===0?6:d.getDay()-1],staffName:staff,notes,items,totalReturns:items.reduce((s,x)=>s+x.qty,0)};
+  onSuccess();fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+}
+function onSuccess(){showScreen('success');}
+
+function resetForm(){
+  dayOffset=0;document.getElementById('f-notes').value='';hideAlert('alertBox');
+  initStaffField();updateDateDisplay();renderList();if(weekOpen)renderWeekPanel();showScreen('form');
 }
 
-function setQty(pi, ds, val) {
-  qtyCache[`${pi}_${ds}`] = val;
-  const el = document.getElementById(`qty_${pi}`);
-  if (el) { el.value = val; el.className = 'qty-input filled'; }
-  if (weekOpen) renderWeekPanel();
-}
+function showScreen(id){document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));document.getElementById(`screen-${id}`).classList.add('active');window.scrollTo(0,0);}
+function showAlert(id,msg){const a=document.getElementById(id);Object.assign(a.style,{background:'var(--warn-bg)',borderColor:'var(--warn-border)',color:'var(--warn)'});a.textContent=msg;a.classList.add('show');a.scrollIntoView({behavior:'smooth',block:'center'});}
+function hideAlert(id){const el=document.getElementById(id);if(el)el.classList.remove('show');}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function goPortal(){window.location.href='index.html';}
 
-function adjustQty(pi, ds, delta) {
-  const cur = getQty(pi, ds) ?? 0;
-  setQty(pi, ds, Math.max(0, cur + delta));
-}
-
-function onQtyInput(pi, ds, input) {
-  if (input.value === '') {
-    delete qtyCache[`${pi}_${ds}`];
-    input.className = 'qty-input';
-  } else {
-    const v = Math.max(0, parseInt(input.value)||0);
-    input.value = v;
-    input.className = 'qty-input filled';
-    qtyCache[`${pi}_${ds}`] = v;
-  }
-  if (weekOpen) renderWeekPanel();
-}
-
-// ══════════════════════════════════════════
-// ADD / DELETE
-// ══════════════════════════════════════════
-function addPaper() {
-  const input = document.getElementById('new-paper-input');
-  const name  = input.value.trim();
-  if (!name) return;
-  const papers = loadPapers();
-  if (papers.some(p => p.name.toLowerCase()===name.toLowerCase())) {
-    input.style.borderColor='var(--danger)';
-    setTimeout(()=>{ input.style.borderColor=''; },1500);
-    return;
-  }
-  papers.push({name, custom:true});
-  savePapers(papers);
-  input.value='';
-  renderList();
-  if (weekOpen) renderWeekPanel();
-}
-
-function deletePaper(pi) {
-  const papers = loadPapers();
-  if (!confirm(t().deleteConfirm(papers[pi].name))) return;
-  // Remove all cache entries for this paper
-  Object.keys(qtyCache).forEach(k => {
-    if (k.startsWith(`${pi}_`)) delete qtyCache[k];
-  });
-  // Shift cache indices
-  Object.keys(qtyCache).forEach(k => {
-    const [p,ds] = k.split('_');
-    if (parseInt(p) > pi) {
-      qtyCache[`${parseInt(p)-1}_${ds}`] = qtyCache[k];
-      delete qtyCache[k];
-    }
-  });
-  papers.splice(pi, 1);
-  savePapers(papers);
-  renderList();
-  if (weekOpen) renderWeekPanel();
-}
-
-// ══════════════════════════════════════════
-// MANAGE MODE
-// ══════════════════════════════════════════
-function toggleManage() {
-  manageMode = !manageMode;
-  applyLang();
-}
-
-// ══════════════════════════════════════════
-// REVIEW
-// ══════════════════════════════════════════
-function goReview() {
-  const L = t();
-  hideAlert('alertBox');
-  const staff = document.getElementById('f-staff').value.trim();
-  if (!staff) { showAlert('alertBox', L.errStaff); return; }
-
-  const papers = loadPapers();
-  const ds     = dateStr(getActiveDate());
-  const hasData = papers.some((_,pi) => getQty(pi,ds) !== null);
-  if (!hasData) { showAlert('alertBox', L.errNoData); return; }
-
-  setText('cf-date-val',    formatDisplay(getActiveDate()));
-  setText('cf-staff-val',   staff);
-  setText('cf-station-val', station);
-
-  let rows = '';
-  papers.forEach((p,pi) => {
-    const v = getQty(pi, ds);
-    if (v !== null) {
-      rows += `<div class="confirm-row">
-        <div class="confirm-key">${escHtml(p.name)}</div>
-        <div class="confirm-val">${v}</div>
-      </div>`;
-    }
-  });
-  document.getElementById('cf-returns-list').innerHTML = rows;
-  showScreen('confirm');
-}
-
-// ══════════════════════════════════════════
-// SUBMIT
-// ══════════════════════════════════════════
-function submitForm() {
-  const L      = t();
-  const papers = loadPapers();
-  const d      = getActiveDate();
-  const ds     = dateStr(d);
-  const staff  = document.getElementById('f-staff').value.trim();
-  const notes  = document.getElementById('f-notes').value.trim();
-
-  const items = papers.map((p,pi) => ({
-    paperName: p.name,
-    isCustom:  p.custom,
-    qty:       getQty(pi, ds),
-  })).filter(x => x.qty !== null);
-
-  const payload = {
-    formType:    'newspaperReturns',
-    submittedAt: new Date().toISOString(),
-    station, lang,
-    date:        ds,
-    dayOfWeek:   L.daysFull[d.getDay()===0?6:d.getDay()-1],
-    staffName:   staff,
-    notes,
-    items,
-    totalReturns: items.reduce((s,x)=>s+x.qty, 0),
-  };
-
-onSuccess();
-fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
-}
-
-function onSuccess() {
-  showScreen('success');
-}
-
-// ══════════════════════════════════════════
-// RESET
-// ══════════════════════════════════════════
-function resetForm() {
-  dayOffset = 0;
-  document.getElementById('f-staff').value = '';
-  document.getElementById('f-notes').value = '';
-  hideAlert('alertBox');
-  updateDateDisplay();
-  renderList();
-  if (weekOpen) renderWeekPanel();
-  showScreen('form');
-}
-
-// ══════════════════════════════════════════
-// SCREENS
-// ══════════════════════════════════════════
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(el=>el.classList.remove('active'));
-  document.getElementById(`screen-${id}`).classList.add('active');
-  window.scrollTo(0,0);
-}
-
-// ══════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════
-function showAlert(id,msg) {
-  const a=document.getElementById(id);
-  Object.assign(a.style,{background:'var(--warn-bg)',borderColor:'var(--warn-border)',color:'var(--warn)'});
-  a.textContent=msg; a.classList.add('show');
-  a.scrollIntoView({behavior:'smooth',block:'center'});
-}
-function hideAlert(id){ const el=document.getElementById(id); if(el) el.classList.remove('show'); }
-function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function goPortal(){ window.location.href='index.html'; }
-
-// ══════════════════════════════════════════
-// INIT
-// ══════════════════════════════════════════
-if (!station) {
-  document.getElementById('no-station-bar').classList.add('show');
-  document.getElementById('station-bar').style.display = 'none';
-  document.getElementById('screen-form').style.display = 'none';
-}
-document.querySelectorAll('.lang-btn').forEach(b=>{
-  b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
-});
+if(!station){document.getElementById('no-station-bar').classList.add('show');document.getElementById('station-bar').style.display='none';document.getElementById('screen-form').style.display='none';}
+document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));});
+initStaffField();
 applyLang();
 </script>
 </body>
