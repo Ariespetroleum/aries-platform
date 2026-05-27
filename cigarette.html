@@ -31,6 +31,7 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
 .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}.field label{display:block;font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:6px;font-family:var(--mono);font-weight:600}
 .field input,.field select{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:10px;color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}.field input:focus,.field select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.10)}.field select option{background:#fff;color:var(--text)}.field.full{grid-column:1/-1}
 .staff-wrap{position:relative}.last-used-hint{display:none;position:absolute;top:100%;left:0;right:0;z-index:10;background:#fff;border:1px solid var(--border2);border-top:none;border-radius:0 0 10px 10px;padding:9px 12px;cursor:pointer;font-size:12px;color:var(--muted);transition:background .15s;box-shadow:var(--shadow-sm)}.last-used-hint:hover{background:var(--surface2);color:var(--text)}.last-used-hint.show{display:block}.last-used-name{color:var(--liberty-blue);font-weight:700}
+.staff-hint{font-size:11px;color:var(--liberty-blue);margin-top:4px;cursor:pointer;font-family:var(--mono)}
 .summary-bar{background:#fff;border:1px solid var(--border);border-radius:14px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:var(--shadow-sm)}.summary-stat{text-align:center}.summary-num{font-family:var(--mono);font-size:20px;font-weight:700;color:var(--bp-green)}.summary-label{font-size:10px;color:var(--muted);margin-top:2px;font-family:var(--mono)}.summary-divider{width:1px;height:34px;background:var(--border)}
 .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}.items-left-label{font-family:var(--mono);font-size:10px;color:var(--muted);flex:1}.manage-btn{font-size:11px;cursor:pointer;font-family:var(--mono);padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--muted);transition:all .15s;white-space:nowrap}.manage-btn:hover{border-color:var(--border2);color:var(--text)}.manage-btn.active{border-color:var(--danger-border);color:var(--sinopec-red);background:var(--danger-bg)}
 .manage-banner{display:none;background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:12px;padding:11px 14px;margin-bottom:12px;font-size:12px;color:var(--sinopec-red-dark);line-height:1.5;font-weight:600}.manage-banner.show{display:block}
@@ -116,6 +117,7 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
           <div class="last-used-hint" id="last-used-hint" onmousedown="useLastName()">
             <span id="last-used-prefix"></span> <span class="last-used-name" id="last-used-name"></span>
           </div>
+          <div id="staff-hint" class="staff-hint" style="display:none"></div>
         </div>
       </div>
     </div>
@@ -255,6 +257,7 @@ const S = {
     deleteConfirm: name => `Remove "${name}" from this station's product list?\n\nThis cannot be undone.`,
     duplicateWarning:'This product already exists in the list.',
     notCounted:'—',
+    staffHint:'✎ Not you? Tap to change',
   },
   zh: {
     pageTitle:'香烟库存盘点 — Aries Petroleum',
@@ -288,6 +291,7 @@ const S = {
     deleteConfirm: name => `确认从本站点产品列表中移除"${name}"？\n\n此操作无法撤销。`,
     duplicateWarning:'该产品已存在于列表中。',
     notCounted:'—',
+    staffHint:'✎ 不是你？点击更改',
   }
 };
 function t() { return S[lang]; }
@@ -309,8 +313,7 @@ const DEFAULT_PRODUCTS = [
 ];
 
 // ══════════════════════════════════════════
-// PRODUCT LIST — stored per station in localStorage
-// When Apps Script URL is set, list is also synced to/from Google Sheet
+// PRODUCT LIST
 // ══════════════════════════════════════════
 function storageKey() { return `ap_cig_${station}`; }
 
@@ -326,15 +329,49 @@ function loadProducts() {
 
 function saveProducts(list) {
   localStorage.setItem(storageKey(), JSON.stringify(list));
-  // TODO: sync to Google Sheet via Apps Script when SHEET_URL is set
 }
 
 // ══════════════════════════════════════════
-// STAFF NAME — last used hint
+// STAFF NAME — autofill from portal + last used hint
 // ══════════════════════════════════════════
 const LAST_NAME_KEY = 'ap_cig_last_staff';
 
+// Read ap_staff_name set by index.html (4hr expiry)
+function getStaffName(){
+  const name = localStorage.getItem('ap_staff_name') || '';
+  const ts   = parseInt(localStorage.getItem('ap_staff_name_ts') || '0');
+  return (name && ts && (Date.now()-ts) < 4*60*60*1000) ? name : '';
+}
+
+function initStaffField(){
+  const name = getStaffName();
+  const inp  = document.getElementById('f-staff');
+  const hint = document.getElementById('staff-hint');
+  if(name){
+    inp.value    = name;
+    inp.readOnly = true;
+    inp.style.background = 'var(--surface2)';
+    inp.style.color = 'var(--muted)';
+    hint.textContent = t().staffHint;
+    hint.style.display = 'block';
+    hint.onclick = ()=>{
+      inp.readOnly = false;
+      inp.style.background = '';
+      inp.style.color = '';
+      inp.value = '';
+      hint.style.display = 'none';
+      inp.focus();
+    };
+  } else {
+    inp.readOnly = false;
+    inp.style.background = '';
+    inp.style.color = '';
+    hint.style.display = 'none';
+  }
+}
+
 function showLastUsedHint() {
+  if(getStaffName()) return;
   const last = localStorage.getItem(LAST_NAME_KEY);
   const input = document.getElementById('f-staff');
   if (last && input.value.trim() === '') {
@@ -397,7 +434,10 @@ function applyLang() {
   setText('succ-again', L.succAgain); setText('succ-home', L.succHome);
   if (station) document.getElementById('station-display').innerHTML = `<span>${station}</span>`;
 
-  // Manage button & banner
+  // Update hint text for current lang
+  const hint = document.getElementById('staff-hint');
+  if(hint && hint.style.display!=='none') hint.textContent = L.staffHint;
+
   const btn = document.getElementById('manage-btn');
   btn.textContent  = manageMode ? L.manageOff : L.manageOn;
   btn.className    = 'manage-btn' + (manageMode ? ' active' : '');
@@ -414,31 +454,21 @@ function setText(id, val) {
   if (el && val !== undefined) el.textContent = val;
 }
 
-// ══════════════════════════════════════════
-// SCREENS
-// ══════════════════════════════════════════
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(el => el.classList.remove('active'));
   document.getElementById(`screen-${id}`).classList.add('active');
   window.scrollTo(0, 0);
 }
 
-// ══════════════════════════════════════════
-// RENDER PRODUCTS
-// ══════════════════════════════════════════
-// Keep qty values across re-renders
 const qtyCache = {};
 
 function renderProducts() {
   const products = loadProducts();
   const L = t();
-
-  // Save current values to cache before re-render
   products.forEach((_, i) => {
     const el = document.getElementById(`qty_${i}`);
     if (el) qtyCache[i] = el.value;
   });
-
   const list = document.getElementById('product-list');
   list.innerHTML = products.map((p, i) => {
     const cached = qtyCache[i] ?? '';
@@ -461,7 +491,6 @@ function renderProducts() {
         </div>
       </div>`;
   }).join('');
-
   setText('product-count', L.productCount(products.length));
 }
 
@@ -469,9 +498,6 @@ function escHtml(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ══════════════════════════════════════════
-// QTY CONTROLS
-// ══════════════════════════════════════════
 function getQty(i) {
   const el = document.getElementById(`qty_${i}`);
   const v  = el ? el.value : (qtyCache[i] ?? '');
@@ -506,9 +532,6 @@ function onQtyInput(i, input) {
   updateSummary();
 }
 
-// ══════════════════════════════════════════
-// SUMMARY
-// ══════════════════════════════════════════
 function updateSummary() {
   const products = loadProducts();
   const total  = products.length;
@@ -522,9 +545,6 @@ function updateSummary() {
   setText('items-left-label', t().itemsLeft(remain));
 }
 
-// ══════════════════════════════════════════
-// ADD / DELETE
-// ══════════════════════════════════════════
 function addProduct() {
   const input = document.getElementById('new-product-input');
   const name  = input.value.trim();
@@ -546,7 +566,6 @@ function addProduct() {
 function deleteProduct(i) {
   const products = loadProducts();
   if (!confirm(t().deleteConfirm(products[i].name))) return;
-  // Clear cache for this index and shift cache
   delete qtyCache[i];
   const keys = Object.keys(qtyCache).map(Number).filter(k => k > i);
   keys.sort((a,b) => a-b).forEach(k => {
@@ -559,17 +578,11 @@ function deleteProduct(i) {
   updateSummary();
 }
 
-// ══════════════════════════════════════════
-// MANAGE MODE — toggle shows/hides delete btns
-// ══════════════════════════════════════════
 function toggleManage() {
   manageMode = !manageMode;
-  applyLang();  // re-renders everything including manage banner + add row
+  applyLang();
 }
 
-// ══════════════════════════════════════════
-// REVIEW & SUBMIT
-// ══════════════════════════════════════════
 function goReview() {
   const L = t();
   hideAlert('alertBox');
@@ -580,13 +593,11 @@ function goReview() {
   const products = loadProducts();
   const counted  = products.filter((_, i) => getQty(i) !== null);
   if (counted.length === 0) { showAlert('alertBox', L.errProducts); return; }
-
   const shiftText = document.getElementById('f-shift').options[document.getElementById('f-shift').selectedIndex].text;
   setText('cf-date-val',    document.getElementById('f-date').value);
   setText('cf-shift-val',   shiftText);
   setText('cf-staff-val',   staff);
   setText('cf-station-val', station);
-
   document.getElementById('cf-stock-list').innerHTML = products.map((p, i) => {
     const qty = getQty(i);
     return `
@@ -595,7 +606,6 @@ function goReview() {
         <div class="confirm-val${qty === null ? ' zero' : ''}">${qty !== null ? qty : L.notCounted}</div>
       </div>`;
   }).join('');
-
   showScreen('confirm');
 }
 
@@ -606,61 +616,36 @@ function submitForm() {
   const staff    = document.getElementById('f-staff').value.trim();
   const shift    = document.getElementById('f-shift').value;
   const date     = document.getElementById('f-date').value;
-
   localStorage.setItem(LAST_NAME_KEY, staff);
-
   const items = products.map((p, i) => ({
-    productName: p.name,
-    isCustom: p.custom,
-    qty: getQty(i),
+    productName: p.name, isCustom: p.custom, qty: getQty(i),
   }));
-
   const payload = {
-    formType:'cigaretteStockCheck',
-    submittedAt:new Date().toISOString(),
-    station, lang, date, shift,
-    staffName:staff,
-    items,
+    formType:'cigaretteStockCheck', submittedAt:new Date().toISOString(),
+    station, lang, date, shift, staffName:staff, items,
     totalProducts:products.length,
     countedProducts:items.filter(x=>x.qty!==null).length,
   };
-
   onSuccess();
-
-  fetch(SHEET_URL,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
-  }).catch(()=>{});
+  fetch(SHEET_URL,{ method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(()=>{});
 }
 
-function onSuccess() {
-  showScreen('success');
-}
-// ══════════════════════════════════════════
-// RESET — clear counts but NOT staff name
-// Show last-name hint on next focus
-// ══════════════════════════════════════════
+function onSuccess() { showScreen('success'); }
+
 function resetForm() {
-  // Clear qty cache and inputs
   Object.keys(qtyCache).forEach(k => delete qtyCache[k]);
   loadProducts().forEach((_, i) => {
     const el = document.getElementById(`qty_${i}`);
     if (el) { el.value = ''; el.className = 'qty-input'; }
   });
-  // Clear staff name so hint shows on next focus
-  document.getElementById('f-staff').value = '';
   document.getElementById('f-shift').value = '';
   document.getElementById('f-date').value  = todayStr();
   hideAlert('alertBox');
   updateSummary();
+  initStaffField();
   showScreen('form');
 }
 
-// ══════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════
 function showAlert(id, msg) {
   const a = document.getElementById(id);
   Object.assign(a.style, { background:'var(--warn-bg)', borderColor:'var(--warn-border)', color:'var(--warn)' });
@@ -668,14 +653,8 @@ function showAlert(id, msg) {
   a.classList.add('show');
   a.scrollIntoView({ behavior:'smooth', block:'center' });
 }
-function hideAlert(id) {
-  const el = document.getElementById(id);
-  if (el) el.classList.remove('show');
-}
-function todayStr() {
-  const n = new Date();
-  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
-}
+function hideAlert(id) { const el = document.getElementById(id); if (el) el.classList.remove('show'); }
+function todayStr() { const n = new Date(); return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`; }
 function goPortal() { window.location.href = 'index.html'; }
 
 // ══════════════════════════════════════════
@@ -691,6 +670,7 @@ document.querySelectorAll('.lang-btn').forEach(b => {
     (lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
 });
 document.getElementById('f-date').value = todayStr();
+initStaffField();
 applyLang();
 </script>
 </body>
