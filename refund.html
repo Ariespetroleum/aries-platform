@@ -6,504 +6,81 @@
 <title>Refund Record — Aries Petroleum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <style>
-:root {
-  --sinopec-red:#E60012;
-  --sinopec-red-dark:#B8000E;
-  --bp-green:#00A651;
-  --bp-green-dark:#007A3D;
-  --liberty-blue:#003DA5;
-  --liberty-blue-dark:#002A73;
-  --liberty-red:#CE1126;
-
-  --bg:#F4F6F8;
-  --surface:#FFFFFF;
-  --surface2:#F8FAFC;
-  --surface3:#EEF2F6;
-  --border:#DDE3EA;
-  --border2:#C9D2DD;
-
-  --accent:var(--bp-green);
-  --accent2:var(--liberty-blue);
-  --warn:var(--sinopec-red);
-  --danger:var(--sinopec-red);
-
-  --text:#142033;
-  --muted:#667085;
-  --label:#344054;
-
-  --mono:'DM Mono',monospace;
-  --sans:'Sora',sans-serif;
-
-  --ok-bg:#ECFDF3;
-  --ok-border:#B7E4C7;
-  --warn-bg:#EFF6FF;
-  --warn-border:#BFDBFE;
-  --danger-bg:#FFF1F2;
-  --danger-border:#FDA4AF;
-
-  --radius:16px;
-  --radius-sm:10px;
-  --shadow:0 4px 18px rgba(15,23,42,.08);
-  --shadow-sm:0 2px 8px rgba(15,23,42,.06);
-}
-
+:root{--sinopec-red:#E60012;--sinopec-red-dark:#B8000E;--bp-green:#00A651;--bp-green-dark:#007A3D;--liberty-blue:#003DA5;--liberty-blue-dark:#002A73;--liberty-red:#CE1126;--bg:#F4F6F8;--surface:#FFFFFF;--surface2:#F8FAFC;--surface3:#EEF2F6;--border:#DDE3EA;--border2:#C9D2DD;--accent:var(--bp-green);--accent2:var(--liberty-blue);--warn:var(--sinopec-red);--danger:var(--sinopec-red);--text:#142033;--muted:#667085;--label:#344054;--mono:'DM Mono',monospace;--sans:'Sora',sans-serif;--ok-bg:#ECFDF3;--ok-border:#B7E4C7;--warn-bg:#EFF6FF;--warn-border:#BFDBFE;--danger-bg:#FFF1F2;--danger-border:#FDA4AF;--radius:16px;--radius-sm:10px;--shadow:0 4px 18px rgba(15,23,42,.08);--shadow-sm:0 2px 8px rgba(15,23,42,.06);}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-
-body{
-  background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);
-  color:var(--text);
-  font-family:var(--sans);
-  font-size:14px;
-  min-height:100vh;
-  padding-bottom:56px;
-}
-
-.header{
-  background:linear-gradient(135deg,var(--sinopec-red) 0%,var(--liberty-blue) 100%);
-  color:#fff;
-  border-bottom:none;
-  padding:14px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;
-  top:0;
-  z-index:100;
-  box-shadow:0 6px 20px rgba(0,0,0,.18);
-}
-
+body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text);font-family:var(--sans);font-size:14px;min-height:100vh;padding-bottom:56px}
+.header{background:linear-gradient(135deg,var(--sinopec-red) 0%,var(--liberty-blue) 100%);color:#fff;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 6px 20px rgba(0,0,0,.18)}
 .header-left{display:flex;align-items:center;gap:10px}
-
-.back-btn{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  color:rgba(255,255,255,.88);
-  font-size:13px;
-  cursor:pointer;
-  padding:5px 10px 5px 0;
-  border-right:1px solid rgba(255,255,255,.24);
-  margin-right:2px;
-  transition:opacity .15s;
-  white-space:nowrap;
-}
-
+.back-btn{display:flex;align-items:center;gap:6px;color:rgba(255,255,255,.88);font-size:13px;cursor:pointer;padding:5px 10px 5px 0;border-right:1px solid rgba(255,255,255,.24);margin-right:2px;transition:opacity .15s;white-space:nowrap}
 .back-btn:hover{opacity:.8}
-
-.back-arrow{font-size:15px}
-.back-label{font-family:var(--mono);font-size:11px;letter-spacing:.04em}
-
-.header-title{
-  font-size:14px;
-  font-weight:800;
-  color:#fff;
-}
-
-.header-sub{
-  font-size:10px;
-  color:rgba(255,255,255,.82);
-  font-family:var(--mono);
-  margin-top:1px;
-  letter-spacing:.08em;
-}
-
+.back-arrow{font-size:15px}.back-label{font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+.header-title{font-size:14px;font-weight:800;color:#fff}
+.header-sub{font-size:10px;color:rgba(255,255,255,.82);font-family:var(--mono);margin-top:1px;letter-spacing:.08em}
 .header-right{display:flex;align-items:center;gap:10px}
-
-.lang-toggle{
-  display:flex;
-  background:rgba(255,255,255,.14);
-  border:1px solid rgba(255,255,255,.22);
-  border-radius:9px;
-  overflow:hidden;
-}
-
-.lang-btn{
-  padding:5px 10px;
-  font-family:var(--mono);
-  font-size:11px;
-  font-weight:700;
-  color:#fff;
-  cursor:pointer;
-  border:none;
-  background:transparent;
-  transition:all .15s;
-}
-
-.lang-btn.active{
-  background:#fff;
-  color:var(--liberty-blue);
-}
-
-.no-station{
-  display:none;
-  background:var(--danger-bg);
-  border-bottom:1px solid var(--danger-border);
-  padding:12px 16px;
-  text-align:center;
-}
-
+.lang-toggle{display:flex;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);border-radius:9px;overflow:hidden}
+.lang-btn{padding:5px 10px;font-family:var(--mono);font-size:11px;font-weight:700;color:#fff;cursor:pointer;border:none;background:transparent;transition:all .15s}
+.lang-btn.active{background:#fff;color:var(--liberty-blue)}
+.no-station{display:none;background:var(--danger-bg);border-bottom:1px solid var(--danger-border);padding:12px 16px;text-align:center}
 .no-station.show{display:block}
-
-.no-station-msg{
-  font-size:13px;
-  color:var(--sinopec-red-dark);
-  margin-bottom:8px;
-  font-weight:700;
-}
-
-.no-station-link{
-  display:inline-block;
-  background:var(--sinopec-red);
-  color:#fff;
-  font-size:12px;
-  font-weight:700;
-  padding:8px 16px;
-  border-radius:9px;
-  text-decoration:none;
-}
-
-.station-bar{
-  background:#fff;
-  border-bottom:1px solid var(--border);
-  padding:9px 16px;
-  display:flex;
-  align-items:center;
-  gap:8px;
-  box-shadow:var(--shadow-sm);
-}
-
-.station-dot{
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--sinopec-red);
-  box-shadow:0 0 0 4px rgba(230,0,18,.12);
-  flex-shrink:0;
-}
-
-.station-name{font-family:var(--mono);font-size:11px;color:var(--muted)}
-.station-name span{color:var(--text);font-weight:700}
-
-.refund-badge{
-  margin-left:auto;
-  font-family:var(--mono);
-  font-size:9px;
-  font-weight:800;
-  letter-spacing:.08em;
-  padding:3px 8px;
-  border-radius:6px;
-  background:#EFF6FF;
-  color:var(--liberty-blue);
-  border:1px solid #BFDBFE;
-}
-
+.no-station-msg{font-size:13px;color:var(--sinopec-red-dark);margin-bottom:8px;font-weight:700}
+.no-station-link{display:inline-block;background:var(--sinopec-red);color:#fff;font-size:12px;font-weight:700;padding:8px 16px;border-radius:9px;text-decoration:none}
+.station-bar{background:#fff;border-bottom:1px solid var(--border);padding:9px 16px;display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-sm)}
+.station-dot{width:7px;height:7px;border-radius:50%;background:var(--sinopec-red);box-shadow:0 0 0 4px rgba(230,0,18,.12);flex-shrink:0}
+.station-name{font-family:var(--mono);font-size:11px;color:var(--muted)}.station-name span{color:var(--text);font-weight:700}
+.refund-badge{margin-left:auto;font-family:var(--mono);font-size:9px;font-weight:800;letter-spacing:.08em;padding:3px 8px;border-radius:6px;background:#EFF6FF;color:var(--liberty-blue);border:1px solid #BFDBFE}
 .container{max-width:540px;margin:0 auto;padding:20px 16px}
 .screen{display:none}.screen.active{display:block}
-
 .form-header{margin-bottom:20px}
-
-.form-title{
-  font-size:20px;
-  font-weight:800;
-  margin-bottom:4px;
-  color:var(--text);
-}
-
-.form-sub{
-  font-size:13px;
-  color:var(--muted);
-  line-height:1.5;
-}
-
-.section{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  margin-bottom:14px;
-  box-shadow:var(--shadow-sm);
-}
-
-.section-header{
-  padding:11px 14px;
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  display:flex;
-  align-items:center;
-  gap:8px;
-}
-
+.form-title{font-size:20px;font-weight:800;margin-bottom:4px;color:var(--text)}
+.form-sub{font-size:13px;color:var(--muted);line-height:1.5}
+.section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px;box-shadow:var(--shadow-sm)}
+.section-header{padding:11px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
 .section-icon{font-size:15px}
-
-.section-title{
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.07em;
-  text-transform:uppercase;
-  font-family:var(--mono);
-  color:var(--label);
-}
-
-.section-body{
-  padding:14px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
+.section-title{font-size:11px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.section-body{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .field.full{grid-column:1/-1}
-
-.field label{
-  display:block;
-  font-size:10px;
-  color:var(--muted);
-  letter-spacing:.07em;
-  text-transform:uppercase;
-  margin-bottom:5px;
-  font-family:var(--mono);
-  font-weight:700;
-}
-
-.field input,.field select,.field textarea{
-  width:100%;
-  background:#fff;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  color:var(--text);
-  font-family:var(--sans);
-  font-size:13px;
-  padding:10px 12px;
-  outline:none;
-  transition:border-color .2s,box-shadow .2s;
-  -webkit-appearance:none;
-}
-
-.field input:focus,.field select:focus,.field textarea:focus{
-  border-color:var(--liberty-blue);
-  box-shadow:0 0 0 3px rgba(0,61,165,.10);
-}
-
-.field input[readonly]{
-  background:var(--surface2);
-  color:var(--label);
-}
-
+.field label{display:block;font-size:10px;color:var(--muted);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;font-family:var(--mono);font-weight:700}
+.field input,.field select,.field textarea{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:var(--sans);font-size:13px;padding:10px 12px;outline:none;transition:border-color .2s,box-shadow .2s;-webkit-appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.10)}
+.field input[readonly]{background:var(--surface2);color:var(--label)}
 .field select option{background:#fff;color:var(--text)}
 .field textarea{resize:vertical;min-height:78px;line-height:1.5}
 .field input[type=number]{-moz-appearance:textfield}
 .field input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
-
-.alert{
-  display:none;
-  border-radius:10px;
-  padding:10px 14px;
-  font-size:12px;
-  margin-bottom:14px;
-  line-height:1.5;
-  font-weight:700;
-}
-
-.alert.show{display:block}
-
-.btn-wrap{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-top:6px;
-}
-
-.btn{
-  width:100%;
-  border:none;
-  border-radius:12px;
-  font-family:var(--sans);
-  font-size:14px;
-  font-weight:800;
-  padding:14px;
-  cursor:pointer;
-  letter-spacing:.02em;
-  transition:opacity .18s,transform .1s;
-}
-
-.btn:active{transform:scale(.985)}
-.btn:disabled{opacity:.45;cursor:not-allowed}
-
-.btn-warn{
-  background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));
-  color:#fff;
-  box-shadow:0 4px 14px rgba(230,0,18,.22);
-}
-
-.btn-warn:hover{opacity:.92}
-
-.btn-secondary{
-  background:#fff;
-  color:var(--label);
-  border:1.5px solid var(--border);
-}
-
-.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
+.staff-hint{font-size:11px;color:var(--liberty-blue);margin-top:4px;cursor:pointer;font-family:var(--mono)}
+.alert{display:none;border-radius:10px;padding:10px 14px;font-size:12px;margin-bottom:14px;line-height:1.5;font-weight:700}.alert.show{display:block}
+.btn-wrap{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.btn{width:100%;border:none;border-radius:12px;font-family:var(--sans);font-size:14px;font-weight:800;padding:14px;cursor:pointer;letter-spacing:.02em;transition:opacity .18s,transform .1s}
+.btn:active{transform:scale(.985)}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-warn{background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));color:#fff;box-shadow:0 4px 14px rgba(230,0,18,.22)}.btn-warn:hover{opacity:.92}
+.btn-secondary{background:#fff;color:var(--label);border:1.5px solid var(--border)}.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
 .note{text-align:center;font-size:11px;color:var(--muted);margin-top:8px}
-
 .confirm-header{margin-bottom:18px}
-
-.confirm-title{
-  font-size:20px;
-  font-weight:800;
-  margin-bottom:4px;
-  color:var(--text);
-}
-
-.confirm-sub{
-  font-size:13px;
-  color:var(--muted);
-}
-
-.confirm-section{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  overflow:hidden;
-  margin-bottom:12px;
-  box-shadow:var(--shadow-sm);
-}
-
-.confirm-section-title{
-  padding:9px 14px;
-  background:var(--surface2);
-  border-bottom:1px solid var(--border);
-  font-size:10px;
-  font-weight:800;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  font-family:var(--mono);
-  color:var(--label);
-}
-
-.confirm-row{
-  display:flex;
-  padding:9px 14px;
-  border-bottom:1px solid var(--border);
-  gap:12px;
-}
-
+.confirm-title{font-size:20px;font-weight:800;margin-bottom:4px;color:var(--text)}
+.confirm-sub{font-size:13px;color:var(--muted)}
+.confirm-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+.confirm-section-title{padding:9px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}
+.confirm-row{display:flex;padding:9px 14px;border-bottom:1px solid var(--border);gap:12px}
 .confirm-row:last-child{border-bottom:none}
-
-.confirm-key{
-  font-size:11px;
-  color:var(--muted);
-  font-family:var(--mono);
-  width:42%;
-  flex-shrink:0;
-  padding-top:1px;
-  font-weight:700;
-}
-
-.confirm-val{
-  font-size:13px;
-  font-weight:600;
-  flex:1;
-  word-break:break-word;
-  color:var(--text);
-}
-
-.confirm-val.warn{color:var(--sinopec-red)}
-
+.confirm-key{font-size:11px;color:var(--muted);font-family:var(--mono);width:42%;flex-shrink:0;padding-top:1px;font-weight:700}
+.confirm-val{font-size:13px;font-weight:600;flex:1;word-break:break-word;color:var(--text)}.confirm-val.warn{color:var(--sinopec-red)}
 .success-wrap{text-align:center;padding:56px 20px}
-
-.success-icon{
-  width:64px;
-  height:64px;
-  background:var(--ok-bg);
-  border:1px solid var(--ok-border);
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  margin:0 auto 18px;
-  font-size:28px;
-  color:var(--bp-green-dark);
-  font-weight:800;
-}
-
-.success-title{
-  font-size:20px;
-  font-weight:800;
-  margin-bottom:8px;
-  color:var(--bp-green-dark);
-}
-
-.success-sub{
-  color:var(--muted);
-  font-size:13px;
-  line-height:1.7;
-  margin-bottom:12px;
-}
-
-.success-ref{
-  font-family:var(--mono);
-  font-size:16px;
-  color:var(--liberty-blue);
-  font-weight:800;
-  margin:12px 0 24px;
-}
-
-.success-actions{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  max-width:260px;
-  margin:0 auto;
-}
-
-.loading-overlay{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:200;
-  background:rgba(15,23,42,.45);
-  backdrop-filter:blur(4px);
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:16px;
-}
-
-.loading-overlay.show{display:flex}
-
-.spinner{
-  width:36px;
-  height:36px;
-  border:3px solid var(--border2);
-  border-top-color:var(--sinopec-red);
-  border-radius:50%;
-  animation:spin .7s linear infinite;
-}
-
+.success-icon{width:64px;height:64px;background:var(--ok-bg);border:1px solid var(--ok-border);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:28px;color:var(--bp-green-dark);font-weight:800}
+.success-title{font-size:20px;font-weight:800;margin-bottom:8px;color:var(--bp-green-dark)}
+.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:12px}
+.success-ref{font-family:var(--mono);font-size:16px;color:var(--liberty-blue);font-weight:800;margin:12px 0 24px}
+.success-actions{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
+.loading-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.45);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:16px}.loading-overlay.show{display:flex}
+.spinner{width:36px;height:36px;border:3px solid var(--border2);border-top-color:var(--sinopec-red);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-.loading-text{
-  font-size:13px;
-  color:#fff;
-  font-family:var(--mono);
-  font-weight:700;
-}
-
-@media(max-width:520px){
-  .container{padding:18px 12px}
-  .section-body{grid-template-columns:1fr}
-}
+.loading-text{font-size:13px;color:#fff;font-family:var(--mono);font-weight:700}
+@media(max-width:520px){.container{padding:18px 12px}.section-body{grid-template-columns:1fr}}
 </style>
 </head>
-
 <body>
 
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-  <div class="loading-text" id="loading-text">Submitting…</div>
-</div>
+<div class="loading-overlay" id="loadingOverlay"><div class="spinner"></div><div class="loading-text" id="loading-text">Submitting…</div></div>
 
 <div class="header">
   <div class="header-left">
@@ -511,10 +88,7 @@ body{
       <span class="back-arrow">←</span>
       <span class="back-label" id="h-back">Portal</span>
     </div>
-    <div>
-      <div class="header-title" id="h-title">Refund Record</div>
-      <div class="header-sub" id="h-sub">REFUND LOG</div>
-    </div>
+    <div><div class="header-title" id="h-title">Refund Record</div><div class="header-sub" id="h-sub">REFUND LOG</div></div>
   </div>
   <div class="header-right">
     <div class="lang-toggle">
@@ -524,75 +98,33 @@ body{
   </div>
 </div>
 
-<div class="no-station" id="no-station-bar">
-  <div class="no-station-msg" id="ns-msg"></div>
-  <a class="no-station-link" href="index.html" id="ns-link"></a>
-</div>
-
-<div class="station-bar" id="station-bar">
-  <div class="station-dot"></div>
-  <div class="station-name" id="station-display"></div>
-  <div class="refund-badge" id="refund-badge">REFUND</div>
-</div>
+<div class="no-station" id="no-station-bar"><div class="no-station-msg" id="ns-msg"></div><a class="no-station-link" href="index.html" id="ns-link"></a></div>
+<div class="station-bar" id="station-bar"><div class="station-dot"></div><div class="station-name" id="station-display"></div><div class="refund-badge" id="refund-badge">REFUND</div></div>
 
 <div class="container">
-
   <div class="screen active" id="screen-form">
-    <div class="form-header">
-      <div class="form-title" id="f-title">Refund Record</div>
-      <div class="form-sub" id="f-sub">Record refund details after the refund has been completed.</div>
-    </div>
+    <div class="form-header"><div class="form-title" id="f-title">Refund Record</div><div class="form-sub" id="f-sub">Record refund details after the refund has been completed.</div></div>
 
     <div class="section">
-      <div class="section-header">
-        <span class="section-icon">↩️</span>
-        <span class="section-title" id="sec-basic">Basic Details</span>
-      </div>
-
+      <div class="section-header"><span class="section-icon">↩️</span><span class="section-title" id="sec-basic">Basic Details</span></div>
       <div class="section-body">
-        <div class="field full">
-          <label id="l-datetime">Date & Time</label>
-          <input type="text" id="f-datetime" readonly>
-        </div>
-
+        <div class="field full"><label id="l-datetime">Date & Time</label><input type="text" id="f-datetime" readonly></div>
         <div class="field">
           <label id="l-staff">Staff Name *</label>
           <input type="text" id="f-staff">
+          <div id="staff-hint" class="staff-hint" style="display:none"></div>
         </div>
-
-        <div class="field">
-          <label id="l-pos">POS No. *</label>
-          <select id="f-pos"></select>
-        </div>
-
-        <div class="field">
-          <label id="l-amount">Refund Amount *</label>
-          <input type="number" id="f-amount" step="0.01" min="0">
-        </div>
-
-        <div class="field">
-          <label id="l-payment">Payment Method *</label>
+        <div class="field"><label id="l-pos">POS No. *</label><select id="f-pos"></select></div>
+        <div class="field"><label id="l-amount">Refund Amount *</label><input type="number" id="f-amount" step="0.01" min="0"></div>
+        <div class="field"><label id="l-payment">Payment Method *</label>
           <select id="f-payment">
             <option value="">—</option>
-            <option>Cash</option>
-            <option>Card</option>
-            <option>EFTPOS</option>
-            <option>Account</option>
+            <option>Cash</option><option>Card</option><option>EFTPOS</option><option>Account</option>
           </select>
         </div>
-
-        <div class="field">
-          <label id="l-receipt">Receipt Number *</label>
-          <input type="text" id="f-receipt" oninput="this.value=this.value.toUpperCase()">
-        </div>
-
-        <div class="field">
-          <label id="l-receipttime">Receipt Time *</label>
-          <input type="time" id="f-receipttime">
-        </div>
-
-        <div class="field full">
-          <label id="l-reasontype">Reason Type *</label>
+        <div class="field"><label id="l-receipt">Receipt Number *</label><input type="text" id="f-receipt" oninput="this.value=this.value.toUpperCase()"></div>
+        <div class="field"><label id="l-receipttime">Receipt Time *</label><input type="time" id="f-receipttime"></div>
+        <div class="field full"><label id="l-reasontype">Reason Type *</label>
           <select id="f-reasontype">
             <option value="">—</option>
             <option value="Wrong item">Wrong item</option>
@@ -605,39 +137,19 @@ body{
             <option value="Other">Other</option>
           </select>
         </div>
-
-        <div class="field full">
-          <label id="l-reason">Refund Reason Details *</label>
-          <textarea id="f-reason"></textarea>
-        </div>
-
-        <div class="field full">
-          <label id="l-notes">Notes</label>
-          <textarea id="f-notes"></textarea>
-        </div>
+        <div class="field full"><label id="l-reason">Refund Reason Details *</label><textarea id="f-reason"></textarea></div>
+        <div class="field full"><label id="l-notes">Notes</label><textarea id="f-notes"></textarea></div>
       </div>
     </div>
 
     <div class="alert" id="alertBox"></div>
-
-    <div class="btn-wrap">
-      <button class="btn btn-warn" id="review-btn" onclick="goReview()"></button>
-    </div>
+    <div class="btn-wrap"><button class="btn btn-warn" id="review-btn" onclick="goReview()"></button></div>
   </div>
 
   <div class="screen" id="screen-confirm">
-    <div class="confirm-header">
-      <div class="confirm-title" id="cf-title"></div>
-      <div class="confirm-sub" id="cf-sub"></div>
-    </div>
-
-    <div class="confirm-section">
-      <div class="confirm-section-title" id="cf-basic-title"></div>
-      <div id="confirm-body"></div>
-    </div>
-
+    <div class="confirm-header"><div class="confirm-title" id="cf-title"></div><div class="confirm-sub" id="cf-sub"></div></div>
+    <div class="confirm-section"><div class="confirm-section-title" id="cf-basic-title"></div><div id="confirm-body"></div></div>
     <div class="alert" id="cf-alert"></div>
-
     <div class="btn-wrap">
       <button class="btn btn-secondary" id="cf-edit-btn" onclick="showScreen('form')"></button>
       <button class="btn btn-warn" id="cf-submit-btn" onclick="submitRefund()"></button>
@@ -657,311 +169,112 @@ body{
       </div>
     </div>
   </div>
-
 </div>
 
 <script>
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
-let station = localStorage.getItem('ap_station') || '';
-let lang = localStorage.getItem('ap_lang') || 'en';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
+let station=localStorage.getItem('ap_station')||'';
+let lang=localStorage.getItem('ap_lang')||'en';
+const openedAt=new Date();
 
-const openedAt = new Date();
-
-const S = {
-  en: {
-    pageTitle:'Refund Record — Aries Petroleum',
-    hBack:'Portal', hTitle:'Refund Record', hSub:'REFUND LOG',
-    nsMsg:'No station selected. Please return to the portal first.',
-    nsLink:'← Go to Portal',
-    badge:'REFUND',
-    fTitle:'Refund Record',
-    fSub:'Record refund details after the refund has been completed.',
-    secBasic:'Basic Details',
-    lDateTime:'Date & Time',
-    lStaff:'Staff Name *',
-    lPOS:'POS No. *',
-    lAmount:'Refund Amount *',
-    lPayment:'Payment Method *',
-    lReceipt:'Receipt Number *',
-    lReceiptTime:'Receipt Time *',
-    lReasonType:'Reason Type *',
-    lReason:'Refund Reason Details *',
-    lNotes:'Notes',
-    review:'Review & Submit →',
-    cfTitle:'Review & Submit',
-    cfSub:'Check refund details before submitting.',
-    cfBasicTitle:'Refund Details',
-    cfEdit:'← Edit',
-    cfSubmit:'Submit Refund Record',
-    cfNote:'Data will be saved to Google Sheets.',
-    succTitle:'Refund Record Saved',
-    succMsg:'The refund record has been submitted.',
-    succAnother:'New Refund Record',
-    succHome:'← Back to Portal',
-    submitting:'Submitting…',
-    errStaff:'Please enter staff name.',
-    errPOS:'Please select POS number.',
-    errAmount:'Please enter refund amount.',
-    errPayment:'Please select payment method.',
-    errReceipt:'Please enter receipt number.',
-    errReceiptTime:'Please enter receipt time.',
-    errReasonType:'Please select reason type.',
-    errReason:'Please enter refund reason details.',
-    fieldStation:'Station',
-    fieldDateTime:'Date & Time',
-    fieldStaff:'Staff',
-    fieldPOS:'POS No.',
-    fieldAmount:'Refund Amount',
-    fieldPayment:'Payment Method',
-    fieldReceipt:'Receipt Number',
-    fieldReceiptTime:'Receipt Time',
-    fieldReasonType:'Reason Type',
-    fieldReason:'Reason Details',
-    fieldNotes:'Notes',
-    na:'—'
-  },
-  zh: {
-    pageTitle:'退款登记 — Aries Petroleum',
-    hBack:'首页', hTitle:'退款登记', hSub:'退款记录',
-    nsMsg:'未选择站点，请先返回首页选择站点。',
-    nsLink:'← 返回首页',
-    badge:'退款',
-    fTitle:'退款登记',
-    fSub:'退款完成后，在此记录退款信息。',
-    secBasic:'基础信息',
-    lDateTime:'日期与时间',
-    lStaff:'员工姓名 *',
-    lPOS:'POS 机号 *',
-    lAmount:'退款金额 *',
-    lPayment:'付款方式 *',
-    lReceipt:'发票号码 *',
-    lReceiptTime:'发票时间 *',
-    lReasonType:'退款类型 *',
-    lReason:'退款原因说明 *',
-    lNotes:'备注',
-    review:'核对并提交 →',
-    cfTitle:'确认提交',
-    cfSub:'提交前请核对退款信息。',
-    cfBasicTitle:'退款信息',
-    cfEdit:'← 返回修改',
-    cfSubmit:'确认提交退款记录',
-    cfNote:'数据将保存至 Google Sheets。',
-    succTitle:'退款记录已保存',
-    succMsg:'退款记录已提交。',
-    succAnother:'新建退款记录',
-    succHome:'← 返回首页',
-    submitting:'提交中…',
-    errStaff:'请填写员工姓名。',
-    errPOS:'请选择 POS 机号。',
-    errAmount:'请填写退款金额。',
-    errPayment:'请选择付款方式。',
-    errReceipt:'请填写发票号码。',
-    errReceiptTime:'请填写发票时间。',
-    errReasonType:'请选择退款类型。',
-    errReason:'请填写退款原因说明。',
-    fieldStation:'站点',
-    fieldDateTime:'日期与时间',
-    fieldStaff:'员工',
-    fieldPOS:'POS 机号',
-    fieldAmount:'退款金额',
-    fieldPayment:'付款方式',
-    fieldReceipt:'发票号码',
-    fieldReceiptTime:'发票时间',
-    fieldReasonType:'退款类型',
-    fieldReason:'原因说明',
-    fieldNotes:'备注',
-    na:'—'
-  }
+const S={
+  en:{pageTitle:'Refund Record — Aries Petroleum',hBack:'Portal',hTitle:'Refund Record',hSub:'REFUND LOG',nsMsg:'No station selected. Please return to the portal first.',nsLink:'← Go to Portal',badge:'REFUND',fTitle:'Refund Record',fSub:'Record refund details after the refund has been completed.',secBasic:'Basic Details',lDateTime:'Date & Time',lStaff:'Staff Name *',lPOS:'POS No. *',lAmount:'Refund Amount *',lPayment:'Payment Method *',lReceipt:'Receipt Number *',lReceiptTime:'Receipt Time *',lReasonType:'Reason Type *',lReason:'Refund Reason Details *',lNotes:'Notes',review:'Review & Submit →',cfTitle:'Review & Submit',cfSub:'Check refund details before submitting.',cfBasicTitle:'Refund Details',cfEdit:'← Edit',cfSubmit:'Submit Refund Record',cfNote:'Data will be saved to Google Sheets.',succTitle:'Refund Record Saved',succMsg:'The refund record has been submitted.',succAnother:'New Refund Record',succHome:'← Back to Portal',submitting:'Submitting…',errStaff:'Please enter staff name.',errPOS:'Please select POS number.',errAmount:'Please enter refund amount.',errPayment:'Please select payment method.',errReceipt:'Please enter receipt number.',errReceiptTime:'Please enter receipt time.',errReasonType:'Please select reason type.',errReason:'Please enter refund reason details.',fieldStation:'Station',fieldDateTime:'Date & Time',fieldStaff:'Staff',fieldPOS:'POS No.',fieldAmount:'Refund Amount',fieldPayment:'Payment Method',fieldReceipt:'Receipt Number',fieldReceiptTime:'Receipt Time',fieldReasonType:'Reason Type',fieldReason:'Reason Details',fieldNotes:'Notes',na:'—',staffHint:'✎ Not you? Tap to change'},
+  zh:{pageTitle:'退款登记 — Aries Petroleum',hBack:'首页',hTitle:'退款登记',hSub:'退款记录',nsMsg:'未选择站点，请先返回首页选择站点。',nsLink:'← 返回首页',badge:'退款',fTitle:'退款登记',fSub:'退款完成后，在此记录退款信息。',secBasic:'基础信息',lDateTime:'日期与时间',lStaff:'员工姓名 *',lPOS:'POS 机号 *',lAmount:'退款金额 *',lPayment:'付款方式 *',lReceipt:'发票号码 *',lReceiptTime:'发票时间 *',lReasonType:'退款类型 *',lReason:'退款原因说明 *',lNotes:'备注',review:'核对并提交 →',cfTitle:'确认提交',cfSub:'提交前请核对退款信息。',cfBasicTitle:'退款信息',cfEdit:'← 返回修改',cfSubmit:'确认提交退款记录',cfNote:'数据将保存至 Google Sheets。',succTitle:'退款记录已保存',succMsg:'退款记录已提交。',succAnother:'新建退款记录',succHome:'← 返回首页',submitting:'提交中…',errStaff:'请填写员工姓名。',errPOS:'请选择 POS 机号。',errAmount:'请填写退款金额。',errPayment:'请选择付款方式。',errReceipt:'请填写发票号码。',errReceiptTime:'请填写发票时间。',errReasonType:'请选择退款类型。',errReason:'请填写退款原因说明。',fieldStation:'站点',fieldDateTime:'日期与时间',fieldStaff:'员工',fieldPOS:'POS 机号',fieldAmount:'退款金额',fieldPayment:'付款方式',fieldReceipt:'发票号码',fieldReceiptTime:'发票时间',fieldReasonType:'退款类型',fieldReason:'原因说明',fieldNotes:'备注',na:'—',staffHint:'✎ 不是你？点击更改'}
 };
+function t(){return S[lang];}
 
-function t(){ return S[lang]; }
-
-function setLang(l){
-  lang = l;
-  localStorage.setItem('ap_lang', l);
-  document.querySelectorAll('.lang-btn').forEach(b=>{
-    b.classList.toggle('active',(l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文'));
-  });
-  applyLang();
+// ── Staff autofill ────────────────────────────────────────────────────────────
+function getStaffName(){
+  const name=localStorage.getItem('ap_staff_name')||'';
+  const ts=parseInt(localStorage.getItem('ap_staff_name_ts')||'0');
+  return(name&&ts&&(Date.now()-ts)<4*60*60*1000)?name:'';
 }
+function initStaffField(){
+  const name=getStaffName();
+  const inp=document.getElementById('f-staff');
+  const hint=document.getElementById('staff-hint');
+  if(name){
+    inp.value=name;inp.readOnly=true;inp.style.background='var(--surface2)';inp.style.color='var(--muted)';
+    hint.textContent=t().staffHint;hint.style.display='block';
+    hint.onclick=()=>{inp.readOnly=false;inp.style.background='';inp.style.color='';inp.value='';hint.style.display='none';inp.focus();};
+  } else {
+    inp.readOnly=false;inp.style.background='';inp.style.color='';hint.style.display='none';
+  }
+}
+
+function setLang(l){lang=l;localStorage.setItem('ap_lang',l);document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',(l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文'));});applyLang();}
 
 function applyLang(){
-  const L = t();
-  document.title = L.pageTitle;
-  setText('h-back',L.hBack); setText('h-title',L.hTitle); setText('h-sub',L.hSub);
-  setText('ns-msg',L.nsMsg); setText('ns-link',L.nsLink);
-  setText('refund-badge',L.badge);
-  setText('f-title',L.fTitle); setText('f-sub',L.fSub);
-  setText('sec-basic',L.secBasic);
-  setText('l-datetime',L.lDateTime); setText('l-staff',L.lStaff);
-  setText('l-pos',L.lPOS); setText('l-amount',L.lAmount);
-  setText('l-payment',L.lPayment); setText('l-receipt',L.lReceipt);
-  setText('l-receipttime',L.lReceiptTime); setText('l-reasontype',L.lReasonType);
-  setText('l-reason',L.lReason); setText('l-notes',L.lNotes);
-  setText('review-btn',L.review);
-  setText('cf-title',L.cfTitle); setText('cf-sub',L.cfSub); setText('cf-basic-title',L.cfBasicTitle);
-  setText('cf-edit-btn',L.cfEdit); setText('cf-submit-btn',L.cfSubmit); setText('cf-note',L.cfNote);
-  setText('succ-title',L.succTitle); setText('succ-msg',L.succMsg);
-  setText('succ-another',L.succAnother); setText('succ-home',L.succHome);
-  if(station) document.getElementById('station-display').innerHTML = `<span>${station}</span>`;
-  document.getElementById('f-datetime').value = formatDateTime(openedAt);
+  const L=t();document.title=L.pageTitle;
+  setText('h-back',L.hBack);setText('h-title',L.hTitle);setText('h-sub',L.hSub);setText('ns-msg',L.nsMsg);setText('ns-link',L.nsLink);setText('refund-badge',L.badge);setText('f-title',L.fTitle);setText('f-sub',L.fSub);setText('sec-basic',L.secBasic);setText('l-datetime',L.lDateTime);setText('l-staff',L.lStaff);setText('l-pos',L.lPOS);setText('l-amount',L.lAmount);setText('l-payment',L.lPayment);setText('l-receipt',L.lReceipt);setText('l-receipttime',L.lReceiptTime);setText('l-reasontype',L.lReasonType);setText('l-reason',L.lReason);setText('l-notes',L.lNotes);setText('review-btn',L.review);setText('cf-title',L.cfTitle);setText('cf-sub',L.cfSub);setText('cf-basic-title',L.cfBasicTitle);setText('cf-edit-btn',L.cfEdit);setText('cf-submit-btn',L.cfSubmit);setText('cf-note',L.cfNote);setText('succ-title',L.succTitle);setText('succ-msg',L.succMsg);setText('succ-another',L.succAnother);setText('succ-home',L.succHome);
+  if(station) document.getElementById('station-display').innerHTML=`<span>${station}</span>`;
+  const hint=document.getElementById('staff-hint');if(hint&&hint.style.display!=='none') hint.textContent=L.staffHint;
+  document.getElementById('f-datetime').value=formatDateTime(openedAt);
 }
 
-function setText(id,val){
-  const el=document.getElementById(id);
-  if(el&&val!==undefined) el.textContent=val;
-}
+function setText(id,val){const el=document.getElementById(id);if(el&&val!==undefined)el.textContent=val;}
 
 function setupPOSOptions(){
-  const pos = document.getElementById('f-pos');
-  const isSinopec = station.toLowerCase().startsWith('sinopec');
-  pos.innerHTML = '<option value="">—</option><option value="POS1">POS 1</option>' +
-    (isSinopec ? '<option value="POS2">POS 2</option>' : '');
+  const pos=document.getElementById('f-pos');
+  const isSinopec=station.toLowerCase().startsWith('sinopec');
+  pos.innerHTML='<option value="">—</option><option value="POS1">POS 1</option>'+(isSinopec?'<option value="POS2">POS 2</option>':'')+'<option value="POS1">POS 1</option><option value="POS2">POS 2</option>';
+  pos.innerHTML='<option value="">—</option><option value="POS1">POS 1</option><option value="POS2">POS 2</option>';
 }
 
-function setDefaultReceiptTime(){
-  const h = String(openedAt.getHours()).padStart(2,'0');
-  const m = String(openedAt.getMinutes()).padStart(2,'0');
-  document.getElementById('f-receipttime').value = `${h}:${m}`;
-}
+function setDefaultReceiptTime(){const h=String(openedAt.getHours()).padStart(2,'0');const m=String(openedAt.getMinutes()).padStart(2,'0');document.getElementById('f-receipttime').value=`${h}:${m}`;}
 
-function formatDateTime(d){
-  return d.toLocaleDateString(lang==='en'?'en-AU':'zh-CN',{
-    weekday:'long',year:'numeric',month:'long',day:'numeric'
-  }) + ' ' + d.toLocaleTimeString(lang==='en'?'en-AU':'zh-CN',{
-    hour:'2-digit',minute:'2-digit'
-  });
-}
+function formatDateTime(d){return d.toLocaleDateString(lang==='en'?'en-AU':'zh-CN',{weekday:'long',year:'numeric',month:'long',day:'numeric'})+' '+d.toLocaleTimeString(lang==='en'?'en-AU':'zh-CN',{hour:'2-digit',minute:'2-digit'});}
 
-function val(id){ return document.getElementById(id).value.trim(); }
+function val(id){return document.getElementById(id).value.trim();}
 
 function goReview(){
-  const L = t();
-  hideAlert('alertBox');
-
+  const L=t();hideAlert('alertBox');
   if(!val('f-staff')) return showAlert('alertBox',L.errStaff);
   if(!val('f-pos')) return showAlert('alertBox',L.errPOS);
-  if(!val('f-amount') || Number(val('f-amount')) <= 0) return showAlert('alertBox',L.errAmount);
+  if(!val('f-amount')||Number(val('f-amount'))<=0) return showAlert('alertBox',L.errAmount);
   if(!val('f-payment')) return showAlert('alertBox',L.errPayment);
   if(!val('f-receipt')) return showAlert('alertBox',L.errReceipt);
   if(!val('f-receipttime')) return showAlert('alertBox',L.errReceiptTime);
   if(!val('f-reasontype')) return showAlert('alertBox',L.errReasonType);
   if(!val('f-reason')) return showAlert('alertBox',L.errReason);
-
-  buildConfirm();
-  showScreen('confirm');
+  buildConfirm();showScreen('confirm');
 }
 
 function buildConfirm(){
-  const L = t();
-  const rows = [
-    [L.fieldStation, station],
-    [L.fieldDateTime, formatDateTime(openedAt)],
-    [L.fieldStaff, val('f-staff')],
-    [L.fieldPOS, val('f-pos')],
-    [L.fieldAmount, '$' + Number(val('f-amount')).toFixed(2)],
-    [L.fieldPayment, val('f-payment')],
-    [L.fieldReceipt, val('f-receipt')],
-    [L.fieldReceiptTime, val('f-receipttime')],
-    [L.fieldReasonType, val('f-reasontype')],
-    [L.fieldReason, val('f-reason')],
-    [L.fieldNotes, val('f-notes') || L.na]
-  ];
-
-  document.getElementById('confirm-body').innerHTML = rows.map(([k,v])=>`
-    <div class="confirm-row">
-      <div class="confirm-key">${escHtml(k)}</div>
-      <div class="confirm-val">${escHtml(v)}</div>
-    </div>
-  `).join('');
+  const L=t();
+  const rows=[[L.fieldStation,station],[L.fieldDateTime,formatDateTime(openedAt)],[L.fieldStaff,val('f-staff')],[L.fieldPOS,val('f-pos')],[L.fieldAmount,'$'+Number(val('f-amount')).toFixed(2)],[L.fieldPayment,val('f-payment')],[L.fieldReceipt,val('f-receipt')],[L.fieldReceiptTime,val('f-receipttime')],[L.fieldReasonType,val('f-reasontype')],[L.fieldReason,val('f-reason')],[L.fieldNotes,val('f-notes')||L.na]];
+  document.getElementById('confirm-body').innerHTML=rows.map(([k,v])=>`<div class="confirm-row"><div class="confirm-key">${escHtml(k)}</div><div class="confirm-val">${escHtml(v)}</div></div>`).join('');
 }
 
 function submitRefund(){
-  const L = t();
-
-  const referenceNo = 'RF-' +
-    new Date().toISOString().slice(0,10).replace(/-/g,'') +
-    '-' +
-    Math.floor(Math.random()*9000+1000);
-
-  const payload = {
-    formType:'refundRecord',
-    submittedAt:new Date().toISOString(),
-    openedAt:openedAt.toISOString(),
-    referenceNo,
-    station,
-    lang,
-    staffName:val('f-staff'),
-    posNo:val('f-pos'),
-    refundAmount:Number(val('f-amount')).toFixed(2),
-    paymentMethod:val('f-payment'),
-    receiptNumber:val('f-receipt'),
-    receiptTime:val('f-receipttime'),
-    reasonType:val('f-reasontype'),
-    refundReason:val('f-reason'),
-    notes:val('f-notes')
-  };
-
-onSuccess(referenceNo);
-fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+  const referenceNo='RF-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+Math.floor(Math.random()*9000+1000);
+  const payload={formType:'refundRecord',submittedAt:new Date().toISOString(),openedAt:openedAt.toISOString(),referenceNo,station,lang,staffName:val('f-staff'),posNo:val('f-pos'),refundAmount:Number(val('f-amount')).toFixed(2),paymentMethod:val('f-payment'),receiptNumber:val('f-receipt'),receiptTime:val('f-receipttime'),reasonType:val('f-reasontype'),refundReason:val('f-reason'),notes:val('f-notes')};
+  onSuccess(referenceNo);
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
 }
 
-function onSuccess(referenceNo){
-  document.getElementById('succ-ref').textContent = 'Ref: ' + referenceNo;
-  showScreen('success');
-}
+function onSuccess(referenceNo){document.getElementById('succ-ref').textContent='Ref: '+referenceNo;showScreen('success');}
 
 function resetForm(){
-  ['f-staff','f-amount','f-receipt','f-reason','f-notes'].forEach(id=>{
-    document.getElementById(id).value='';
-  });
-  ['f-pos','f-payment','f-reasontype'].forEach(id=>{
-    document.getElementById(id).value='';
-  });
-  setDefaultReceiptTime();
-  hideAlert('alertBox');
+  ['f-staff','f-amount','f-receipt','f-reason','f-notes'].forEach(id=>{document.getElementById(id).value='';});
+  ['f-pos','f-payment','f-reasontype'].forEach(id=>{document.getElementById(id).value='';});
+  setDefaultReceiptTime();hideAlert('alertBox');
+  initStaffField();
   showScreen('form');
 }
 
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+id).classList.add('active');
-  window.scrollTo(0,0);
-}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');window.scrollTo(0,0);}
+function showAlert(id,msg){const a=document.getElementById(id);Object.assign(a.style,{background:'var(--warn-bg)',borderColor:'var(--warn-border)',color:'var(--warn)'});a.textContent=msg;a.classList.add('show');a.scrollIntoView({behavior:'smooth',block:'center'});}
+function hideAlert(id){const el=document.getElementById(id);if(el)el.classList.remove('show');}
+function escHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function goPortal(){window.location.href='index.html';}
 
-function showAlert(id,msg){
-  const a=document.getElementById(id);
-  Object.assign(a.style,{background:'var(--warn-bg)',borderColor:'var(--warn-border)',color:'var(--warn)'});
-  a.textContent=msg;
-  a.classList.add('show');
-  a.scrollIntoView({behavior:'smooth',block:'center'});
-}
-
-function hideAlert(id){
-  const el=document.getElementById(id);
-  if(el) el.classList.remove('show');
-}
-
-function escHtml(str){
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function goPortal(){ window.location.href='index.html'; }
-
-if(!station){
-  document.getElementById('no-station-bar').classList.add('show');
-  document.getElementById('station-bar').style.display='none';
-  document.getElementById('screen-form').style.display='none';
-}
-
-document.querySelectorAll('.lang-btn').forEach(b=>{
-  b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
-});
-
+if(!station){document.getElementById('no-station-bar').classList.add('show');document.getElementById('station-bar').style.display='none';document.getElementById('screen-form').style.display='none';}
+document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));});
 setupPOSOptions();
 setDefaultReceiptTime();
+initStaffField();
 applyLang();
 </script>
-
 </body>
 </html>
