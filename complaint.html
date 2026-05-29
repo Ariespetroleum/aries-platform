@@ -7,283 +7,69 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --sinopec-red:#E60012;
-  --sinopec-red-dark:#B8000E;
-  --bp-green:#00A651;
-  --liberty-blue:#003DA5;
-  --liberty-red:#CE1126;
-
-  --bg:#F4F6F8;
-  --surface:#FFFFFF;
-  --surface-soft:#F8FAFC;
-  --border:#DDE3EA;
-  --border-strong:#C9D2DD;
-
-  --text:#142033;
-  --muted:#667085;
-  --label:#344054;
-
-  --sev-low:#16a34a;
-  --sev-low-bg:#f0fdf4;
-  --sev-mid:#d97706;
-  --sev-mid-bg:#fffbeb;
-  --sev-high:#dc2626;
-  --sev-high-bg:#fef2f2;
-
-  --radius:16px;
-  --radius-sm:10px;
-  --sans:'DM Sans',sans-serif;
-  --mono:'DM Mono',monospace;
-  --shadow:0 4px 18px rgba(15,23,42,.08);
-  --shadow-sm:0 2px 8px rgba(15,23,42,.06);
-}
-
+:root{--sinopec-red:#E60012;--sinopec-red-dark:#B8000E;--bp-green:#00A651;--liberty-blue:#003DA5;--liberty-red:#CE1126;--bg:#F4F6F8;--surface:#FFFFFF;--surface-soft:#F8FAFC;--border:#DDE3EA;--border-strong:#C9D2DD;--text:#142033;--muted:#667085;--label:#344054;--sev-low:#16a34a;--sev-low-bg:#f0fdf4;--sev-mid:#d97706;--sev-mid-bg:#fffbeb;--sev-high:#dc2626;--sev-high-bg:#fef2f2;--radius:16px;--radius-sm:10px;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace;--shadow:0 4px 18px rgba(15,23,42,.08);--shadow-sm:0 2px 8px rgba(15,23,42,.06);}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-
-body{
-  font-family:var(--sans);
-  background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);
-  color:var(--text);
-  min-height:100vh;
-  padding-bottom:48px;
-}
-
-/* HEADER */
-.header{
-  background:linear-gradient(135deg,var(--sinopec-red) 0%,var(--liberty-blue) 100%);
-  padding:14px 20px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  position:sticky;top:0;z-index:100;
-  box-shadow:0 6px 20px rgba(0,0,0,.18);
-}
+body{font-family:var(--sans);background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text);min-height:100vh;padding-bottom:48px}
+.header{background:linear-gradient(135deg,var(--sinopec-red) 0%,var(--liberty-blue) 100%);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 6px 20px rgba(0,0,0,.18)}
 .header-left{display:flex;align-items:center;gap:10px}
-.header-logo{
-  width:32px;height:32px;
-  background:rgba(255,255,255,.16);
-  border:1px solid rgba(255,255,255,.24);
-  border-radius:9px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;flex-shrink:0;
-}
+.header-logo{width:32px;height:32px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
 .brand{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;color:#fff}
 .brand span{opacity:.6;display:block;font-size:10px;letter-spacing:.06em;margin-top:1px}
-.back-btn{
-  display:flex;align-items:center;gap:5px;
-  background:rgba(255,255,255,.15);
-  border:1px solid rgba(255,255,255,.25);
-  color:#fff;border-radius:8px;
-  padding:6px 12px;font-size:12px;font-weight:600;
-  cursor:pointer;font-family:var(--sans);
-  text-decoration:none;transition:background .15s;
-}
+.back-btn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--sans);text-decoration:none;transition:background .15s}
 .back-btn:hover{background:rgba(255,255,255,.25)}
-
 .lang-toggle{display:flex;gap:4px;margin-left:8px}
-.lang-btn{
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-  color:rgba(255,255,255,.75);border-radius:6px;
-  padding:4px 8px;font-size:11px;font-weight:600;
-  cursor:pointer;font-family:var(--sans);transition:all .15s;
-}
-.lang-btn.active{background:rgba(255,255,255,.9);color:var(--sinopec-red);}
-
-/* STATION BAR */
-.station-bar{
-  background:var(--surface);
-  border-bottom:1px solid var(--border);
-  padding:10px 20px;
-  display:flex;align-items:center;gap:8px;
-  font-size:13px;color:var(--muted);
-}
+.lang-btn{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.75);border-radius:6px;padding:4px 8px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--sans);transition:all .15s}
+.lang-btn.active{background:rgba(255,255,255,.9);color:var(--sinopec-red)}
+.station-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 .station-bar strong{color:var(--text);font-weight:600}
-.no-station-bar{
-  display:none;
-  background:#FFF7ED;border-bottom:2px solid #FED7AA;
-  padding:12px 20px;text-align:center;
-  font-size:13px;color:#92400E;font-weight:500;
-}
+.no-station-bar{display:none;background:#FFF7ED;border-bottom:2px solid #FED7AA;padding:12px 20px;text-align:center;font-size:13px;color:#92400E;font-weight:500}
 .no-station-bar a{color:var(--sinopec-red);font-weight:700}
 .no-station-bar.show{display:block}
-
-/* CONTAINER */
 .container{max-width:520px;margin:0 auto;padding:20px 16px}
-
-/* PAGE TITLE */
-.page-header{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:20px;
-  margin-bottom:20px;
-  box-shadow:var(--shadow-sm);
-  display:flex;align-items:flex-start;gap:14px;
-}
-.page-icon{
-  width:48px;height:48px;flex-shrink:0;
-  background:linear-gradient(135deg,var(--sinopec-red),var(--liberty-blue));
-  border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;
-}
+.page-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px;box-shadow:var(--shadow-sm);display:flex;align-items:flex-start;gap:14px}
+.page-icon{width:48px;height:48px;flex-shrink:0;background:linear-gradient(135deg,var(--sinopec-red),var(--liberty-blue));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px}
 .page-header-text h1{font-size:18px;font-weight:700;margin-bottom:4px}
 .page-header-text p{font-size:13px;color:var(--muted);line-height:1.4}
-
-/* FORM CARD */
-.card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:20px;
-  margin-bottom:16px;
-  box-shadow:var(--shadow-sm);
-}
-.section-title{
-  font-size:12px;font-weight:700;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--muted);
-  margin-bottom:14px;padding-bottom:10px;
-  border-bottom:1px solid var(--border);
-}
-
-/* FORM FIELDS */
-.field{margin-bottom:16px}
-.field:last-child{margin-bottom:0}
-.field label{
-  display:block;font-size:13px;font-weight:600;
-  color:var(--label);margin-bottom:6px;
-}
-.field label .req{color:var(--sinopec-red)}
-.field label .opt{color:var(--muted);font-weight:400;font-size:11px}
-
-input[type=text],input[type=tel],input[type=email],
-input[type=date],input[type=time],
-select,textarea{
-  width:100%;
-  padding:11px 14px;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  font-family:var(--sans);font-size:14px;
-  color:var(--text);background:var(--surface-soft);
-  outline:none;transition:border-color .15s,box-shadow .15s;
-  -webkit-appearance:none;appearance:none;
-}
-input:focus,select:focus,textarea:focus{
-  border-color:var(--sinopec-red);
-  box-shadow:0 0 0 3px rgba(230,0,18,.1);
-  background:#fff;
-}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:var(--shadow-sm)}
+.section-title{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.field{margin-bottom:16px}.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--label);margin-bottom:6px}
+.field label .req{color:var(--sinopec-red)}.field label .opt{color:var(--muted);font-weight:400;font-size:11px}
+input[type=text],input[type=tel],input[type=email],input[type=date],input[type=time],select,textarea{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--sans);font-size:14px;color:var(--text);background:var(--surface-soft);outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:var(--sinopec-red);box-shadow:0 0 0 3px rgba(230,0,18,.1);background:#fff}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23667085' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
 textarea{resize:vertical;min-height:90px;line-height:1.5}
-
 .field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-/* SOURCE TOGGLE */
-.source-toggle{
-  display:grid;grid-template-columns:1fr 1fr;gap:8px;
-  margin-top:4px;
-}
-.source-opt{
-  display:flex;align-items:center;gap:8px;
-  padding:12px 14px;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  cursor:pointer;transition:all .15s;
-  background:var(--surface-soft);
-}
+/* staff hint */
+.staff-hint{font-size:11px;color:var(--liberty-blue);margin-top:4px;cursor:pointer;font-family:var(--mono)}
+.source-toggle{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.source-opt{display:flex;align-items:center;gap:8px;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;background:var(--surface-soft)}
 .source-opt:hover{border-color:var(--sinopec-red)}
 .source-opt input[type=radio]{display:none}
-.source-opt.selected{
-  border-color:var(--sinopec-red);
-  background:#FFF1F2;
-}
+.source-opt.selected{border-color:var(--sinopec-red);background:#FFF1F2}
 .source-opt .opt-icon{font-size:20px;flex-shrink:0}
 .source-opt .opt-label{font-size:13px;font-weight:600;color:var(--text)}
 .source-opt .opt-sub{font-size:11px;color:var(--muted);margin-top:1px}
-
-/* SEVERITY */
-.severity-row{
-  display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
-  margin-top:4px;
-}
-.sev-opt{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  padding:12px 8px;
-  border:1.5px solid var(--border);
-  border-radius:var(--radius-sm);
-  cursor:pointer;transition:all .15s;
-  background:var(--surface-soft);
-}
+.severity-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:4px}
+.sev-opt{display:flex;flex-direction:column;align-items:center;gap:4px;padding:12px 8px;border:1.5px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s;background:var(--surface-soft)}
 .sev-opt input[type=radio]{display:none}
-.sev-opt .sev-icon{font-size:20px}
-.sev-opt .sev-label{font-size:12px;font-weight:700;letter-spacing:.04em}
-.sev-opt.sel-low{border-color:var(--sev-low);background:var(--sev-low-bg)}
-.sev-opt.sel-low .sev-label{color:var(--sev-low)}
-.sev-opt.sel-mid{border-color:var(--sev-mid);background:var(--sev-mid-bg)}
-.sev-opt.sel-mid .sev-label{color:var(--sev-mid)}
-.sev-opt.sel-high{border-color:var(--sev-high);background:var(--sev-high-bg)}
-.sev-opt.sel-high .sev-label{color:var(--sev-high)}
-
-/* ALERT */
-.alert{
-  display:none;padding:12px 14px;border-radius:var(--radius-sm);
-  font-size:13px;font-weight:500;margin-bottom:16px;
-  border:1px solid;
-}
+.sev-opt .sev-icon{font-size:20px}.sev-opt .sev-label{font-size:12px;font-weight:700;letter-spacing:.04em}
+.sev-opt.sel-low{border-color:var(--sev-low);background:var(--sev-low-bg)}.sev-opt.sel-low .sev-label{color:var(--sev-low)}
+.sev-opt.sel-mid{border-color:var(--sev-mid);background:var(--sev-mid-bg)}.sev-opt.sel-mid .sev-label{color:var(--sev-mid)}
+.sev-opt.sel-high{border-color:var(--sev-high);background:var(--sev-high-bg)}.sev-opt.sel-high .sev-label{color:var(--sev-high)}
+.alert{display:none;padding:12px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;margin-bottom:16px;border:1px solid}
 .alert.show{display:block}
 .alert-warn{background:#FFF7ED;border-color:#FED7AA;color:#92400E}
 .alert-err{background:#FFF1F2;border-color:#FECDD3;color:#9F1239}
-
-/* SUBMIT */
-.btn-primary{
-  width:100%;padding:14px;
-  background:linear-gradient(135deg,var(--sinopec-red),var(--liberty-blue));
-  color:#fff;border:none;border-radius:var(--radius-sm);
-  font-family:var(--sans);font-size:15px;font-weight:700;
-  cursor:pointer;transition:opacity .15s,transform .1s;
-  letter-spacing:.02em;
-}
-.btn-primary:hover{opacity:.92}
-.btn-primary:active{transform:scale(.98)}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed}
-
-/* SUCCESS SCREEN */
-.screen{display:none}
-.screen.active{display:block}
-
-.success-card{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:var(--radius);
-  padding:36px 24px;
-  text-align:center;
-  box-shadow:var(--shadow);
-}
-.success-icon{
-  width:72px;height:72px;
-  background:linear-gradient(135deg,var(--bp-green),#34d399);
-  border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:32px;margin:0 auto 18px;
-}
+.btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,var(--sinopec-red),var(--liberty-blue));color:#fff;border:none;border-radius:var(--radius-sm);font-family:var(--sans);font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s;letter-spacing:.02em}
+.btn-primary:hover{opacity:.92}.btn-primary:active{transform:scale(.98)}.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.screen{display:none}.screen.active{display:block}
+.success-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:36px 24px;text-align:center;box-shadow:var(--shadow)}
+.success-icon{width:72px;height:72px;background:linear-gradient(135deg,var(--bp-green),#34d399);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 18px}
 .success-title{font-size:20px;font-weight:700;margin-bottom:8px}
 .success-sub{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:6px}
-.success-ref{
-  font-family:var(--mono);font-size:12px;
-  background:var(--surface-soft);border:1px solid var(--border);
-  border-radius:8px;padding:8px 14px;
-  display:inline-block;margin:12px 0 24px;color:var(--muted);
-}
-.btn-outline{
-  width:100%;padding:12px;
-  background:transparent;
-  color:var(--sinopec-red);
-  border:1.5px solid var(--sinopec-red);
-  border-radius:var(--radius-sm);
-  font-family:var(--sans);font-size:14px;font-weight:600;
-  cursor:pointer;transition:all .15s;margin-top:10px;
-}
+.success-ref{font-family:var(--mono);font-size:12px;background:var(--surface-soft);border:1px solid var(--border);border-radius:8px;padding:8px 14px;display:inline-block;margin:12px 0 24px;color:var(--muted)}
+.btn-outline{width:100%;padding:12px;background:transparent;color:var(--sinopec-red);border:1.5px solid var(--sinopec-red);border-radius:var(--radius-sm);font-family:var(--sans);font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;margin-top:10px}
 .btn-outline:hover{background:#FFF1F2}
 </style>
 </head>
@@ -306,50 +92,34 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
 <div class="no-station-bar" id="no-station-bar">
   <span id="ns-msg">No station selected.</span> <a href="index.html" id="ns-link">← Go to Portal</a>
 </div>
-
 <div class="station-bar" id="station-bar">
   <span id="sb-label">Station:</span>&nbsp;<strong id="sb-station"></strong>
 </div>
 
 <div class="container">
-
-  <!-- FORM SCREEN -->
   <div class="screen active" id="screen-form">
-
     <div class="page-header">
       <div class="page-icon">📋</div>
-      <div class="page-header-text">
-        <h1 id="ph-title">Complaint & Issue Log</h1>
-        <p id="ph-sub">Record customer complaints or issues found during inspection.</p>
-      </div>
+      <div class="page-header-text"><h1 id="ph-title">Complaint & Issue Log</h1><p id="ph-sub">Record customer complaints or issues found during inspection.</p></div>
     </div>
 
-    <!-- SOURCE & AREA -->
     <div class="card">
       <div class="section-title" id="sec-source">SOURCE & AREA</div>
-
       <div class="field">
         <label id="lbl-source">Report Type <span class="req">*</span></label>
         <div class="source-toggle">
           <label class="source-opt selected" id="opt-customer" onclick="selectSource('customer')">
             <input type="radio" name="source" value="customer" checked>
             <div class="opt-icon">🙋</div>
-            <div>
-              <div class="opt-label" id="src-cust-lbl">Customer</div>
-              <div class="opt-sub" id="src-cust-sub">Complaint</div>
-            </div>
+            <div><div class="opt-label" id="src-cust-lbl">Customer</div><div class="opt-sub" id="src-cust-sub">Complaint</div></div>
           </label>
           <label class="source-opt" id="opt-staff" onclick="selectSource('staff')">
             <input type="radio" name="source" value="staff">
             <div class="opt-icon">🔍</div>
-            <div>
-              <div class="opt-label" id="src-staff-lbl">Staff</div>
-              <div class="opt-sub" id="src-staff-sub">Inspection finding</div>
-            </div>
+            <div><div class="opt-label" id="src-staff-lbl">Staff</div><div class="opt-sub" id="src-staff-sub">Inspection finding</div></div>
           </label>
         </div>
       </div>
-
       <div class="field">
         <label for="f-area" id="lbl-area">Area <span class="req">*</span></label>
         <select id="f-area">
@@ -361,87 +131,50 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
       </div>
     </div>
 
-    <!-- DATE / TIME / STAFF -->
     <div class="card">
       <div class="section-title" id="sec-details">DETAILS</div>
       <div class="field-row">
-        <div class="field">
-          <label for="f-date" id="lbl-date">Date <span class="req">*</span></label>
-          <input type="date" id="f-date">
-        </div>
-        <div class="field">
-          <label for="f-time" id="lbl-time">Time <span class="req">*</span></label>
-          <input type="time" id="f-time">
-        </div>
+        <div class="field"><label for="f-date" id="lbl-date">Date <span class="req">*</span></label><input type="date" id="f-date"></div>
+        <div class="field"><label for="f-time" id="lbl-time">Time <span class="req">*</span></label><input type="time" id="f-time"></div>
       </div>
       <div class="field">
         <label for="f-staff" id="lbl-staff">Staff Name <span class="req">*</span></label>
-        <input type="text" id="f-staff" placeholder="Your name" id-ph="staff-ph">
+        <input type="text" id="f-staff" placeholder="Your name">
+        <div id="staff-hint" class="staff-hint" style="display:none"></div>
       </div>
     </div>
 
-    <!-- SEVERITY & DESCRIPTION -->
     <div class="card">
       <div class="section-title" id="sec-issue">ISSUE</div>
-
       <div class="field">
         <label id="lbl-sev">Severity <span class="req">*</span></label>
         <div class="severity-row">
-          <label class="sev-opt" id="sev-low" onclick="selectSev('Low')">
-            <input type="radio" name="severity" value="Low">
-            <div class="sev-icon">🟢</div>
-            <div class="sev-label" id="sev-low-lbl">LOW</div>
-          </label>
-          <label class="sev-opt" id="sev-mid" onclick="selectSev('Medium')">
-            <input type="radio" name="severity" value="Medium">
-            <div class="sev-icon">🟡</div>
-            <div class="sev-label" id="sev-mid-lbl">MED</div>
-          </label>
-          <label class="sev-opt" id="sev-high" onclick="selectSev('High')">
-            <input type="radio" name="severity" value="High">
-            <div class="sev-icon">🔴</div>
-            <div class="sev-label" id="sev-high-lbl">HIGH</div>
-          </label>
+          <label class="sev-opt" id="sev-low" onclick="selectSev('Low')"><input type="radio" name="severity" value="Low"><div class="sev-icon">🟢</div><div class="sev-label" id="sev-low-lbl">LOW</div></label>
+          <label class="sev-opt" id="sev-mid" onclick="selectSev('Medium')"><input type="radio" name="severity" value="Medium"><div class="sev-icon">🟡</div><div class="sev-label" id="sev-mid-lbl">MED</div></label>
+          <label class="sev-opt" id="sev-high" onclick="selectSev('High')"><input type="radio" name="severity" value="High"><div class="sev-icon">🔴</div><div class="sev-label" id="sev-high-lbl">HIGH</div></label>
         </div>
       </div>
-
       <div class="field">
         <label for="f-desc" id="lbl-desc">Description <span class="req">*</span></label>
-        <textarea id="f-desc" rows="4" id-ph="desc-ph"></textarea>
+        <textarea id="f-desc" rows="4"></textarea>
       </div>
     </div>
 
-    <!-- CUSTOMER INFO (shown only when source = customer) -->
     <div class="card" id="cust-card">
       <div class="section-title" id="sec-cust">CUSTOMER INFO</div>
-      <div class="field">
-        <label for="f-cname" id="lbl-cname">Customer Name <span class="opt">(optional)</span></label>
-        <input type="text" id="f-cname">
-      </div>
-      <div class="field">
-        <label for="f-ccontact" id="lbl-ccontact">Phone / Email <span class="opt">(optional)</span></label>
-        <input type="text" id="f-ccontact">
-      </div>
+      <div class="field"><label for="f-cname" id="lbl-cname">Customer Name <span class="opt">(optional)</span></label><input type="text" id="f-cname"></div>
+      <div class="field"><label for="f-ccontact" id="lbl-ccontact">Phone / Email <span class="opt">(optional)</span></label><input type="text" id="f-ccontact"></div>
     </div>
 
-    <!-- RESOLUTION -->
     <div class="card">
       <div class="section-title" id="sec-res">RESOLUTION</div>
-      <div class="field">
-        <label for="f-action" id="lbl-action">Action Taken / Notes <span class="opt">(optional)</span></label>
-        <textarea id="f-action" rows="3" id-ph="action-ph"></textarea>
-      </div>
+      <div class="field"><label for="f-action" id="lbl-action">Action Taken / Notes <span class="opt">(optional)</span></label><textarea id="f-action" rows="3"></textarea></div>
     </div>
 
     <div class="alert alert-err" id="alertBox"></div>
+    <button class="btn-primary" id="submit-btn" onclick="submitForm()"><span id="submit-lbl">Submit Record</span></button>
+  </div>
 
-    <button class="btn-primary" id="submit-btn" onclick="submitForm()">
-      <span id="submit-lbl">Submit Record</span>
-    </button>
-
-  </div><!-- /screen-form -->
-
-  <!-- SUCCESS SCREEN -->
   <div class="screen" id="screen-success">
     <div class="success-card">
       <div class="success-icon">✓</div>
@@ -452,258 +185,163 @@ textarea{resize:vertical;min-height:90px;line-height:1.5}
       <button class="btn-outline" onclick="goPortal()"><span id="succ-home">← Back to Portal</span></button>
     </div>
   </div>
-
-</div><!-- /container -->
+</div>
 
 <script>
-// ── CONFIG ──
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxAxIY7uGqBnR6FxS8zEp4epc8bzKggMCTNO3PZES7DApeULIrV1FTEjx71St0Npl0k/exec';
+const SHEET_URL='https://script.google.com/macros/s/AKfycbxAxIY7uGqBnR6FxS8zEp4epc8bzKggMCTNO3PZES7DApeULIrV1FTEjx71St0Npl0k/exec';
+let lang=localStorage.getItem('ap_lang')||'en';
+let station=localStorage.getItem('ap_station')||'';
+let selectedSource='customer';
+let selectedSeverity='';
 
-// ── STATE ──
-let lang    = localStorage.getItem('ap_lang')    || 'en';
-let station = localStorage.getItem('ap_station') || '';
-let selectedSource   = 'customer';
-let selectedSeverity = '';
-
-// ── STRINGS ──
-const S = {
-  en: {
-    hSub:'COMPLAINT LOG', hBack:'Portal',
-    nsSub:'No station selected.', nsLink:'← Go to Portal',
-    sbLabel:'Station:',
-    phTitle:'Complaint & Issue Log',
-    phSub:'Record customer complaints or issues found during inspection.',
-    secSource:'SOURCE & AREA', secDetails:'DETAILS', secIssue:'ISSUE', secCust:'CUSTOMER INFO', secRes:'RESOLUTION',
-    lblSource:'Report Type', lblArea:'Area', lblDate:'Date', lblTime:'Time', lblStaff:'Staff Name',
-    lblSev:'Severity', lblDesc:'Description', lblCname:'Customer Name', lblCcontact:'Phone / Email',
-    lblAction:'Action Taken / Notes',
-    areaPh:'— Select area —', areaPump:'⛽ Pump Area', areaWash:'🚗 Car Wash', areaStore:'🏪 Store',
-    srcCustLbl:'Customer', srcCustSub:'Complaint',
-    srcStaffLbl:'Staff', srcStaffSub:'Inspection finding',
-    sevLow:'LOW', sevMid:'MED', sevHigh:'HIGH',
-    staffPh:'Your name', descPh:'Describe the complaint or issue in detail…', actionPh:'What was done to resolve this?',
-    submitLbl:'Submit Record', submitting:'Submitting…',
-    succTitle:'Record Saved', succSub:'The complaint / issue has been logged to Google Sheets.',
-    succAgain:'Log Another', succHome:'← Back to Portal',
-    errArea:'Please select an area.', errTime:'Please enter the time.',
-    errStaff:'Please enter your name.', errSev:'Please select a severity level.',
-    errDesc:'Please describe the complaint or issue.',
-  },
-  zh: {
-    hSub:'投诉记录', hBack:'返回主页',
-    nsSub:'未选择站点。', nsLink:'← 返回主页',
-    sbLabel:'当前站点：',
-    phTitle:'投诉 & 问题记录',
-    phSub:'记录客人投诉或员工巡查中发现的问题。',
-    secSource:'来源与区域', secDetails:'基本信息', secIssue:'问题详情', secCust:'客人信息', secRes:'处理情况',
-    lblSource:'记录类型', lblArea:'区域', lblDate:'日期', lblTime:'时间', lblStaff:'员工姓名',
-    lblSev:'严重程度', lblDesc:'描述', lblCname:'客人姓名', lblCcontact:'电话 / 邮箱',
-    lblAction:'处理方式 / 备注',
-    areaPh:'— 请选择区域 —', areaPump:'⛽ 油泵区', areaWash:'🚗 洗车区', areaStore:'🏪 店内',
-    srcCustLbl:'客人投诉', srcCustSub:'客人反映的问题',
-    srcStaffLbl:'员工发现', srcStaffSub:'巡查中发现的问题',
-    sevLow:'轻微', sevMid:'中等', sevHigh:'严重',
-    staffPh:'你的姓名', descPh:'详细描述投诉内容或发现的问题…', actionPh:'记录已采取的处理措施',
-    submitLbl:'提交记录', submitting:'提交中…',
-    succTitle:'记录已保存', succSub:'投诉/问题已记录到 Google Sheets。',
-    succAgain:'再记一条', succHome:'← 返回主页',
-    errArea:'请选择区域。', errTime:'请输入时间。',
-    errStaff:'请输入员工姓名。', errSev:'请选择严重程度。',
-    errDesc:'请描述投诉或问题内容。',
-  }
+const S={
+  en:{hSub:'COMPLAINT LOG',hBack:'Portal',nsSub:'No station selected.',nsLink:'← Go to Portal',sbLabel:'Station:',phTitle:'Complaint & Issue Log',phSub:'Record customer complaints or issues found during inspection.',secSource:'SOURCE & AREA',secDetails:'DETAILS',secIssue:'ISSUE',secCust:'CUSTOMER INFO',secRes:'RESOLUTION',lblSource:'Report Type',lblArea:'Area',lblDate:'Date',lblTime:'Time',lblStaff:'Staff Name',lblSev:'Severity',lblDesc:'Description',lblCname:'Customer Name',lblCcontact:'Phone / Email',lblAction:'Action Taken / Notes',areaPh:'— Select area —',areaPump:'⛽ Pump Area',areaWash:'🚗 Car Wash',areaStore:'🏪 Store',srcCustLbl:'Customer',srcCustSub:'Complaint',srcStaffLbl:'Staff',srcStaffSub:'Inspection finding',sevLow:'LOW',sevMid:'MED',sevHigh:'HIGH',staffPh:'Your name',descPh:'Describe the complaint or issue in detail…',actionPh:'What was done to resolve this?',submitLbl:'Submit Record',submitting:'Submitting…',succTitle:'Record Saved',succSub:'The complaint / issue has been logged to Google Sheets.',succAgain:'Log Another',succHome:'← Back to Portal',errArea:'Please select an area.',errTime:'Please enter the time.',errStaff:'Please enter your name.',errSev:'Please select a severity level.',errDesc:'Please describe the complaint or issue.',staffHint:'✎ Not you? Tap to change'},
+  zh:{hSub:'投诉记录',hBack:'返回主页',nsSub:'未选择站点。',nsLink:'← 返回主页',sbLabel:'当前站点：',phTitle:'投诉 & 问题记录',phSub:'记录客人投诉或员工巡查中发现的问题。',secSource:'来源与区域',secDetails:'基本信息',secIssue:'问题详情',secCust:'客人信息',secRes:'处理情况',lblSource:'记录类型',lblArea:'区域',lblDate:'日期',lblTime:'时间',lblStaff:'员工姓名',lblSev:'严重程度',lblDesc:'描述',lblCname:'客人姓名',lblCcontact:'电话 / 邮箱',lblAction:'处理方式 / 备注',areaPh:'— 请选择区域 —',areaPump:'⛽ 油泵区',areaWash:'🚗 洗车区',areaStore:'🏪 店内',srcCustLbl:'客人投诉',srcCustSub:'客人反映的问题',srcStaffLbl:'员工发现',srcStaffSub:'巡查中发现的问题',sevLow:'轻微',sevMid:'中等',sevHigh:'严重',staffPh:'你的姓名',descPh:'详细描述投诉内容或发现的问题…',actionPh:'记录已采取的处理措施',submitLbl:'提交记录',submitting:'提交中…',succTitle:'记录已保存',succSub:'投诉/问题已记录到 Google Sheets。',succAgain:'再记一条',succHome:'← 返回主页',errArea:'请选择区域。',errTime:'请输入时间。',errStaff:'请输入员工姓名。',errSev:'请选择严重程度。',errDesc:'请描述投诉或问题内容。',staffHint:'✎ 不是你？点击更改'}
 };
+function t(key){return(S[lang]||S.en)[key]||key;}
 
-function t(key){ return (S[lang]||S.en)[key]||key; }
+// ── Staff autofill ────────────────────────────────────────────────────────────
+function getStaffName(){
+  const name=localStorage.getItem('ap_staff_name')||'';
+  const ts=parseInt(localStorage.getItem('ap_staff_name_ts')||'0');
+  return(name&&ts&&(Date.now()-ts)<4*60*60*1000)?name:'';
+}
+function initStaffField(){
+  const name=getStaffName();
+  const inp=document.getElementById('f-staff');
+  const hint=document.getElementById('staff-hint');
+  if(name){
+    inp.value=name;inp.readOnly=true;inp.style.background='var(--surface-soft)';inp.style.color='var(--muted)';
+    hint.textContent=t('staffHint');hint.style.display='block';
+    hint.onclick=()=>{inp.readOnly=false;inp.style.background='';inp.style.color='';inp.value='';hint.style.display='none';inp.focus();};
+  } else {
+    inp.readOnly=false;inp.style.background='';inp.style.color='';hint.style.display='none';
+  }
+}
 
 function applyLang(){
-  document.querySelectorAll('.lang-btn').forEach(b=>{
-    b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
-  });
-  document.getElementById('h-sub').textContent         = t('hSub');
-  document.getElementById('h-back').textContent        = t('hBack');
-  document.getElementById('ns-msg').textContent        = t('nsSub');
-  document.getElementById('ns-link').textContent       = t('nsLink');
-  document.getElementById('sb-label').textContent      = t('sbLabel');
-  document.getElementById('ph-title').textContent      = t('phTitle');
-  document.getElementById('ph-sub').textContent        = t('phSub');
-  document.getElementById('sec-source').textContent    = t('secSource');
-  document.getElementById('sec-details').textContent   = t('secDetails');
-  document.getElementById('sec-issue').textContent     = t('secIssue');
-  document.getElementById('sec-cust').textContent      = t('secCust');
-  document.getElementById('sec-res').textContent       = t('secRes');
-  document.getElementById('lbl-source').innerHTML      = t('lblSource')+' <span class="req">*</span>';
-  document.getElementById('lbl-area').innerHTML        = t('lblArea')+' <span class="req">*</span>';
-  document.getElementById('lbl-date').innerHTML        = t('lblDate')+' <span class="req">*</span>';
-  document.getElementById('lbl-time').innerHTML        = t('lblTime')+' <span class="req">*</span>';
-  document.getElementById('lbl-staff').innerHTML       = t('lblStaff')+' <span class="req">*</span>';
-  document.getElementById('lbl-sev').innerHTML         = t('lblSev')+' <span class="req">*</span>';
-  document.getElementById('lbl-desc').innerHTML        = t('lblDesc')+' <span class="req">*</span>';
-  document.getElementById('lbl-cname').innerHTML       = t('lblCname')+' <span class="opt">(optional)</span>';
-  document.getElementById('lbl-ccontact').innerHTML    = t('lblCcontact')+' <span class="opt">(optional)</span>';
-  document.getElementById('lbl-action').innerHTML      = t('lblAction')+' <span class="opt">(optional)</span>';
-  document.getElementById('area-ph').textContent       = t('areaPh');
-  document.getElementById('area-pump').textContent     = t('areaPump');
-  document.getElementById('area-wash').textContent     = t('areaWash');
-  document.getElementById('area-store').textContent    = t('areaStore');
-  document.getElementById('src-cust-lbl').textContent  = t('srcCustLbl');
-  document.getElementById('src-cust-sub').textContent  = t('srcCustSub');
-  document.getElementById('src-staff-lbl').textContent = t('srcStaffLbl');
-  document.getElementById('src-staff-sub').textContent = t('srcStaffSub');
-  document.getElementById('sev-low-lbl').textContent   = t('sevLow');
-  document.getElementById('sev-mid-lbl').textContent   = t('sevMid');
-  document.getElementById('sev-high-lbl').textContent  = t('sevHigh');
-  document.getElementById('f-staff').placeholder       = t('staffPh');
-  document.getElementById('f-desc').placeholder        = t('descPh');
-  document.getElementById('f-action').placeholder      = t('actionPh');
-  document.getElementById('submit-lbl').textContent    = t('submitLbl');
-  document.getElementById('succ-title').textContent    = t('succTitle');
-  document.getElementById('succ-sub').textContent      = t('succSub');
-  document.getElementById('succ-again').textContent    = t('succAgain');
-  document.getElementById('succ-home').textContent     = t('succHome');
+  document.querySelectorAll('.lang-btn').forEach(b=>{b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));});
+  document.getElementById('h-sub').textContent=t('hSub');
+  document.getElementById('h-back').textContent=t('hBack');
+  document.getElementById('ns-msg').textContent=t('nsSub');
+  document.getElementById('ns-link').textContent=t('nsLink');
+  document.getElementById('sb-label').textContent=t('sbLabel');
+  document.getElementById('ph-title').textContent=t('phTitle');
+  document.getElementById('ph-sub').textContent=t('phSub');
+  document.getElementById('sec-source').textContent=t('secSource');
+  document.getElementById('sec-details').textContent=t('secDetails');
+  document.getElementById('sec-issue').textContent=t('secIssue');
+  document.getElementById('sec-cust').textContent=t('secCust');
+  document.getElementById('sec-res').textContent=t('secRes');
+  document.getElementById('lbl-source').innerHTML=t('lblSource')+' <span class="req">*</span>';
+  document.getElementById('lbl-area').innerHTML=t('lblArea')+' <span class="req">*</span>';
+  document.getElementById('lbl-date').innerHTML=t('lblDate')+' <span class="req">*</span>';
+  document.getElementById('lbl-time').innerHTML=t('lblTime')+' <span class="req">*</span>';
+  document.getElementById('lbl-staff').innerHTML=t('lblStaff')+' <span class="req">*</span>';
+  document.getElementById('lbl-sev').innerHTML=t('lblSev')+' <span class="req">*</span>';
+  document.getElementById('lbl-desc').innerHTML=t('lblDesc')+' <span class="req">*</span>';
+  document.getElementById('lbl-cname').innerHTML=t('lblCname')+' <span class="opt">(optional)</span>';
+  document.getElementById('lbl-ccontact').innerHTML=t('lblCcontact')+' <span class="opt">(optional)</span>';
+  document.getElementById('lbl-action').innerHTML=t('lblAction')+' <span class="opt">(optional)</span>';
+  document.getElementById('area-ph').textContent=t('areaPh');
+  document.getElementById('area-pump').textContent=t('areaPump');
+  document.getElementById('area-wash').textContent=t('areaWash');
+  document.getElementById('area-store').textContent=t('areaStore');
+  document.getElementById('src-cust-lbl').textContent=t('srcCustLbl');
+  document.getElementById('src-cust-sub').textContent=t('srcCustSub');
+  document.getElementById('src-staff-lbl').textContent=t('srcStaffLbl');
+  document.getElementById('src-staff-sub').textContent=t('srcStaffSub');
+  document.getElementById('sev-low-lbl').textContent=t('sevLow');
+  document.getElementById('sev-mid-lbl').textContent=t('sevMid');
+  document.getElementById('sev-high-lbl').textContent=t('sevHigh');
+  document.getElementById('f-staff').placeholder=t('staffPh');
+  document.getElementById('f-desc').placeholder=t('descPh');
+  document.getElementById('f-action').placeholder=t('actionPh');
+  document.getElementById('submit-lbl').textContent=t('submitLbl');
+  document.getElementById('succ-title').textContent=t('succTitle');
+  document.getElementById('succ-sub').textContent=t('succSub');
+  document.getElementById('succ-again').textContent=t('succAgain');
+  document.getElementById('succ-home').textContent=t('succHome');
+  // update hint text
+  const hint=document.getElementById('staff-hint');
+  if(hint&&hint.style.display!=='none') hint.textContent=t('staffHint');
 }
 
-function setLang(l){
-  lang = l;
-  localStorage.setItem('ap_lang', l);
-  applyLang();
-}
+function setLang(l){lang=l;localStorage.setItem('ap_lang',l);applyLang();}
 
 function selectSource(src){
-  selectedSource = src;
-  document.getElementById('opt-customer').classList.toggle('selected', src==='customer');
-  document.getElementById('opt-staff').classList.toggle('selected', src==='staff');
-  document.getElementById('cust-card').style.display = src==='customer' ? '' : 'none';
+  selectedSource=src;
+  document.getElementById('opt-customer').classList.toggle('selected',src==='customer');
+  document.getElementById('opt-staff').classList.toggle('selected',src==='staff');
+  document.getElementById('cust-card').style.display=src==='customer'?'':'none';
 }
 
 function selectSev(sev){
-  selectedSeverity = sev;
-  ['Low','Medium','High'].forEach(s=>{
-    const el = document.getElementById('sev-'+s.slice(0,s==='Medium'?3:3).toLowerCase().replace('med','mid'));
-    if(el) el.className='sev-opt';
-  });
-  document.getElementById('sev-low').className  = 'sev-opt' + (sev==='Low'    ? ' sel-low'  : '');
-  document.getElementById('sev-mid').className  = 'sev-opt' + (sev==='Medium' ? ' sel-mid'  : '');
-  document.getElementById('sev-high').className = 'sev-opt' + (sev==='High'   ? ' sel-high' : '');
+  selectedSeverity=sev;
+  document.getElementById('sev-low').className='sev-opt'+(sev==='Low'?' sel-low':'');
+  document.getElementById('sev-mid').className='sev-opt'+(sev==='Medium'?' sel-mid':'');
+  document.getElementById('sev-high').className='sev-opt'+(sev==='High'?' sel-high':'');
 }
 
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+id).classList.add('active');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function showErr(msg){
-  const a = document.getElementById('alertBox');
-  a.textContent = msg;
-  a.className = 'alert alert-err show';
-  a.scrollIntoView({behavior:'smooth',block:'center'});
-}
-function hideErr(){ document.getElementById('alertBox').classList.remove('show'); }
-
-function todayStr(){
-  const n=new Date();
-  return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;
-}
-function nowTime(){
-  const n=new Date();
-  return `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;
-}
-function genRef(){
-  const n=new Date();
-  return 'CMP-'+n.getFullYear()+String(n.getMonth()+1).padStart(2,'0')+String(n.getDate()).padStart(2,'0')+'-'+Math.floor(Math.random()*9000+1000);
-}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+function showErr(msg){const a=document.getElementById('alertBox');a.textContent=msg;a.className='alert alert-err show';a.scrollIntoView({behavior:'smooth',block:'center'});}
+function hideErr(){document.getElementById('alertBox').classList.remove('show');}
+function todayStr(){const n=new Date();return `${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
+function nowTime(){const n=new Date();return `${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')}`;}
+function genRef(){const n=new Date();return 'CMP-'+n.getFullYear()+String(n.getMonth()+1).padStart(2,'0')+String(n.getDate()).padStart(2,'0')+'-'+Math.floor(Math.random()*9000+1000);}
 
 function submitForm(){
   hideErr();
-  const area     = document.getElementById('f-area').value;
-  const date     = document.getElementById('f-date').value;
-  const time     = document.getElementById('f-time').value;
-  const staff    = document.getElementById('f-staff').value.trim();
-  const desc     = document.getElementById('f-desc').value.trim();
-  const action   = document.getElementById('f-action').value.trim();
-  const cname    = document.getElementById('f-cname').value.trim();
-  const ccontact = document.getElementById('f-ccontact').value.trim();
-
-  if (!area)             return showErr(t('errArea'));
-  if (!time)             return showErr(t('errTime'));
-  if (!staff)            return showErr(t('errStaff'));
-  if (!selectedSeverity) return showErr(t('errSev'));
-  if (!desc)             return showErr(t('errDesc'));
-
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  document.getElementById('submit-lbl').textContent = t('submitting');
-
-  // Save last staff name
-  localStorage.setItem('ap_last_staff', staff);
-
-  const ref = genRef();
-  const payload = {
-    formType:      'complaintLog',
-    submittedAt:   new Date().toISOString(),
-    referenceNo:   ref,
-    station,
-    date,
-    time,
-    staffName:     staff,
-    source:        selectedSource,   // 'customer' or 'staff'
-    area,                            // 'Pump' | 'Car Wash' | 'Store'
-    severity:      selectedSeverity, // 'Low' | 'Medium' | 'High'
-    description:   desc,
-    customerName:  cname,
-    customerContact: ccontact,
-    actionTaken:   action,
-    lang,
-  };
-
-  // Show success immediately (no-cors can't read response)
-  document.getElementById('succ-ref').textContent = ref;
+  const area=document.getElementById('f-area').value;
+  const date=document.getElementById('f-date').value;
+  const time=document.getElementById('f-time').value;
+  const staff=document.getElementById('f-staff').value.trim();
+  const desc=document.getElementById('f-desc').value.trim();
+  const action=document.getElementById('f-action').value.trim();
+  const cname=document.getElementById('f-cname').value.trim();
+  const ccontact=document.getElementById('f-ccontact').value.trim();
+  if(!area) return showErr(t('errArea'));
+  if(!time) return showErr(t('errTime'));
+  if(!staff) return showErr(t('errStaff'));
+  if(!selectedSeverity) return showErr(t('errSev'));
+  if(!desc) return showErr(t('errDesc'));
+  const btn=document.getElementById('submit-btn');
+  btn.disabled=true;
+  document.getElementById('submit-lbl').textContent=t('submitting');
+  const ref=genRef();
+  const payload={formType:'complaintLog',submittedAt:new Date().toISOString(),referenceNo:ref,station,date,time,staffName:staff,source:selectedSource,area,severity:selectedSeverity,description:desc,customerName:cname,customerContact:ccontact,actionTaken:action,lang};
+  document.getElementById('succ-ref').textContent=ref;
   showScreen('success');
-
-  fetch(SHEET_URL, {
-    method:'POST', mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(payload)
-  }).catch(()=>{});
-
-  btn.disabled = false;
-  document.getElementById('submit-lbl').textContent = t('submitLbl');
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+  btn.disabled=false;
+  document.getElementById('submit-lbl').textContent=t('submitLbl');
 }
 
 function resetForm(){
-  selectedSeverity = '';
-  selectedSource   = 'customer';
-  ['sev-low','sev-mid','sev-high'].forEach(id=>{ document.getElementById(id).className='sev-opt'; });
+  selectedSeverity='';selectedSource='customer';
+  ['sev-low','sev-mid','sev-high'].forEach(id=>{document.getElementById(id).className='sev-opt';});
   document.getElementById('opt-customer').classList.add('selected');
   document.getElementById('opt-staff').classList.remove('selected');
-  document.getElementById('cust-card').style.display = '';
-  document.getElementById('f-area').value    = '';
-  document.getElementById('f-time').value    = nowTime();
-  document.getElementById('f-desc').value    = '';
-  document.getElementById('f-action').value  = '';
-  document.getElementById('f-cname').value   = '';
-  document.getElementById('f-ccontact').value= '';
+  document.getElementById('cust-card').style.display='';
+  document.getElementById('f-area').value='';
+  document.getElementById('f-time').value=nowTime();
+  document.getElementById('f-desc').value='';
+  document.getElementById('f-action').value='';
+  document.getElementById('f-cname').value='';
+  document.getElementById('f-ccontact').value='';
   hideErr();
+  initStaffField();
   showScreen('form');
 }
 
-function goPortal(){ window.location.href = 'index.html'; }
+function goPortal(){window.location.href='index.html';}
 
 // ── INIT ──
-document.getElementById('f-date').value = todayStr();
-document.getElementById('f-time').value = nowTime();
-
-// Pre-fill last staff name
-const lastStaff = localStorage.getItem('ap_last_staff');
-if (lastStaff) document.getElementById('f-staff').value = lastStaff;
-
-if (station) {
-  document.getElementById('sb-station').textContent = station;
-} else {
-  document.getElementById('no-station-bar').classList.add('show');
-  document.getElementById('station-bar').style.display = 'none';
-}
-
+document.getElementById('f-date').value=todayStr();
+document.getElementById('f-time').value=nowTime();
+if(station){document.getElementById('sb-station').textContent=station;}
+else{document.getElementById('no-station-bar').classList.add('show');document.getElementById('station-bar').style.display='none';}
+initStaffField();
 applyLang();
 </script>
 </body>
