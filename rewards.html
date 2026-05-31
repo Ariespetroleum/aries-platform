@@ -157,6 +157,22 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
 .redeem-btn:hover{opacity:.9}
 .redeem-btn:disabled{opacity:.45;cursor:not-allowed}
 .redeem-btn-red{background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark));box-shadow:0 4px 12px rgba(230,0,18,.22)}
+.pending-alert{background:#FFFBEB;border:1.5px solid #FDE68A;border-radius:var(--radius-sm);padding:11px 14px;margin-bottom:14px;display:none;align-items:center;gap:10px;cursor:pointer}
+.pending-alert.show{display:flex}
+.pending-alert-dot{width:8px;height:8px;border-radius:50%;background:var(--sinopec-red);flex-shrink:0;animation:pulseDot 1.4s ease-in-out infinite}
+@keyframes pulseDot{0%,100%{box-shadow:0 0 0 0 rgba(230,0,18,.4)}50%{box-shadow:0 0 0 6px rgba(230,0,18,.0)}}
+.pending-alert-text{font-size:13px;color:#92400E;font-weight:700;flex:1}
+.pending-alert-cta{font-size:11px;font-weight:800;color:var(--sinopec-red);font-family:var(--mono);white-space:nowrap}
+.history-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+.history-row:last-child{border-bottom:none}
+.history-icon{font-size:18px;flex-shrink:0}
+.history-info{flex:1;min-width:0}
+.history-date{font-size:12px;font-weight:700;color:var(--text)}
+.history-loc{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.history-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap}
+.hb-pending{background:#FFFBEB;color:#92400E;border:1px solid #FDE68A}
+.hb-done{background:var(--green-light);color:var(--bp-green-dark);border:1px solid #BBF7D0}
+.hb-rejected{background:var(--danger-light);color:var(--sinopec-red);border:1px solid #FECDD3}
 </style>
 </head>
 <body>
@@ -204,17 +220,24 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
     </div>
 
     <div class="tabs">
-      <button class="tab active" id="tab-pending" onclick="switchTab('pending')">
+      <button class="tab" id="tab-pending" onclick="switchTab('pending')">
         <span id="tab-pending-lbl">Pending</span>
         <span class="tab-count" id="pending-count" style="display:none">0</span>
       </button>
-      <button class="tab" id="tab-search" onclick="switchTab('search')">
+      <button class="tab active" id="tab-search" onclick="switchTab('search')">
         <span id="tab-search-lbl">Search</span>
       </button>
     </div>
 
+    <!-- PENDING ALERT (shown in Search tab when there are pending items) -->
+    <div class="pending-alert" id="pending-alert" onclick="switchTab('pending')">
+      <div class="pending-alert-dot"></div>
+      <div class="pending-alert-text" id="pending-alert-text">3 items pending confirmation</div>
+      <div class="pending-alert-cta" id="pending-alert-cta">View →</div>
+    </div>
+
     <!-- PENDING TAB -->
-    <div id="pane-pending">
+    <div id="pane-pending" style="display:none">
       <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
         <button id="refresh-btn" onclick="refreshPending()" style="font-size:11px;font-weight:700;font-family:var(--mono);padding:6px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--liberty-blue);cursor:pointer">
           ↺ <span id="refresh-lbl">Refresh</span>
@@ -227,7 +250,7 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
     </div>
 
     <!-- SEARCH TAB -->
-    <div id="pane-search" style="display:none">
+    <div id="pane-search">
 
       <div class="search-box">
         <div class="search-box-title" id="search-coffee-title">☕ Coffee Progress</div>
@@ -235,7 +258,7 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
           <label class="flabel" id="lbl-coffee-phone">Customer Mobile</label>
           <input type="tel" id="coffee-phone" placeholder="04xx xxx xxx" inputmode="tel" maxlength="13" onkeydown="if(event.key==='Enter')searchCoffee()">
         </div>
-        <button class="search-btn" id="coffee-search-btn" onclick="searchCoffee()" onkeydown="if(event.key==='Enter')searchCoffee()">
+        <button class="search-btn" id="coffee-search-btn" onclick="searchCoffee()">
           <span id="coffee-search-lbl">Search</span>
         </button>
         <div id="coffee-result"></div>
@@ -244,8 +267,12 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
       <div class="search-box">
         <div class="search-box-title" id="search-wash-title">🚗 Wash Reward Progress</div>
         <div class="fg">
-          <label class="flabel" id="lbl-wash-phone">Customer Mobile</label>
-          <input type="tel" id="wash-phone" placeholder="04xx xxx xxx" inputmode="tel" maxlength="13" onkeydown="if(event.key==='Enter')searchWash()">
+          <label class="flabel" id="lbl-wash-search-label">Plate Number or Mobile</label>
+          <input type="text" id="wash-search-input" placeholder="e.g. ABC123 or 04xx xxx xxx"
+            style="font-family:var(--mono);font-size:14px;font-weight:700;text-transform:uppercase"
+            autocomplete="off"
+            oninput="this.value=this.value.toUpperCase()"
+            onkeydown="if(event.key==='Enter')searchWash()">
         </div>
         <button class="search-btn" id="wash-search-btn" onclick="searchWash()">
           <span id="wash-search-lbl">Search</span>
@@ -326,8 +353,12 @@ const S = {
     searchCoffeeTitle:'☕ Coffee Progress',
     searchWashTitle:'🚗 Wash Reward Progress',
     searchMonthlyTitle:'💳 Monthly Membership',
-    lblCoffeePhone:'Customer Mobile', lblWashPhone:'Customer Mobile', lblPlate:'Plate Number',
+    lblCoffeePhone:'Customer Mobile', lblWashSearchLabel:'Plate Number or Mobile', lblPlate:'Plate Number',
     searchBtn:'Search',
+    pendingAlertCta:'View →',
+    pendingAlertText:n=>`${n} item${n===1?'':'s'} pending confirmation`,
+    historyTitle:'Recent History',
+    hbPending:'⏳ Pending', hbDone:'✅ Confirmed', hbRejected:'✗ Rejected',
     notFound:'No record found.',
     rfName:'Name', rfPhone:'Mobile', rfEmail:'Email',
     rfConfirmed:'Confirmed Purchases', rfFree:'Free Coffees Earned',
@@ -395,8 +426,12 @@ const S = {
     searchCoffeeTitle:'☕ 咖啡集点进度',
     searchWashTitle:'🚗 洗车积分进度',
     searchMonthlyTitle:'💳 包月会员查询',
-    lblCoffeePhone:'顾客手机号', lblWashPhone:'顾客手机号', lblPlate:'车牌号码',
+    lblCoffeePhone:'顾客手机号', lblWashSearchLabel:'车牌号码或手机号', lblPlate:'车牌号码',
     searchBtn:'查询',
+    pendingAlertCta:'查看 →',
+    pendingAlertText:n=>`${n} 条记录待确认`,
+    historyTitle:'历史记录',
+    hbPending:'⏳ 待确认', hbDone:'✅ 已确认', hbRejected:'✗ 已拒绝',
     notFound:'未找到记录。',
     rfName:'姓名', rfPhone:'手机', rfEmail:'邮箱',
     rfConfirmed:'已确认购买次数', rfFree:'已领取免费咖啡',
@@ -449,7 +484,7 @@ const S = {
 
 let lang      = localStorage.getItem('ap_lang') || 'en';
 let station   = localStorage.getItem('ap_station') || '';
-let activeTab = 'pending';
+let activeTab = 'search';
 
 function t(){ return S[lang]; }
 
@@ -484,13 +519,14 @@ function applyLang(){
   document.getElementById('search-coffee-title').textContent  = L.searchCoffeeTitle;
   document.getElementById('search-wash-title').textContent    = L.searchWashTitle;
   document.getElementById('search-monthly-title').textContent = L.searchMonthlyTitle;
-  document.getElementById('lbl-coffee-phone').textContent = L.lblCoffeePhone;
-  document.getElementById('lbl-wash-phone').textContent   = L.lblWashPhone;
-  document.getElementById('lbl-plate').textContent        = L.lblPlate;
-  document.getElementById('lbl-monthly-phone').textContent= L.lblMonthlyPhone||'Customer Mobile';
+  document.getElementById('lbl-coffee-phone').textContent  = L.lblCoffeePhone;
+  document.getElementById('lbl-wash-search-label').textContent = L.lblWashSearchLabel;
+  document.getElementById('lbl-plate').textContent         = L.lblPlate;
+  document.getElementById('lbl-monthly-phone').textContent = L.lblMonthlyPhone||'Customer Mobile';
   document.getElementById('coffee-search-lbl').textContent = L.searchBtn;
   document.getElementById('wash-search-lbl').textContent   = L.searchBtn;
   document.getElementById('plate-search-lbl').textContent  = L.searchBtn;
+  document.getElementById('pending-alert-cta').textContent = L.pendingAlertCta||'View →';
   updateChip();
 }
 
@@ -523,10 +559,12 @@ function selectStation(key){
 
 function switchTab(tab){
   activeTab=tab;
-  document.getElementById('tab-pending').classList.toggle('active',tab==='pending');
-  document.getElementById('tab-search').classList.toggle('active',tab==='search');
-  document.getElementById('pane-pending').style.display = tab==='pending'?'block':'none';
-  document.getElementById('pane-search').style.display  = tab==='search' ?'block':'none';
+  document.getElementById('tab-pending').classList.toggle('active', tab==='pending');
+  document.getElementById('tab-search').classList.toggle('active',  tab==='search');
+  document.getElementById('pane-pending').style.display = tab==='pending' ? 'block' : 'none';
+  document.getElementById('pane-search').style.display  = tab==='search'  ? 'block' : 'none';
+  // Hide alert banner when user switches to pending (they're already looking at it)
+  if(tab==='pending') document.getElementById('pending-alert').classList.remove('show');
 }
 
 // ── LOAD PENDING ──
@@ -554,13 +592,23 @@ function renderPending(data){
   const coffees = (data.coffeePending||[]);
   const washes  = (data.washPending||[]);
   const total   = coffees.length+washes.length;
-  // update refresh btn
   const rb=document.getElementById('refresh-btn');
   if(rb) rb.disabled=false;
 
+  // Tab badge
   const countEl=document.getElementById('pending-count');
   countEl.textContent=total;
   countEl.style.display=total?'inline':'none';
+
+  // Alert banner — only show when user is on Search tab
+  const alertEl  =document.getElementById('pending-alert');
+  const alertText=document.getElementById('pending-alert-text');
+  if(total>0 && activeTab==='search'){
+    alertText.textContent=L.pendingAlertText(total);
+    alertEl.classList.add('show');
+  } else {
+    alertEl.classList.remove('show');
+  }
 
   document.getElementById('pending-loading').style.display='none';
   const box=document.getElementById('pending-content');
@@ -720,6 +768,9 @@ async function searchCoffee(){
     const url=`${API_URL}?action=searchCoffee&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
     const res=await fetch(url); const data=await res.json();
 
+    const histData=await fetchHistory(phone,'');
+    const histHtml=renderHistory(histData?.history||[], L);
+
     // ── New customer: no record yet ──
     if(!data.found){
       box.innerHTML=`
@@ -727,6 +778,7 @@ async function searchCoffee(){
           <div class="result-card-title">${L.searchCoffeeTitle}</div>
           <div style="font-size:13px;color:var(--muted);margin-bottom:12px">${L.notFoundAddCoffee}</div>
           <button class="redeem-btn" onclick="staffAddCoffee('${esc(phone)}',this)">${L.addCoffeeBtn}</button>
+          ${histHtml}
         </div>`;
       return;
     }
@@ -759,60 +811,123 @@ async function searchCoffee(){
           : ''}
         <button class="redeem-btn" style="margin-top:10px;background:linear-gradient(135deg,#0369a1,#075985)"
           onclick="staffAddCoffee('${esc(phone)}',this)">${L.addCoffeeBtn}</button>
+        ${histHtml}
       </div>`;
   }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
 }
 
+// ── HISTORY HELPER ──────────────────────────────────────────
+function renderHistory(history, L){
+  if(!history||!history.length) return '';
+  const rows=history.slice(0,15).map(item=>{
+    const icon=item.type==='coffee'?'☕':item.type==='monthly'?'💳':'🚗';
+    const st=(item.status||'pending').toLowerCase();
+    const cls=st==='done'?'hb-done':st==='rejected'?'hb-rejected':'hb-pending';
+    const lbl=st==='done'?(L.hbDone||'✅ Confirmed'):st==='rejected'?(L.hbRejected||'✗ Rejected'):(L.hbPending||'⏳ Pending');
+    return `<div class="history-row">
+      <div class="history-icon">${icon}</div>
+      <div class="history-info">
+        <div class="history-date">${item.date||'—'}</div>
+        <div class="history-loc">${esc(item.location||'')}</div>
+      </div>
+      <div class="history-badge ${cls}">${lbl}</div>
+    </div>`;
+  }).join('');
+  return `<div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+    <div style="font-size:10px;font-family:var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:700">${L.historyTitle||'Recent History'}</div>
+    ${rows}
+  </div>`;
+}
+
+async function fetchHistory(phone, plate){
+  try{
+    const url=`${API_URL}?action=getCustomerProgress&phone=${encodeURIComponent(phone)}&plate=${encodeURIComponent(plate||'')}&token=${API_TOKEN}`;
+    return await (await fetch(url)).json();
+  }catch(e){ return null; }
+}
+
 async function searchWash(){
   const L=t();
-  const phone=normalizePhone(document.getElementById('wash-phone').value);
+  const raw=document.getElementById('wash-search-input').value.trim().toUpperCase().replace(/\s/g,'');
   const box=document.getElementById('wash-result');
-  if(!phone){ box.innerHTML=`<div class="err-inline">${L.lblWashPhone}?</div>`; return; }
+  if(!raw){ box.innerHTML=`<div class="err-inline">${L.lblWashSearchLabel||'Plate or Mobile'}?</div>`; return; }
   box.innerHTML=`<div class="loading"><span class="spinner"></span>${L.loading}</div>`;
-  try{
-    const url=`${API_URL}?action=searchWashReward&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
-    const res=await fetch(url); const data=await res.json();
 
-    // ── New customer: no record yet ──
+  const isPhone=/^(04|4)\d{8}$/.test(raw);
+  const phone=isPhone?normalizePhone(raw):'';
+  const plate=isPhone?'':raw;
+
+  try{
+    let data, histData;
+    if(isPhone){
+      const url=`${API_URL}?action=searchWashReward&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
+      data=await (await fetch(url)).json();
+      histData=await fetchHistory(phone,'');
+    } else {
+      const url=`${API_URL}?action=searchWashByPlate&plate=${encodeURIComponent(plate)}&token=${API_TOKEN}`;
+      data=await (await fetch(url)).json();
+      histData=data.phone?await fetchHistory(normalizePhone(data.phone),plate):null;
+    }
+
+    const histHtml=renderHistory(histData?.history||[], L);
+
     if(!data.found){
       box.innerHTML=`
         <div class="result-card">
           <div class="result-card-title">${L.searchWashTitle}</div>
           <div style="font-size:13px;color:var(--muted);margin-bottom:12px">${L.notFoundAddWash}</div>
-          <button class="redeem-btn redeem-btn-red" onclick="staffAddWash('${esc(phone)}',this)">${L.addWashBtn}</button>
+          ${plate?`<div style="font-size:12px;color:var(--label);margin-bottom:10px">Plate: <strong style="font-family:var(--mono)">${esc(plate)}</strong></div>`:''}
+          <button class="redeem-btn redeem-btn-red" onclick="staffAddWashFromSearch('${esc(plate)}','${esc(phone)}',this)">${L.addWashBtn}</button>
+          ${histHtml}
         </div>`;
       return;
     }
 
     const c=data.confirmedWashes||0;
     const mod=c%3; const remaining=3-mod;
-    const rewardReady=data.rewardReady||false;
-    const freePending=data.freePending||0;
+    const rewardReady=data.rewardReady||false; const freePending=data.freePending||0;
     let track='';
     for(let i=0;i<3;i++){
       track+=`<div class="prog-dot${i<mod?' lit-red':''}">${i<mod?'✓':i+1}</div>`;
       if(i<2) track+='<span class="prog-arrow">›</span>';
     }
     track+=`<span class="prog-arrow">›</span><div class="prog-free prog-free-red">FREE</div>`;
+    const addPhone=data.phone||phone;
     box.innerHTML=`
       <div class="result-card">
         <div class="result-card-title">${L.searchWashTitle}</div>
-        <div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone||'')}</span></div>
+        ${data.phone?`<div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone)}</span></div>`:''}
+        ${plate?`<div class="result-row"><span class="result-key">${L.rfPlate}</span><span class="result-val">${esc(plate)}</span></div>`:''}
         <div class="result-row"><span class="result-key">${L.rfWashes}</span><span class="result-val red">${c}</span></div>
         <div class="result-row"><span class="result-key">${L.rfRedeemed}</span><span class="result-val">${data.freeRedeemed||0}</span></div>
         <div class="prog-track">${track}</div>
         <div class="prog-lbl">${rewardReady?'':L.washProgressLbl(mod,remaining)}</div>
-        ${rewardReady
-          ? `<div class="prog-free-banner">
-               ${L.freeWashReady}
-               ${freePending>1?`<span style="font-size:11px;display:block;margin-top:4px;opacity:.8">(${freePending} ${L.freePendingCount})</span>`:''}
-             </div>
-             <button class="redeem-btn redeem-btn-red" onclick="redeemWash('${esc(phone)}',this)">${L.redeemWashBtn}</button>`
-          : ''}
+        ${rewardReady?`<div class="prog-free-banner">${L.freeWashReady}${freePending>1?`<span style="font-size:11px;display:block;margin-top:4px;opacity:.8">(${freePending} ${L.freePendingCount})</span>`:''}</div><button class="redeem-btn redeem-btn-red" onclick="redeemWash('${esc(addPhone)}',this)">${L.redeemWashBtn}</button>`:''}
         <button class="redeem-btn redeem-btn-red" style="margin-top:10px;background:linear-gradient(135deg,#b91c1c,#991b1b)"
-          onclick="staffAddWash('${esc(phone)}',this)">${L.addWashBtn}</button>
+          onclick="staffAddWashFromSearch('${esc(plate)}','${esc(addPhone)}',this)">${L.addWashBtn}</button>
+        ${histHtml}
       </div>`;
   }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
+}
+
+async function staffAddWashFromSearch(plate, phone, btn){
+  const L=t();
+  if(plate && !phone){
+    const input=prompt(lang==='zh'?'请输入顾客手机号码：':'Enter customer mobile number:');
+    if(!input) return;
+    phone=normalizePhone(input);
+    if(!/^04\d{8}$/.test(phone)){ showToast(L.errMonthlyPhone||'Invalid phone','error'); return; }
+  }
+  const name=await promptStaffName(); if(!name) return;
+  btn.disabled=true; btn.textContent='…';
+  try{
+    const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({
+      action:'staffAddWash',phone,plate,station,staffName:name,token:API_TOKEN,date:todayStr()
+    })});
+    const data=await res.json();
+    if(data.success){ showToast(L.addSuccess,'success'); await searchWash(); }
+    else{ btn.disabled=false; btn.textContent=L.addWashBtn; showToast(data.error||L.addErr,'error'); }
+  }catch(e){ btn.disabled=false; btn.textContent=L.addWashBtn; showToast(L.addErr,'error'); }
 }
 
 async function searchPlate(){
