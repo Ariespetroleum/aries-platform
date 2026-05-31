@@ -371,6 +371,13 @@ const S = {
     freeWashReady:'🎉 Free wash ready — confirm plate number with customer.',
     redeemCoffeeBtn:'✓ Mark Free Coffee as Redeemed',
     redeemWashBtn:'✓ Mark Free Wash as Redeemed',
+    confirmMonthlyWashBtn:'✓ Record Today's Wash',
+    alreadyWashedToday:'✅ Already washed today',
+    confirmMonthlyWashConfirm:(plate)=>`Confirm wash for ${plate} today?`,
+    confirmMonthlyWashSuccess:'Wash recorded!',
+    confirmMonthlyWashErr:'Could not record. Please try again.',
+    membershipExpiredErr:'Membership has expired.',
+    todayWashesLbl:'Today',
     addMonthlyBtn:'💳 + Activate Monthly Membership',
     renewMonthlyBtn:'💳 + Renew / Update Membership',
     addMonthlyTitle:'Activate Monthly Membership',
@@ -445,6 +452,13 @@ const S = {
     freeWashReady:'🎉 免费洗车已解锁 — 请核对顾客手机号。',
     redeemCoffeeBtn:'✓ 标记免费咖啡已领取',
     redeemWashBtn:'✓ 标记免费洗车已使用',
+    confirmMonthlyWashBtn:'✓ 记录今日洗车',
+    alreadyWashedToday:'✅ 今日已洗车',
+    confirmMonthlyWashConfirm:(plate)=>`确认为车牌 ${plate} 记录今日洗车？`,
+    confirmMonthlyWashSuccess:'洗车记录成功！',
+    confirmMonthlyWashErr:'记录失败，请重试。',
+    membershipExpiredErr:'会员已到期。',
+    todayWashesLbl:'今日',
     addMonthlyBtn:'💳 + 开通包月会员',
     renewMonthlyBtn:'💳 + 续费 / 更新会员',
     addMonthlyTitle:'开通包月会员',
@@ -965,26 +979,66 @@ async function searchPlate(){
     }
 
     // ── Existing membership ──
-    const today=new Date().toISOString().slice(0,10);
-    const expired=data.expiryDate && data.expiryDate < today;
+    const todayDate=new Date().toISOString().slice(0,10);
+    const expired=data.expiryDate && data.expiryDate < todayDate;
+    const washedToday=data.washedToday||false;
     const expiredLabel=lang==='zh'?'会员已到期，在下方续费：':'Membership expired — renew below:';
     const renewLabel  =lang==='zh'?'续费或更改套餐：':'Renew or update membership:';
+    const washBtnHtml = expired
+      ? `<div class="err-inline" style="margin-top:12px">${L.membershipExpiredErr||'Membership expired.'}</div>`
+      : washedToday
+        ? `<button class="redeem-btn" style="margin-top:12px;background:var(--bp-green-dark);opacity:.7;cursor:default" disabled>${L.alreadyWashedToday}</button>`
+        : `<button class="redeem-btn" style="margin-top:12px;background:linear-gradient(135deg,var(--sinopec-red),var(--sinopec-red-dark))"
+             onclick="confirmMonthlyWash('${esc(data.plate||resolvedPlate)}','${esc(data.phone||resolvedPhone)}',this)"
+           >${L.confirmMonthlyWashBtn}</button>`;
     box.innerHTML=`
       <div class="result-card">
         <div class="result-card-title">${L.searchMonthlyTitle}</div>
         <div class="result-row"><span class="result-key">${L.rfPlate}</span><span class="result-val">${esc(data.plate||'')}</span></div>
-        <div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone||'')}</span></div>
+        <div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone||'—')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfTier}</span><span class="result-val blue">${esc(data.monthlyTier||'Monthly')}</span></div>
-        <div class="result-row"><span class="result-key">${L.rfJoined}</span><span class="result-val">${data.joinedAt||'—'}</span></div>
         <div class="result-row"><span class="result-key">${L.rfExpiry}</span>
           <span class="result-val ${expired?'red':'green'}">${data.expiryDate||'—'}${expired?' ⚠️':''}</span></div>
         <div class="result-row"><span class="result-key">${L.rfTotalWashes}</span><span class="result-val">${data.confirmedWashes||0}</span></div>
-        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+        ${washBtnHtml}
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
           <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${expired?expiredLabel:renewLabel}</div>
           ${renderMonthlyForm(data.plate||resolvedPlate, data.phone||resolvedPhone)}
         </div>
       </div>`;
   }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
+}
+
+async function confirmMonthlyWash(plate, phone, btn){
+  const L=t();
+  if(!confirm(L.confirmMonthlyWashConfirm(plate))) return;
+  const name=await promptStaffName(); if(!name) return;
+  btn.disabled=true; btn.textContent='…';
+  try{
+    const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({
+      action:'staffConfirmMonthlyWash', plate, phone, station,
+      staffName:name, token:API_TOKEN, date:todayStr()
+    })});
+    const data=await res.json();
+    if(data.success){
+      showToast(L.confirmMonthlyWashSuccess,'success');
+      // Refresh to show updated count and "already washed" state
+      await searchPlate();
+    } else if(data.error==='already_washed'){
+      btn.disabled=false;
+      btn.textContent=L.alreadyWashedToday;
+      btn.style.background='var(--bp-green-dark)';
+      btn.style.opacity='.7';
+      btn.style.cursor='default';
+      showToast(L.alreadyWashedToday,'success');
+    } else {
+      btn.disabled=false; btn.textContent=L.confirmMonthlyWashBtn;
+      showToast(data.error||L.confirmMonthlyWashErr,'error');
+    }
+  }catch(e){
+    btn.disabled=false; btn.textContent=L.confirmMonthlyWashBtn;
+    showToast(L.confirmMonthlyWashErr,'error');
+  }
 }
 
 function renderMonthlyForm(plate, phone){
