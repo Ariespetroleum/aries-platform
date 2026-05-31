@@ -913,12 +913,7 @@ async function searchWash(){
 
 async function staffAddWashFromSearch(plate, phone, btn){
   const L=t();
-  if(plate && !phone){
-    const input=prompt(lang==='zh'?'请输入顾客手机号码：':'Enter customer mobile number:');
-    if(!input) return;
-    phone=normalizePhone(input);
-    if(!/^04\d{8}$/.test(phone)){ showToast(L.errMonthlyPhone||'Invalid phone','error'); return; }
-  }
+  // phone is optional — plate alone is sufficient to record the wash
   const name=await promptStaffName(); if(!name) return;
   btn.disabled=true; btn.textContent='…';
   try{
