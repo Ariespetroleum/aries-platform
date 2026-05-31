@@ -283,12 +283,12 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
       <div class="search-box">
         <div class="search-box-title" id="search-monthly-title">💳 Monthly Membership</div>
         <div class="fg">
-          <label class="flabel" id="lbl-plate">Plate Number</label>
-          <input type="text" id="search-plate" placeholder="e.g. ABC123" style="text-transform:uppercase;font-family:var(--mono);font-size:16px;letter-spacing:.08em;font-weight:700" autocomplete="off" onkeydown="if(event.key==='Enter')searchPlate()">
-        </div>
-        <div class="fg">
-          <label class="flabel" id="lbl-monthly-phone">Customer Mobile <span style="font-weight:400;font-size:10px;color:var(--muted)">(optional)</span></label>
-          <input type="tel" id="monthly-phone" placeholder="04xx xxx xxx" inputmode="tel" maxlength="13" onkeydown="if(event.key==='Enter')searchPlate()">
+          <label class="flabel" id="lbl-monthly-search-label">Plate Number or Mobile</label>
+          <input type="text" id="monthly-search-input" placeholder="e.g. ABC123 or 04xx xxx xxx"
+            style="font-family:var(--mono);font-size:14px;font-weight:700;text-transform:uppercase"
+            autocomplete="off"
+            oninput="this.value=this.value.toUpperCase()"
+            onkeydown="if(event.key==='Enter')searchPlate()">
         </div>
         <button class="search-btn" id="plate-search-btn" onclick="searchPlate()">
           <span id="plate-search-lbl">Search</span>
@@ -351,8 +351,9 @@ const S = {
     toastErr:'Error — please try again',
     alreadyWashed:'Already washed today — monthly limit is 1 per day.',
     searchCoffeeTitle:'☕ Coffee Progress',
-    searchWashTitle:'🚗 Wash Reward Progress',
+    searchWashTitle:'🚗 Wash 3-Get-1 Progress',
     searchMonthlyTitle:'💳 Monthly Membership',
+    lblMonthlySearchLabel:'Plate Number or Mobile',
     lblCoffeePhone:'Customer Mobile', lblWashSearchLabel:'Plate Number or Mobile', lblPlate:'Plate Number',
     searchBtn:'Search',
     pendingAlertCta:'View →',
@@ -424,8 +425,9 @@ const S = {
     toastErr:'操作失败，请重试',
     alreadyWashed:'该车牌今天已洗车，包月会员每日限一次。',
     searchCoffeeTitle:'☕ 咖啡集点进度',
-    searchWashTitle:'🚗 洗车积分进度',
+    searchWashTitle:'🚗 洗三送一进度',
     searchMonthlyTitle:'💳 包月会员查询',
+    lblMonthlySearchLabel:'车牌号码或手机号',
     lblCoffeePhone:'顾客手机号', lblWashSearchLabel:'车牌号码或手机号', lblPlate:'车牌号码',
     searchBtn:'查询',
     pendingAlertCta:'查看 →',
@@ -519,14 +521,13 @@ function applyLang(){
   document.getElementById('search-coffee-title').textContent  = L.searchCoffeeTitle;
   document.getElementById('search-wash-title').textContent    = L.searchWashTitle;
   document.getElementById('search-monthly-title').textContent = L.searchMonthlyTitle;
-  document.getElementById('lbl-coffee-phone').textContent  = L.lblCoffeePhone;
-  document.getElementById('lbl-wash-search-label').textContent = L.lblWashSearchLabel;
-  document.getElementById('lbl-plate').textContent         = L.lblPlate;
-  document.getElementById('lbl-monthly-phone').textContent = L.lblMonthlyPhone||'Customer Mobile';
-  document.getElementById('coffee-search-lbl').textContent = L.searchBtn;
-  document.getElementById('wash-search-lbl').textContent   = L.searchBtn;
-  document.getElementById('plate-search-lbl').textContent  = L.searchBtn;
-  document.getElementById('pending-alert-cta').textContent = L.pendingAlertCta||'View →';
+  document.getElementById('lbl-coffee-phone').textContent      = L.lblCoffeePhone;
+  document.getElementById('lbl-wash-search-label').textContent  = L.lblWashSearchLabel;
+  document.getElementById('lbl-monthly-search-label').textContent = L.lblMonthlySearchLabel||'Plate Number or Mobile';
+  document.getElementById('coffee-search-lbl').textContent      = L.searchBtn;
+  document.getElementById('wash-search-lbl').textContent        = L.searchBtn;
+  document.getElementById('plate-search-lbl').textContent       = L.searchBtn;
+  document.getElementById('pending-alert-cta').textContent      = L.pendingAlertCta||'View →';
   updateChip();
 }
 
@@ -932,22 +933,38 @@ async function staffAddWashFromSearch(plate, phone, btn){
 
 async function searchPlate(){
   const L=t();
-  const plate=document.getElementById('search-plate').value.trim().toUpperCase();
-  const phone=normalizePhone(document.getElementById('monthly-phone').value);
+  const raw=document.getElementById('monthly-search-input').value.trim().toUpperCase().replace(/\s/g,'');
   const box=document.getElementById('plate-result');
-  if(!plate){ box.innerHTML=`<div class="err-inline">${L.errMonthlyPlate||'Please enter a plate number.'}</div>`; return; }
+  if(!raw){ box.innerHTML=`<div class="err-inline">${L.lblMonthlySearchLabel||'Plate or Mobile'}?</div>`; return; }
   box.innerHTML=`<div class="loading"><span class="spinner"></span>${L.loading}</div>`;
-  try{
-    const url=`${API_URL}?action=searchPlate&plate=${encodeURIComponent(plate)}&token=${API_TOKEN}`;
-    const res=await fetch(url); const data=await res.json();
 
-    // ── New membership ──
+  // Detect: AU phone → search by phone via WashMonthlyMembers; otherwise plate
+  const isPhone=/^(04|4)\d{8}$/.test(raw);
+  const plate=isPhone?'':raw;
+  const phone=isPhone?normalizePhone(raw):'';
+
+  try{
+    let data;
+    if(isPhone){
+      // Search monthly by phone — look up WashMonthlyMembers for this phone
+      const url=`${API_URL}?action=searchMonthlyByPhone&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
+      const res=await fetch(url); data=await res.json();
+    } else {
+      const url=`${API_URL}?action=searchPlate&plate=${encodeURIComponent(plate)}&token=${API_TOKEN}`;
+      const res=await fetch(url); data=await res.json();
+    }
+
+    // Resolve plate and phone for the form
+    const resolvedPlate = data.plate || plate;
+    const resolvedPhone = data.phone ? normalizePhone(data.phone) : phone;
+
+    // ── No record found ──
     if(!data.found){
       box.innerHTML=`
         <div class="result-card">
           <div class="result-card-title">${L.searchMonthlyTitle}</div>
           <div style="font-size:13px;color:var(--muted);margin-bottom:14px">${L.notFoundMonthly}</div>
-          ${renderMonthlyForm(plate, phone)}
+          ${renderMonthlyForm(resolvedPlate, resolvedPhone)}
         </div>`;
       return;
     }
@@ -955,6 +972,8 @@ async function searchPlate(){
     // ── Existing membership ──
     const today=new Date().toISOString().slice(0,10);
     const expired=data.expiryDate && data.expiryDate < today;
+    const expiredLabel=lang==='zh'?'会员已到期，在下方续费：':'Membership expired — renew below:';
+    const renewLabel  =lang==='zh'?'续费或更改套餐：':'Renew or update membership:';
     box.innerHTML=`
       <div class="result-card">
         <div class="result-card-title">${L.searchMonthlyTitle}</div>
@@ -966,8 +985,8 @@ async function searchPlate(){
           <span class="result-val ${expired?'red':'green'}">${data.expiryDate||'—'}${expired?' ⚠️':''}</span></div>
         <div class="result-row"><span class="result-key">${L.rfTotalWashes}</span><span class="result-val">${data.confirmedWashes||0}</span></div>
         <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
-          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${expired?'Membership expired — renew below:':'Renew or update membership:'}</div>
-          ${renderMonthlyForm(plate, data.phone||phone)}
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">${expired?expiredLabel:renewLabel}</div>
+          ${renderMonthlyForm(data.plate||resolvedPlate, data.phone||resolvedPhone)}
         </div>
       </div>`;
   }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
@@ -1048,8 +1067,8 @@ async function staffAddMonthly(btn){
     const data=await res.json();
     if(data.success){
       showToast(L.addMonthlySuccess,'success');
-      // Refresh the plate search
-      document.getElementById('search-plate').value=plate;
+      // Refresh the plate search using the actual plate value
+      document.getElementById('monthly-search-input').value=plate;
       await searchPlate();
     } else {
       btn.disabled=false; btn.textContent=L.addMonthlyBtn;
