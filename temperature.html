@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Temperature Log — Aries Petroleum</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,13 +55,15 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
 .device-info{flex:1;min-width:0}
 .device-name{font-size:13px;font-weight:800;color:var(--text)}
 .device-range{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px}
-.temp-input-wrap{position:relative}
-.temp-input{width:84px;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:14px;font-weight:800;padding:8px 26px 8px 10px;text-align:right;outline:none;transition:border-color .2s,background .2s,box-shadow .2s}
+.temp-input-wrap{display:flex;align-items:center;gap:5px}
+.sign-btn{width:30px;height:36px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--label);font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-family:var(--mono);line-height:1;user-select:none;-webkit-user-select:none}.sign-btn:hover{border-color:var(--liberty-blue);color:var(--liberty-blue)}.sign-btn.negative{background:#EFF6FF;border-color:#BFDBFE;color:var(--liberty-blue)}
+.temp-input-inner{position:relative}
+.temp-input{width:72px;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:14px;font-weight:800;padding:8px 26px 8px 10px;text-align:right;outline:none;transition:border-color .2s,background .2s,box-shadow .2s}
 .temp-input:focus{border-color:var(--liberty-blue);background:#fff;box-shadow:0 0 0 3px rgba(0,61,165,.10)}
 .temp-input.ok{border-color:var(--ok-border);background:var(--ok-bg);color:var(--bp-green-dark)}
 .temp-input.warn{border-color:#BFDBFE;background:#EFF6FF;color:var(--liberty-blue)}
 .temp-input.danger{border-color:var(--danger-border);background:var(--danger-bg);color:var(--sinopec-red)}
-.temp-unit{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11px;color:var(--muted);pointer-events:none}
+.temp-unit{position:absolute;right:7px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:11px;color:var(--muted);pointer-events:none}
 .status-dot{width:8px;height:8px;border-radius:50%;background:var(--border);flex-shrink:0;transition:background .2s,box-shadow .2s}
 .status-dot.ok{background:var(--bp-green);box-shadow:0 0 0 4px rgba(0,166,81,.12)}
 .status-dot.warn{background:var(--liberty-blue);box-shadow:0 0 0 4px rgba(0,61,165,.10)}
@@ -100,7 +105,7 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
 .success-title{font-size:20px;font-weight:800;margin-bottom:8px;color:var(--bp-green-dark)}
 .success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px}
 .success-actions{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
-@media(max-width:420px){.container{padding:18px 12px}.header-right{gap:6px}.header-time{display:none}.shift-nav{gap:5px}.shift-tab{font-size:11px}.temp-row{padding:11px 12px;gap:8px}.temp-input{width:78px}}
+@media(max-width:420px){.container{padding:18px 12px}.header-right{gap:6px}.header-time{display:none}.shift-nav{gap:5px}.shift-tab{font-size:11px}.temp-row{padding:11px 12px;gap:8px}.temp-input{width:62px}}
 </style>
 </head>
 <body>
@@ -328,13 +333,30 @@ function buildCard(shift){
       // ── KEY CHANGE: type="text" inputmode="decimal" ──
       // This makes Android show a numeric keyboard that includes the minus key.
       // pattern and inputmode together give the best cross-platform experience.
-      row.innerHTML=`<div class="device-info"><div class="device-name">${dev.name}</div><div class="device-range">${dev.note}</div></div><div class="temp-input-wrap"><input class="temp-input" type="text" inputmode="decimal" pattern="-?[0-9]*\\.?[0-9]*" id="${shift}_${d.key}" placeholder="—" autocomplete="off" oninput="validateTemp(this,'${shift}','${d.key}')"><span class="temp-unit">°C</span></div><div class="status-dot" id="dot_${shift}_${d.key}"></div>`;
+      // Only frozen devices need negative values; show ± button for all to keep UI consistent
+      const needsMinus = d.max !== null && d.max < 0;
+      row.innerHTML=`<div class="device-info"><div class="device-name">${dev.name}</div><div class="device-range">${dev.note}</div></div><div class="temp-input-wrap"><button class="sign-btn${needsMinus?' negative':''}" id="sign_${shift}_${d.key}" onclick="toggleSign('${shift}','${d.key}')" type="button" tabindex="-1">±</button><div class="temp-input-inner"><input class="temp-input" type="text" inputmode="numeric" pattern="[0-9]*" id="${shift}_${d.key}" placeholder="—" autocomplete="off" oninput="validateTemp(this,'${shift}','${d.key}')"><span class="temp-unit">°C</span></div></div><div class="status-dot" id="dot_${shift}_${d.key}"></div>`;
       card.appendChild(row);
     });
   });
 }
 
 function getStatus(val,d){if(d.direction==='min_only'){if(val>=d.hotMin)return'ok';if(val>=d.hotMin-5)return'warn';return'danger';}if(val<=d.max)return'ok';if(val<=d.max+2)return'warn';return'danger';}
+
+// ── ± button: toggle sign of current value ───────────────────────────────────
+function toggleSign(shift, key) {
+  const input = document.getElementById(shift + '_' + key);
+  const btn   = document.getElementById('sign_' + shift + '_' + key);
+  const raw   = input.value.trim();
+  if (raw === '' || raw === '0') return;
+  const val = parseTempValue(raw);
+  if (isNaN(val)) return;
+  const newVal = -val;
+  // Display without unnecessary decimal for whole numbers
+  input.value = Number.isInteger(newVal) ? String(newVal) : String(newVal);
+  btn.classList.toggle('negative', newVal < 0);
+  validateTemp(input, shift, key);
+}
 
 function validateTemp(input,shift,key){
   const d=DEVICES.find(x=>x.key===key);
@@ -344,6 +366,9 @@ function validateTemp(input,shift,key){
   if(raw===''||raw==='-'){input.className='temp-input';dot.className='status-dot';return;}
   const val=parseTempValue(raw);
   if(isNaN(val)){input.className='temp-input';dot.className='status-dot';return;}
+  // Sync sign button state
+  const btn=document.getElementById('sign_'+shift+'_'+key);
+  if(btn) btn.classList.toggle('negative', val<0);
   const st=getStatus(val,d);
   input.className='temp-input '+st;
   dot.className='status-dot '+st;
@@ -406,7 +431,14 @@ function goPortal(){window.location.href='index.html';}
 function resetForm(){
   submitted={morning:false,afternoon:false,night:false};
   SHIFTS.forEach(sh=>{
-    DEVICES.forEach(d=>{const inp=document.getElementById(sh+'_'+d.key);if(inp){inp.value='';inp.className='temp-input';}const dot=document.getElementById('dot_'+sh+'_'+d.key);if(dot)dot.className='status-dot';});
+    DEVICES.forEach(d=>{
+      const inp=document.getElementById(sh+'_'+d.key);
+      if(inp){inp.value='';inp.className='temp-input';}
+      const dot=document.getElementById('dot_'+sh+'_'+d.key);
+      if(dot)dot.className='status-dot';
+      const btn=document.getElementById('sign_'+sh+'_'+d.key);
+      if(btn){const needsMinus=d.max!==null&&d.max<0;btn.className='sign-btn'+(needsMinus?' negative':'');}
+    });
   });
   document.getElementById('flagList').classList.remove('show');
   document.getElementById('alertBox').classList.remove('show');
