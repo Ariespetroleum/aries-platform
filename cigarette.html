@@ -46,6 +46,11 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
 .confirm-header{margin-bottom:18px}.confirm-title{font-size:20px;font-weight:800;margin-bottom:5px;color:var(--text)}.confirm-sub{font-size:12px;color:var(--muted)}.confirm-section{background:#fff;border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:var(--shadow-sm)}.confirm-section-title{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:var(--mono);color:var(--label)}.confirm-row{display:flex;padding:9px 14px;border-bottom:1px solid var(--border);gap:12px;align-items:center}.confirm-row:last-child{border-bottom:none}.confirm-key{font-size:12px;color:var(--label);flex:1;min-width:0;font-weight:600}.confirm-val{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text);flex-shrink:0}.confirm-val.zero{color:var(--muted)}
 .success-wrap{text-align:center;padding:56px 20px}.success-icon{width:68px;height:68px;background:var(--ok-bg);border:1px solid var(--ok-border);color:var(--bp-green-dark);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;font-size:30px;font-weight:800}.success-title{font-size:21px;font-weight:800;margin-bottom:8px;color:var(--bp-green-dark)}.success-sub{color:var(--muted);font-size:13px;line-height:1.7;margin-bottom:24px}.success-actions{display:flex;flex-direction:column;gap:10px;max-width:260px;margin:0 auto}
 .loading-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(20,32,51,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:16px}.loading-overlay.show{display:flex}.spinner{width:38px;height:38px;border:3px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.loading-text{font-size:13px;color:#fff;font-family:var(--mono)}
+/* product list loading skeleton */
+.list-loading{padding:20px 14px;text-align:center;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.sync-badge{display:none;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;padding:3px 8px;border-radius:6px;margin-left:6px;vertical-align:middle}
+.sync-badge.syncing{display:inline-block;background:#FFF7ED;color:#B45309;border:1px solid #FED7AA}
+.sync-badge.error{display:inline-block;background:var(--warn-bg);color:var(--sinopec-red-dark);border:1px solid var(--warn-border)}
 </style>
 </head>
 <body>
@@ -155,6 +160,7 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
         <div class="section-header-left">
           <span class="section-icon">🚬</span>
           <span class="section-title" id="sec-products-title">Products</span>
+          <span class="sync-badge" id="sync-badge"></span>
         </div>
         <span class="section-count" id="product-count">0 items</span>
       </div>
@@ -258,6 +264,9 @@ const S = {
     duplicateWarning:'This product already exists in the list.',
     notCounted:'—',
     staffHint:'✎ Not you? Tap to change',
+    loadingList:'Loading product list…',
+    syncingList:'SYNCING',
+    syncError:'SYNC ERROR — using local list',
   },
   zh: {
     pageTitle:'香烟库存盘点 — Aries Petroleum',
@@ -292,6 +301,9 @@ const S = {
     duplicateWarning:'该产品已存在于列表中。',
     notCounted:'—',
     staffHint:'✎ 不是你？点击更改',
+    loadingList:'正在加载产品列表…',
+    syncingList:'同步中',
+    syncError:'同步失败 — 已使用本地列表',
   }
 };
 function t() { return S[lang]; }
@@ -313,22 +325,102 @@ const DEFAULT_PRODUCTS = [
 ];
 
 // ══════════════════════════════════════════
-// PRODUCT LIST
+// PRODUCT LIST — server-first, localStorage as cache/fallback
 // ══════════════════════════════════════════
-function storageKey() { return `ap_cig_${station}`; }
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
 
-function loadProducts() {
-  const saved = localStorage.getItem(storageKey());
-  if (saved) {
-    try { return JSON.parse(saved); } catch(e) {}
-  }
-  const list = DEFAULT_PRODUCTS.map(name => ({ name, custom: false }));
-  saveProducts(list);
-  return list;
+// in-memory working copy (source of truth for this session once loaded)
+let _products = null;
+
+function cacheKey() { return `ap_cig_products_${station}`; }
+
+function getCachedProducts() {
+  try {
+    const raw = localStorage.getItem(cacheKey());
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return null;
 }
 
-function saveProducts(list) {
-  localStorage.setItem(storageKey(), JSON.stringify(list));
+function setCachedProducts(list) {
+  try { localStorage.setItem(cacheKey(), JSON.stringify(list)); } catch(e) {}
+}
+
+function getDefaultProducts() {
+  return DEFAULT_PRODUCTS.map(name => ({ name, custom: false }));
+}
+
+// Load from server; fall back to cache then defaults.
+// Returns a Promise that resolves when _products is ready.
+async function loadProductsFromServer() {
+  if (!station) {
+    _products = getDefaultProducts();
+    return;
+  }
+
+  showSyncBadge('syncing');
+
+  try {
+    const url = `${SHEET_URL}?action=getCigProducts&station=${encodeURIComponent(station)}`;
+    const resp = await fetch(url, { cache: 'no-store' });
+    const data = await resp.json();
+
+    if (data.success) {
+      if (data.products === null) {
+        // First time this station uses the page — initialise with defaults
+        _products = getDefaultProducts();
+        // Write defaults back to server in background
+        saveProductsToServer(_products).catch(() => {});
+      } else {
+        _products = data.products;
+        setCachedProducts(_products);
+      }
+      hideSyncBadge();
+    } else {
+      throw new Error(data.error || 'unknown error');
+    }
+  } catch(err) {
+    console.warn('CigProducts fetch failed, using cache/defaults:', err);
+    const cached = getCachedProducts();
+    _products = cached || getDefaultProducts();
+    showSyncBadge('error');
+  }
+}
+
+// Save to server; also update local cache.
+async function saveProductsToServer(list) {
+  if (!station) return;
+  setCachedProducts(list);
+  showSyncBadge('syncing');
+  try {
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ formType: 'saveCigProducts', station, products: list }),
+    });
+    hideSyncBadge();
+  } catch(err) {
+    console.warn('CigProducts save failed:', err);
+    showSyncBadge('error');
+  }
+}
+
+function showSyncBadge(type) {
+  const el = document.getElementById('sync-badge');
+  el.className = 'sync-badge ' + type;
+  el.textContent = type === 'syncing' ? t().syncingList : t().syncError;
+}
+function hideSyncBadge() {
+  const el = document.getElementById('sync-badge');
+  el.className = 'sync-badge';
+}
+
+// Synchronous accessor — always returns current in-memory list
+function getProducts() { return _products || []; }
+
+function setAndSaveProducts(list) {
+  _products = list;
+  saveProductsToServer(list).catch(() => {});
 }
 
 // ══════════════════════════════════════════
@@ -336,7 +428,6 @@ function saveProducts(list) {
 // ══════════════════════════════════════════
 const LAST_NAME_KEY = 'ap_cig_last_staff';
 
-// Read ap_staff_name set by index.html (4hr expiry)
 function getStaffName(){
   const name = localStorage.getItem('ap_staff_name') || '';
   const ts   = parseInt(localStorage.getItem('ap_staff_name_ts') || '0');
@@ -434,7 +525,6 @@ function applyLang() {
   setText('succ-again', L.succAgain); setText('succ-home', L.succHome);
   if (station) document.getElementById('station-display').innerHTML = `<span>${station}</span>`;
 
-  // Update hint text for current lang
   const hint = document.getElementById('staff-hint');
   if(hint && hint.style.display!=='none') hint.textContent = L.staffHint;
 
@@ -463,13 +553,23 @@ function showScreen(id) {
 const qtyCache = {};
 
 function renderProducts() {
-  const products = loadProducts();
+  const products = getProducts();
   const L = t();
+
+  // Preserve current input values before re-render
   products.forEach((_, i) => {
     const el = document.getElementById(`qty_${i}`);
     if (el) qtyCache[i] = el.value;
   });
+
   const list = document.getElementById('product-list');
+
+  if (_products === null) {
+    list.innerHTML = `<div class="list-loading">${L.loadingList}</div>`;
+    setText('product-count', L.productCount(0));
+    return;
+  }
+
   list.innerHTML = products.map((p, i) => {
     const cached = qtyCache[i] ?? '';
     const filled = cached !== '';
@@ -533,7 +633,7 @@ function onQtyInput(i, input) {
 }
 
 function updateSummary() {
-  const products = loadProducts();
+  const products = getProducts();
   const total  = products.length;
   const filled = products.filter((_, i) => getQty(i) !== null).length;
   const remain = total - filled;
@@ -549,22 +649,22 @@ function addProduct() {
   const input = document.getElementById('new-product-input');
   const name  = input.value.trim();
   if (!name) return;
-  const products = loadProducts();
+  const products = getProducts();
   if (products.some(p => p.name.toLowerCase() === name.toLowerCase())) {
     input.style.borderColor = 'var(--danger)';
     setTimeout(() => { input.style.borderColor = ''; }, 1500);
     alert(t().duplicateWarning);
     return;
   }
-  products.push({ name, custom: true });
-  saveProducts(products);
+  const newList = [...products, { name, custom: true }];
+  setAndSaveProducts(newList);
   input.value = '';
   renderProducts();
   updateSummary();
 }
 
 function deleteProduct(i) {
-  const products = loadProducts();
+  const products = getProducts();
   if (!confirm(t().deleteConfirm(products[i].name))) return;
   delete qtyCache[i];
   const keys = Object.keys(qtyCache).map(Number).filter(k => k > i);
@@ -572,8 +672,8 @@ function deleteProduct(i) {
     qtyCache[k-1] = qtyCache[k];
     delete qtyCache[k];
   });
-  products.splice(i, 1);
-  saveProducts(products);
+  const newList = products.filter((_, idx) => idx !== i);
+  setAndSaveProducts(newList);
   renderProducts();
   updateSummary();
 }
@@ -590,7 +690,7 @@ function goReview() {
   const shift = document.getElementById('f-shift').value;
   if (!staff) { showAlert('alertBox', L.errStaff); return; }
   if (!shift) { showAlert('alertBox', L.errShift); return; }
-  const products = loadProducts();
+  const products = getProducts();
   const counted  = products.filter((_, i) => getQty(i) !== null);
   if (counted.length === 0) { showAlert('alertBox', L.errProducts); return; }
   const shiftText = document.getElementById('f-shift').options[document.getElementById('f-shift').selectedIndex].text;
@@ -609,10 +709,8 @@ function goReview() {
   showScreen('confirm');
 }
 
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxs-f95f6JwrxA-U0uVFwSj90Es1s43hS4hs20U5DGSIKRlQJVgP4oaXIbTe4smZ6Ex/exec';
-
 function submitForm() {
-  const products = loadProducts();
+  const products = getProducts();
   const staff    = document.getElementById('f-staff').value.trim();
   const shift    = document.getElementById('f-shift').value;
   const date     = document.getElementById('f-date').value;
@@ -634,7 +732,7 @@ function onSuccess() { showScreen('success'); }
 
 function resetForm() {
   Object.keys(qtyCache).forEach(k => delete qtyCache[k]);
-  loadProducts().forEach((_, i) => {
+  getProducts().forEach((_, i) => {
     const el = document.getElementById(`qty_${i}`);
     if (el) { el.value = ''; el.className = 'qty-input'; }
   });
@@ -671,7 +769,15 @@ document.querySelectorAll('.lang-btn').forEach(b => {
 });
 document.getElementById('f-date').value = todayStr();
 initStaffField();
-applyLang();
+applyLang();  // renders skeleton "Loading…" state first
+
+// Load product list from server, then re-render
+if (station) {
+  loadProductsFromServer().then(() => {
+    renderProducts();
+    updateSummary();
+  });
+}
 </script>
 </body>
 </html>
