@@ -246,10 +246,6 @@ let pendingRow=null,alarmCallback=null;
 
 function t(){return STRINGS[lang];}
 
-// ── Platform detection ───────────────────────────────────────────────────────
-const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-const isAndroid = /Android/.test(navigator.userAgent);
-
 // ── Parse a temperature string robustly ──────────────────────────────────────
 // Handles: "−18" (Unicode minus), "-18" (hyphen), "3.5", " 4 ", etc.
 function parseTempValue(raw) {
@@ -335,15 +331,8 @@ function buildCard(shift){
     devs.forEach(d=>{
       const dev=s.devices[d.key];const row=document.createElement('div');row.className='temp-row';
       const needsMinus = d.max !== null && d.max < 0;
-      // iOS: inputmode="decimal" gives a keyboard with a minus key — no button needed.
-      // Android: inputmode="numeric" keyboard has no minus, so show the ± button instead.
-      // Desktop/other: also show the ± button as a convenience.
-      const useSignBtn = !isIOS;
-      const inputMode  = isIOS ? 'decimal' : 'numeric';
-      const signBtnHtml = useSignBtn
-        ? `<button class="sign-btn${needsMinus?' negative':''}" id="sign_${shift}_${d.key}" onclick="toggleSign('${shift}','${d.key}')" type="button" tabindex="-1">±</button>`
-        : '';
-      row.innerHTML=`<div class="device-info"><div class="device-name">${dev.name}</div><div class="device-range">${dev.note}</div></div><div class="temp-input-wrap">${signBtnHtml}<div class="temp-input-inner"><input class="temp-input" type="text" inputmode="${inputMode}" pattern="-?[0-9]*\\.?[0-9]*" id="${shift}_${d.key}" placeholder="—" autocomplete="off" oninput="validateTemp(this,'${shift}','${d.key}')"><span class="temp-unit">°C</span></div></div><div class="status-dot" id="dot_${shift}_${d.key}"></div>`;
+      // All platforms use the ± button — most mobile keyboards don't reliably show a minus key.
+      row.innerHTML=`<div class="device-info"><div class="device-name">${dev.name}</div><div class="device-range">${dev.note}</div></div><div class="temp-input-wrap"><button class="sign-btn${needsMinus?' negative':''}" id="sign_${shift}_${d.key}" onclick="toggleSign('${shift}','${d.key}')" type="button" tabindex="-1">±</button><div class="temp-input-inner"><input class="temp-input" type="text" inputmode="numeric" pattern="-?[0-9]*\\.?[0-9]*" id="${shift}_${d.key}" placeholder="—" autocomplete="off" oninput="validateTemp(this,'${shift}','${d.key}')"><span class="temp-unit">°C</span></div></div><div class="status-dot" id="dot_${shift}_${d.key}"></div>`;
       card.appendChild(row);
     });
   });
@@ -445,7 +434,7 @@ function resetForm(){
       const dot=document.getElementById('dot_'+sh+'_'+d.key);
       if(dot)dot.className='status-dot';
       const btn=document.getElementById('sign_'+sh+'_'+d.key);
-      if(btn&&!isIOS){const needsMinus=d.max!==null&&d.max<0;btn.className='sign-btn'+(needsMinus?' negative':'');}
+      if(btn){const needsMinus=d.max!==null&&d.max<0;btn.className='sign-btn'+(needsMinus?' negative':'');}
     });
   });
   document.getElementById('flagList').classList.remove('show');
