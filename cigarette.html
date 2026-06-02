@@ -412,47 +412,25 @@ function loadProductsFromServer() {
   });
 }
 
-// Save to server via JSONP GET — same approach as load, avoids CORS issues.
-function saveProductsToServer(list) {
-  if (!station) return Promise.resolve();
+// Save to server via no-cors POST with text/plain content type.
+// text/plain avoids CORS preflight, and Apps Script can read the raw body fine.
+async function saveProductsToServer(list) {
+  if (!station) return;
   setCachedProducts(list);
   showSyncBadge('syncing');
-
-  return new Promise((resolve) => {
-    const cbName = '_cigSaveCb_' + Date.now();
-    const script = document.createElement('script');
-    const timer = setTimeout(() => {
-      cleanup();
-      console.warn('CigProducts save timeout');
-      showSyncBadge('error');
-      resolve();
-    }, 10000);
-
-    function cleanup() {
-      clearTimeout(timer);
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[cbName] = function(data) {
-      cleanup();
-      if (data && data.success) {
-        hideSyncBadge();
-      } else {
-        showSyncBadge('error');
-      }
-      resolve();
-    };
-
-    const params = 'action=saveCigProducts'
-      + '&station=' + encodeURIComponent(station)
-      + '&products=' + encodeURIComponent(JSON.stringify(list))
-      + '&callback=' + cbName
-      + '&t=' + Date.now();
-    script.src = SHEET_URL + '?' + params;
-    script.onerror = () => { cleanup(); showSyncBadge('error'); resolve(); };
-    document.head.appendChild(script);
-  });
+  try {
+    const body = JSON.stringify({ formType: 'saveCigProducts', station, products: list });
+    await fetch(SHEET_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: body,
+    });
+    // no-cors means we can't read the response — assume success if no exception
+    hideSyncBadge();
+  } catch(err) {
+    console.warn('CigProducts save failed:', err);
+    showSyncBadge('error');
+  }
 }
 
 function showSyncBadge(type) {
