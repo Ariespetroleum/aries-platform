@@ -353,44 +353,66 @@ function getDefaultProducts() {
   return DEFAULT_PRODUCTS.map(name => ({ name, custom: false }));
 }
 
-// Load from server; fall back to cache then defaults.
-// Returns a Promise that resolves when _products is ready.
-async function loadProductsFromServer() {
+// Load from server via JSONP — avoids CORS/redirect issues with Google Apps Script.
+// Falls back to localStorage cache then defaults.
+function loadProductsFromServer() {
   if (!station) {
     _products = getDefaultProducts();
-    return;
+    return Promise.resolve();
   }
 
   showSyncBadge('syncing');
 
-  try {
-    const url = `${SHEET_URL}?action=getCigProducts&station=${encodeURIComponent(station)}`;
-    const resp = await fetch(url, { cache: 'no-store' });
-    const data = await resp.json();
+  return new Promise((resolve) => {
+    const cbName = '_cigCb_' + Date.now();
+    const script = document.createElement('script');
+    const timer = setTimeout(() => {
+      cleanup();
+      console.warn('CigProducts JSONP timeout');
+      useFallback();
+      resolve();
+    }, 8000);
 
-    if (data.success) {
-      if (data.products === null) {
-        // First time this station uses the page — initialise with defaults
-        _products = getDefaultProducts();
-        // Write defaults back to server in background
-        saveProductsToServer(_products).catch(() => {});
-      } else {
-        _products = data.products;
-        setCachedProducts(_products);
-      }
-      hideSyncBadge();
-    } else {
-      throw new Error(data.error || 'unknown error');
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
     }
-  } catch(err) {
-    console.warn('CigProducts fetch failed, using cache/defaults:', err);
-    const cached = getCachedProducts();
-    _products = cached || getDefaultProducts();
-    showSyncBadge('error');
-  }
+
+    function useFallback() {
+      const cached = getCachedProducts();
+      _products = cached || getDefaultProducts();
+      showSyncBadge('error');
+    }
+
+    window[cbName] = function(data) {
+      cleanup();
+      try {
+        if (data && data.success) {
+          if (data.products === null) {
+            _products = getDefaultProducts();
+            saveProductsToServer(_products);
+          } else {
+            _products = data.products;
+            setCachedProducts(_products);
+          }
+          hideSyncBadge();
+        } else {
+          useFallback();
+        }
+      } catch(e) {
+        useFallback();
+      }
+      resolve();
+    };
+
+    script.src = SHEET_URL + '?action=getCigProducts&station=' + encodeURIComponent(station) + '&callback=' + cbName + '&t=' + Date.now();
+    script.onerror = () => { cleanup(); useFallback(); resolve(); };
+    document.head.appendChild(script);
+  });
 }
 
-// Save to server; also update local cache.
+// Save to server via no-cors POST; also update local cache.
 async function saveProductsToServer(list) {
   if (!station) return;
   setCachedProducts(list);
@@ -398,6 +420,7 @@ async function saveProductsToServer(list) {
   try {
     await fetch(SHEET_URL, {
       method: 'POST',
+      mode: 'no-cors',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ formType: 'saveCigProducts', station, products: list }),
     });
