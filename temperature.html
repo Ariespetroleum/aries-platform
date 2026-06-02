@@ -53,8 +53,7 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
 .device-name{font-size:13px;font-weight:800;color:var(--text)}
 .device-range{font-family:var(--mono);font-size:10px;color:var(--muted);margin-top:2px}
 .temp-input-wrap{position:relative}
-.temp-input{width:84px;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:14px;font-weight:800;padding:8px 26px 8px 10px;text-align:right;outline:none;transition:border-color .2s,background .2s,box-shadow .2s;-moz-appearance:textfield}
-.temp-input::-webkit-inner-spin-button,.temp-input::-webkit-outer-spin-button{-webkit-appearance:none}
+.temp-input{width:84px;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--mono);font-size:14px;font-weight:800;padding:8px 26px 8px 10px;text-align:right;outline:none;transition:border-color .2s,background .2s,box-shadow .2s}
 .temp-input:focus{border-color:var(--liberty-blue);background:#fff;box-shadow:0 0 0 3px rgba(0,61,165,.10)}
 .temp-input.ok{border-color:var(--ok-border);background:var(--ok-bg);color:var(--bp-green-dark)}
 .temp-input.warn{border-color:#BFDBFE;background:#EFF6FF;color:var(--liberty-blue)}
@@ -64,12 +63,10 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
 .status-dot.ok{background:var(--bp-green);box-shadow:0 0 0 4px rgba(0,166,81,.12)}
 .status-dot.warn{background:var(--liberty-blue);box-shadow:0 0 0 4px rgba(0,61,165,.10)}
 .status-dot.danger{background:var(--sinopec-red);box-shadow:0 0 0 4px rgba(230,0,18,.12)}
-/* sig row */
 .sig-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;flex-direction:column}
 .sig-label{font-size:10px;color:var(--muted);white-space:nowrap;font-weight:700;letter-spacing:.07em;text-transform:uppercase;font-family:var(--mono)}
 .sig-input{width:100%;background:#fff;border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--sans);font-size:13px;padding:9px 11px;outline:none;transition:border-color .2s,box-shadow .2s}
 .sig-input:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.10)}
-/* staff hint */
 .staff-hint{font-size:11px;color:var(--liberty-blue);margin-top:4px;cursor:pointer;font-family:var(--mono)}
 .flag-list{background:var(--danger-bg);border:1px solid var(--danger-border);border-radius:12px;padding:12px 14px;margin-top:12px;display:none}
 .flag-list.show{display:block}
@@ -229,8 +226,8 @@ let station = localStorage.getItem('ap_station') || '';
 let lang    = localStorage.getItem('ap_lang')    || 'en';
 
 const STRINGS = {
-  en:{pageTitle:'Temperature Log — Aries Petroleum',hBack:'Portal',hTitle:'Temperature Log',nsMsgNoStn:'No station selected. Please return to the portal first.',nsLink:'← Go to Portal',fTitle:'Temperature Log',fSub:'Record temperatures for all units — 3 shifts per day.',shifts:{morning:'☀️ Morning',afternoon:'🌤 Afternoon',night:'🌙 Night'},badges:{morning:'Morning Shift',afternoon:'Afternoon Shift',night:'Night Shift'},sigLabel:'Staff name',sigPh:'Enter your name',flagTitle:'⚠ Out-of-range readings',submitBtn:'Submit shift',fNote:'Saved to Google Sheets',successTitle:'All shifts submitted',successMsg:'All three shift temperature records have been saved.',succAlarm:'🚨 Persistent alarm (manager notified):',succSingle:'⚠ Single-shift exceedance:',succAgain:'Submit another day',succHome:'← Back to Portal',submitting:'Submitting…',shiftSaved:(s)=>`✓ ${s} shift saved. Continue with next shift.`,errSig:'Please enter your name before submitting.',errEmpty:(n)=>`${n} reading(s) still empty. Please fill all fields.`,groups:{hot:'Hot Food',cold:'Refrigerated',frozen:'Frozen'},devices:{hot_pie:{name:'Hot Pie Warmer',note:'Min 60°C'},sandwich:{name:'Sandwich Fridge',note:'Max 5°C'},donut:{name:'Donut Display Fridge',note:'Max 5°C'},dairy:{name:'Milk & Dairy Fridge',note:'Max 5°C'},cool_room:{name:'Cool Room',note:'Max 5°C'},ice_cream:{name:'Ice Cream Freezer',note:'Max −15°C'},freezer:{name:'Chest Freezer',note:'Max −15°C'}},alarmTitle:'Persistent Temperature Alarm',alarmSub:'The following units have exceeded safe limits in 2+ shifts.\nNotify your manager immediately.',alarmAck:'I have notified my manager — continue',alarmNote:'Record will be flagged in Google Sheets.',alarmExceeded:'Exceeded',alarmTimes:'time(s)',alarmReading:'Readings:',alarmLimit:'Limit:',staffHint:'✎ Not you? Tap to change'},
-  zh:{pageTitle:'温度记录 — Aries Petroleum',hBack:'首页',hTitle:'温度记录',nsMsgNoStn:'未选择站点，请先返回首页选择站点。',nsLink:'← 返回首页',fTitle:'温度记录',fSub:'每天三班次，记录所有设备温度。',shifts:{morning:'☀️ 早班',afternoon:'🌤 午班',night:'🌙 夜班'},badges:{morning:'早班',afternoon:'午班',night:'夜班'},sigLabel:'员工姓名',sigPh:'输入姓名',flagTitle:'⚠ 温度异常项目',submitBtn:'提交当前班次',fNote:'数据保存至 Google Sheets',successTitle:'三班次全部提交',successMsg:'所有温度记录已保存至 Google Sheets。',succAlarm:'🚨 持续异常（已通知主管）：',succSingle:'⚠ 单次超标：',succAgain:'再填一天',succHome:'← 返回首页',submitting:'提交中…',shiftSaved:(s)=>`✓ ${s}已保存，请继续填写下一班次。`,errSig:'请填写员工姓名。',errEmpty:(n)=>`还有 ${n} 项未填写，请全部填完再提交。`,groups:{hot:'热食',cold:'冷藏',frozen:'冷冻'},devices:{hot_pie:{name:'热派保温柜',note:'不低于 60°C'},sandwich:{name:'三明治保鲜柜',note:'不超过 5°C'},donut:{name:'甜甜圈保鲜柜',note:'不超过 5°C'},dairy:{name:'鲜奶及奶制品柜',note:'不超过 5°C'},cool_room:{name:'冷藏室',note:'不超过 5°C'},ice_cream:{name:'冰淇淋冷冻柜',note:'不超过 −15°C'},freezer:{name:'卧式冷冻柜',note:'不超过 −15°C'}},alarmTitle:'温度持续异常 — 立即处理',alarmSub:'以下设备在 2 个或以上班次中超出安全范围，\n请立即通知主管。',alarmAck:'我已通知主管，继续提交',alarmNote:'记录将在 Google Sheets 中标记为需跟进。',alarmExceeded:'超标',alarmTimes:'次',alarmReading:'实测值：',alarmLimit:'限值：',staffHint:'✎ 不是你？点击更改'}
+  en:{pageTitle:'Temperature Log — Aries Petroleum',hBack:'Portal',hTitle:'Temperature Log',nsMsgNoStn:'No station selected. Please return to the portal first.',nsLink:'← Go to Portal',fTitle:'Temperature Log',fSub:'Record temperatures for all units — 3 shifts per day.',shifts:{morning:'☀️ Morning',afternoon:'🌤 Afternoon',night:'🌙 Night'},badges:{morning:'Morning Shift',afternoon:'Afternoon Shift',night:'Night Shift'},sigLabel:'Staff name',sigPh:'Enter your name',flagTitle:'⚠ Out-of-range readings',submitBtn:'Submit shift',fNote:'Saved to Google Sheets',successTitle:'All shifts submitted',successMsg:'All three shift temperature records have been saved.',succAlarm:'🚨 Persistent alarm (manager notified):',succSingle:'⚠ Single-shift exceedance:',succAgain:'Submit another day',succHome:'← Back to Portal',submitting:'Submitting…',shiftSaved:(s)=>`✓ ${s} shift saved. Continue with next shift.`,errSig:'Please enter your name before submitting.',errEmpty:(n)=>`${n} reading(s) still empty. Please fill all fields.`,errInvalid:'One or more readings contain invalid characters. Please enter numbers only (e.g. −18 or 3.5).',groups:{hot:'Hot Food',cold:'Refrigerated',frozen:'Frozen'},devices:{hot_pie:{name:'Hot Pie Warmer',note:'Min 60°C'},sandwich:{name:'Sandwich Fridge',note:'Max 5°C'},donut:{name:'Donut Display Fridge',note:'Max 5°C'},dairy:{name:'Milk & Dairy Fridge',note:'Max 5°C'},cool_room:{name:'Cool Room',note:'Max 5°C'},ice_cream:{name:'Ice Cream Freezer',note:'Max −15°C'},freezer:{name:'Chest Freezer',note:'Max −15°C'}},alarmTitle:'Persistent Temperature Alarm',alarmSub:'The following units have exceeded safe limits in 2+ shifts.\nNotify your manager immediately.',alarmAck:'I have notified my manager — continue',alarmNote:'Record will be flagged in Google Sheets.',alarmExceeded:'Exceeded',alarmTimes:'time(s)',alarmReading:'Readings:',alarmLimit:'Limit:',staffHint:'✎ Not you? Tap to change'},
+  zh:{pageTitle:'温度记录 — Aries Petroleum',hBack:'首页',hTitle:'温度记录',nsMsgNoStn:'未选择站点，请先返回首页选择站点。',nsLink:'← 返回首页',fTitle:'温度记录',fSub:'每天三班次，记录所有设备温度。',shifts:{morning:'☀️ 早班',afternoon:'🌤 午班',night:'🌙 夜班'},badges:{morning:'早班',afternoon:'午班',night:'夜班'},sigLabel:'员工姓名',sigPh:'输入姓名',flagTitle:'⚠ 温度异常项目',submitBtn:'提交当前班次',fNote:'数据保存至 Google Sheets',successTitle:'三班次全部提交',successMsg:'所有温度记录已保存至 Google Sheets。',succAlarm:'🚨 持续异常（已通知主管）：',succSingle:'⚠ 单次超标：',succAgain:'再填一天',succHome:'← 返回首页',submitting:'提交中…',shiftSaved:(s)=>`✓ ${s}已保存，请继续填写下一班次。`,errSig:'请填写员工姓名。',errEmpty:(n)=>`还有 ${n} 项未填写，请全部填完再提交。`,errInvalid:'有输入内容包含无效字符，请只输入数字（如 −18 或 3.5）。',groups:{hot:'热食',cold:'冷藏',frozen:'冷冻'},devices:{hot_pie:{name:'热派保温柜',note:'不低于 60°C'},sandwich:{name:'三明治保鲜柜',note:'不超过 5°C'},donut:{name:'甜甜圈保鲜柜',note:'不超过 5°C'},dairy:{name:'鲜奶及奶制品柜',note:'不超过 5°C'},cool_room:{name:'冷藏室',note:'不超过 5°C'},ice_cream:{name:'冰淇淋冷冻柜',note:'不超过 −15°C'},freezer:{name:'卧式冷冻柜',note:'不超过 −15°C'}},alarmTitle:'温度持续异常 — 立即处理',alarmSub:'以下设备在 2 个或以上班次中超出安全范围，\n请立即通知主管。',alarmAck:'我已通知主管，继续提交',alarmNote:'记录将在 Google Sheets 中标记为需跟进。',alarmExceeded:'超标',alarmTimes:'次',alarmReading:'实测值：',alarmLimit:'限值：',staffHint:'✎ 不是你？点击更改'}
 };
 
 const DEVICES=[{key:'hot_pie',direction:'min_only',hotMin:60,max:null,group:'hot'},{key:'sandwich',direction:'max_only',hotMin:null,max:5,group:'cold'},{key:'donut',direction:'max_only',hotMin:null,max:5,group:'cold'},{key:'dairy',direction:'max_only',hotMin:null,max:5,group:'cold'},{key:'cool_room',direction:'max_only',hotMin:null,max:5,group:'cold'},{key:'ice_cream',direction:'max_only',hotMin:null,max:-15,group:'frozen'},{key:'freezer',direction:'max_only',hotMin:null,max:-15,group:'frozen'}];
@@ -244,6 +241,17 @@ let pendingRow=null,alarmCallback=null;
 
 function t(){return STRINGS[lang];}
 
+// ── Parse a temperature string robustly ──────────────────────────────────────
+// Handles: "−18" (Unicode minus), "-18" (hyphen), "3.5", " 4 ", etc.
+function parseTempValue(raw) {
+  if (raw === '' || raw === null || raw === undefined) return NaN;
+  // Replace Unicode minus (U+2212) and en-dash with ASCII hyphen
+  const cleaned = String(raw).replace(/[\u2212\u2013]/g, '-').trim();
+  // Allow only digits, hyphen at start, and one decimal point
+  if (!/^-?\d*\.?\d+$/.test(cleaned)) return NaN;
+  return parseFloat(cleaned);
+}
+
 // ── Staff name autofill (4hr expiry) ─────────────────────────────────────────
 function getStaffName(){
   const name=localStorage.getItem('ap_staff_name')||'';
@@ -251,7 +259,6 @@ function getStaffName(){
   return(name&&ts&&(Date.now()-ts)<4*60*60*1000)?name:'';
 }
 
-// Apply autofill to all 3 shift sig fields
 function initStaffFields(){
   const name=getStaffName();
   SHIFTS.forEach(sh=>{
@@ -303,7 +310,6 @@ function applyLang(){
     document.getElementById('badge-'+sh).textContent=s.badges[sh];
     document.getElementById('siglabel-'+sh).textContent=s.sigLabel;
     document.getElementById('sig-'+sh).placeholder=s.sigPh;
-    // Update hint text
     const hint=document.getElementById('hint-'+sh);
     if(hint&&hint.style.display!=='none') hint.textContent=s.staffHint;
   });
@@ -319,7 +325,10 @@ function buildCard(shift){
     const hdr=document.createElement('div');hdr.className='card-group-label';hdr.style.color=GROUP_COLORS[grp];if(gi>0)hdr.style.borderTop='1px solid var(--border)';hdr.textContent=s.groups[grp];card.appendChild(hdr);
     devs.forEach(d=>{
       const dev=s.devices[d.key];const row=document.createElement('div');row.className='temp-row';
-      row.innerHTML=`<div class="device-info"><div class="device-name">${dev.name}</div><div class="device-range">${dev.note}</div></div><div class="temp-input-wrap"><input class="temp-input" type="number" step="0.1" id="${shift}_${d.key}" placeholder="—" oninput="validateTemp(this,'${shift}','${d.key}')"><span class="temp-unit">°C</span></div><div class="status-dot" id="dot_${shift}_${d.key}"></div>`;
+      // ── KEY CHANGE: type="text" inputmode="decimal" ──
+      // This makes Android show a numeric keyboard that includes the minus key.
+      // pattern and inputmode together give the best cross-platform experience.
+      row.innerHTML=`<div class="device-info"><div class="device-name">${dev.name}</div><div class="device-range">${dev.note}</div></div><div class="temp-input-wrap"><input class="temp-input" type="text" inputmode="decimal" pattern="-?[0-9]*\\.?[0-9]*" id="${shift}_${d.key}" placeholder="—" autocomplete="off" oninput="validateTemp(this,'${shift}','${d.key}')"><span class="temp-unit">°C</span></div><div class="status-dot" id="dot_${shift}_${d.key}"></div>`;
       card.appendChild(row);
     });
   });
@@ -327,11 +336,23 @@ function buildCard(shift){
 
 function getStatus(val,d){if(d.direction==='min_only'){if(val>=d.hotMin)return'ok';if(val>=d.hotMin-5)return'warn';return'danger';}if(val<=d.max)return'ok';if(val<=d.max+2)return'warn';return'danger';}
 
-function validateTemp(input,shift,key){const d=DEVICES.find(x=>x.key===key);const dot=document.getElementById('dot_'+shift+'_'+key);const val=parseFloat(input.value);if(input.value===''||isNaN(val)){input.className='temp-input';dot.className='status-dot';return;}const st=getStatus(val,d);input.className='temp-input '+st;dot.className='status-dot '+st;updateFlags();}
+function validateTemp(input,shift,key){
+  const d=DEVICES.find(x=>x.key===key);
+  const dot=document.getElementById('dot_'+shift+'_'+key);
+  const raw=input.value;
+  // Empty — reset
+  if(raw===''||raw==='-'){input.className='temp-input';dot.className='status-dot';return;}
+  const val=parseTempValue(raw);
+  if(isNaN(val)){input.className='temp-input';dot.className='status-dot';return;}
+  const st=getStatus(val,d);
+  input.className='temp-input '+st;
+  dot.className='status-dot '+st;
+  updateFlags();
+}
 
-function updateFlags(){const s=t();const flags=[];SHIFTS.forEach(shift=>{DEVICES.forEach(d=>{const inp=document.getElementById(shift+'_'+d.key);if(!inp||inp.value==='')return;if(getStatus(parseFloat(inp.value),d)==='danger')flags.push('['+s.badges[shift]+'] '+s.devices[d.key].name+': '+inp.value+'°C — '+s.devices[d.key].note);});});document.getElementById('flagItems').innerHTML=flags.map(f=>'<div class="flag-item"><span>⚠</span> '+f+'</div>').join('');document.getElementById('flagList').classList.toggle('show',flags.length>0);}
+function updateFlags(){const s=t();const flags=[];SHIFTS.forEach(shift=>{DEVICES.forEach(d=>{const inp=document.getElementById(shift+'_'+d.key);if(!inp||inp.value==='')return;const val=parseTempValue(inp.value);if(isNaN(val))return;if(getStatus(val,d)==='danger')flags.push('['+s.badges[shift]+'] '+s.devices[d.key].name+': '+inp.value+'°C — '+s.devices[d.key].note);});});document.getElementById('flagItems').innerHTML=flags.map(f=>'<div class="flag-item"><span>⚠</span> '+f+'</div>').join('');document.getElementById('flagList').classList.toggle('show',flags.length>0);}
 
-function getRepeatOffenders(){const counts={};DEVICES.forEach(d=>{counts[d.key]={count:0,shifts:[],values:[]};});const toCheck=[...new Set([...SHIFTS.filter(s=>submitted[s]),currentShift])];toCheck.forEach(shift=>{DEVICES.forEach(d=>{const inp=document.getElementById(shift+'_'+d.key);if(!inp||inp.value==='')return;const val=parseFloat(inp.value);if(!isNaN(val)&&getStatus(val,d)==='danger'){counts[d.key].count++;counts[d.key].shifts.push(t().badges[shift]);counts[d.key].values.push(val+'°C');}});});return DEVICES.filter(d=>counts[d.key].count>=2).map(d=>({device:d,...counts[d.key]}));}
+function getRepeatOffenders(){const counts={};DEVICES.forEach(d=>{counts[d.key]={count:0,shifts:[],values:[]};});const toCheck=[...new Set([...SHIFTS.filter(s=>submitted[s]),currentShift])];toCheck.forEach(shift=>{DEVICES.forEach(d=>{const inp=document.getElementById(shift+'_'+d.key);if(!inp||inp.value==='')return;const val=parseTempValue(inp.value);if(!isNaN(val)&&getStatus(val,d)==='danger'){counts[d.key].count++;counts[d.key].shifts.push(t().badges[shift]);counts[d.key].values.push(inp.value+'°C');}});});return DEVICES.filter(d=>counts[d.key].count>=2).map(d=>({device:d,...counts[d.key]}));}
 
 function switchShift(shift){currentShift=shift;SHIFTS.forEach(s=>document.getElementById('sec-'+s).classList.toggle('active',s===shift));updateTabs();updateStepBar();document.getElementById('alertBox').classList.remove('show');}
 
@@ -342,10 +363,13 @@ function updateStepBar(){SHIFTS.forEach((s,i)=>{const el=document.getElementById
 function submitShift(){
   const s=t();const sig=document.getElementById('sig-'+currentShift).value.trim();
   if(!sig){showAlert(s.errSig);return;}
-  const missing=DEVICES.filter(d=>{const v=document.getElementById(currentShift+'_'+d.key).value;return v===''||isNaN(parseFloat(v));}).length;
+  // Check for any invalid (non-numeric) entries
+  const invalid=DEVICES.filter(d=>{const v=document.getElementById(currentShift+'_'+d.key).value;return v!==''&&isNaN(parseTempValue(v));});
+  if(invalid.length){showAlert(s.errInvalid);return;}
+  const missing=DEVICES.filter(d=>{const v=document.getElementById(currentShift+'_'+d.key).value;return v===''||isNaN(parseTempValue(v));}).length;
   if(missing){showAlert(s.errEmpty(missing));return;}
   const row={formType:'temperatureLog',submittedAt:new Date().toISOString(),station,date:todayStr(),shift:currentShift,signature:sig,lang};
-  DEVICES.forEach(d=>{row[d.key]=document.getElementById(currentShift+'_'+d.key).value;});
+  DEVICES.forEach(d=>{row[d.key]=parseTempValue(document.getElementById(currentShift+'_'+d.key).value);});
   showAlarmIfNeeded(row,()=>sendToSheets(row));
 }
 
