@@ -29,17 +29,14 @@ body{font-family:var(--sans);background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F
 .back-btn{width:32px;height:32px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:#fff;flex-shrink:0;border:none}
 .brand{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.12em;color:#fff}
 .brand span{color:rgba(255,255,255,.7)}
-/* staff chip in header */
 .staff-chip{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:20px;padding:3px 9px 3px 3px;cursor:pointer}
 .staff-chip-avatar{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.9);color:var(--sinopec-red);font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .staff-chip-name{font-family:var(--mono);font-size:10px;color:#fff;font-weight:600;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .lang-btn{padding:6px 10px;font-family:var(--mono);font-size:11px;color:#fff;cursor:pointer;border:none;background:transparent;font-weight:600}
 .lang-btn.active{background:#fff;color:var(--liberty-blue)}
 
-/* screen system */
 .screen{display:none}.screen.active{display:block}
 
-/* station select */
 .station-wrap{max-width:480px;margin:0 auto;padding:24px 16px}
 .page-eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:700}
 .page-heading{font-size:22px;font-weight:800;line-height:1.3;margin-bottom:6px;color:var(--text)}
@@ -54,10 +51,8 @@ body{font-family:var(--sans);background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F
 .station-opt-loc{font-size:11px;color:var(--muted);margin-top:2px}
 .station-opt-arrow{color:var(--border-strong);font-size:16px;font-weight:700}
 
-/* main portal */
 .portal-wrap{max-width:520px;margin:0 auto;padding:0 12px 24px}
 
-/* station bar */
 .station-bar{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;display:flex;align-items:center;justify-content:space-between;margin:14px 0;box-shadow:var(--shadow-sm)}
 .sbar-left{display:flex;align-items:center;gap:10px}
 .sbar-dot{width:8px;height:8px;border-radius:50%;background:var(--bp-green);box-shadow:0 0 6px var(--bp-green);flex-shrink:0}
@@ -65,17 +60,14 @@ body{font-family:var(--sans);background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F
 .sbar-sub{font-size:11px;color:var(--muted);font-family:var(--mono);margin-top:1px}
 .sbar-change{font-size:11px;color:var(--liberty-blue);cursor:pointer;border:1px solid rgba(0,61,165,.25);padding:5px 12px;border-radius:7px;font-family:var(--mono);background:var(--blue-light);white-space:nowrap;font-weight:600}
 
-/* tabs */
 .tabs{display:flex;gap:0;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow-sm)}
 .tab{flex:1;padding:11px 8px;font-size:12px;font-weight:700;text-align:center;cursor:pointer;color:var(--muted);border:none;background:transparent;font-family:var(--sans);transition:all .18s;border-right:1px solid var(--border)}
 .tab:last-child{border-right:none}
 .tab.active{background:var(--liberty-blue);color:#fff}
 .tab-count{display:inline-block;background:var(--sinopec-red);color:#fff;font-size:9px;font-weight:800;border-radius:10px;padding:1px 5px;margin-left:4px;vertical-align:middle;font-family:var(--mono)}
 
-/* section label */
 .section-lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:16px 0 8px}
 
-/* pending card */
 .pending-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;box-shadow:var(--shadow-sm);animation:slideUp .25s ease both}
 @keyframes slideUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 .pending-stripe{height:4px;width:100%}
@@ -102,24 +94,20 @@ body{font-family:var(--sans);background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F
 .btn-done{background:var(--green-light);color:var(--bp-green-dark);border:1.5px solid #BBF7D0;cursor:default}
 .btn-rejected-done{background:#FFF1F2;color:var(--muted);border:1.5px solid var(--border);cursor:default}
 
-/* empty state */
 .empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
 .empty-icon{font-size:40px;margin-bottom:10px}
 .empty-title{font-size:15px;font-weight:700;color:var(--label);margin-bottom:4px}
 .empty-sub{font-size:13px}
 
-/* loading */
 .loading{text-align:center;padding:32px;color:var(--muted);font-size:13px}
 .spinner{display:inline-block;width:18px;height:18px;border:2.5px solid var(--border);border-top-color:var(--liberty-blue);border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;margin-right:8px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all .3s;white-space:nowrap;pointer-events:none}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .toast.success{background:var(--bp-green)}
 .toast.error{background:var(--sinopec-red)}
 
-/* search tab */
 .search-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
 .search-box-title{font-size:14px;font-weight:800;color:var(--text);margin-bottom:12px}
 .fg{margin-bottom:12px}
@@ -129,7 +117,6 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
 .search-btn{width:100%;padding:12px;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--sans);background:linear-gradient(135deg,var(--liberty-blue),var(--liberty-blue-dark));color:#fff;box-shadow:0 4px 14px rgba(0,61,165,.2)}
 .search-btn:disabled{opacity:.5;cursor:not-allowed}
 
-/* result card */
 .result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:12px;box-shadow:var(--shadow-sm);animation:slideUp .25s ease both}
 .result-card-title{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px}
 .result-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)}
@@ -140,7 +127,6 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
 .result-val.red{color:var(--sinopec-red)}
 .result-val.blue{color:var(--liberty-blue)}
 
-/* progress dots */
 .prog-track{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin-top:10px}
 .prog-dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:var(--surface-soft);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;font-family:var(--mono);color:var(--muted)}
 .prog-dot.lit-green{background:var(--bp-green);border-color:var(--bp-green);color:#fff}
@@ -194,7 +180,6 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
   </div>
 </div>
 
-<!-- ══ STATION SELECT (fallback if no ap_station) ══ -->
 <div class="screen" id="screen-station">
   <div class="station-wrap">
     <div class="page-eyebrow" id="s-eyebrow">Rewards Portal</div>
@@ -204,7 +189,6 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
   </div>
 </div>
 
-<!-- ══ MAIN PORTAL ══ -->
 <div class="screen" id="screen-portal">
   <div class="portal-wrap">
 
@@ -229,14 +213,12 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
       </button>
     </div>
 
-    <!-- PENDING ALERT (shown in Search tab when there are pending items) -->
     <div class="pending-alert" id="pending-alert" onclick="switchTab('pending')">
       <div class="pending-alert-dot"></div>
       <div class="pending-alert-text" id="pending-alert-text">3 items pending confirmation</div>
       <div class="pending-alert-cta" id="pending-alert-cta">View →</div>
     </div>
 
-    <!-- PENDING TAB -->
     <div id="pane-pending" style="display:none">
       <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
         <button id="refresh-btn" onclick="refreshPending()" style="font-size:11px;font-weight:700;font-family:var(--mono);padding:6px 14px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--liberty-blue);cursor:pointer">
@@ -249,7 +231,6 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
       <div id="pending-content" style="display:none"></div>
     </div>
 
-    <!-- SEARCH TAB -->
     <div id="pane-search">
 
       <div class="search-box">
@@ -302,7 +283,6 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
 
 <div class="toast" id="toast"></div>
 
-<!-- Staff name modal -->
 <div id="name-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:20px">
   <div style="background:#fff;border-radius:16px;padding:22px 20px;width:100%;max-width:320px;box-shadow:0 12px 40px rgba(0,0,0,.2)">
     <div style="font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px" id="modal-title">Your Name</div>
@@ -338,28 +318,28 @@ const S = {
     sEyebrow:'Rewards Portal', sHeading:'Select your <span>station</span>',
     sSub:'You will only see pending items from your station.',
     sbarChange:'Change', sbarSub:'Rewards Portal',
-    modalTitle:'Your Name', modalSub:'Enter your name for the record', modalCancel:'Cancel', modalConfirm:'Confirm →', modalErr:'Please enter your name.',
+    modalTitle:'Your Name', modalSub:'Enter your name for the record', modalCancel:'Cancel', modalConfirm:'Confirm \u2192', modalErr:'Please enter your name.',
     tabPending:'Pending', tabSearch:'Search', refreshLbl:'Refresh',
-    loading:'Loading…',
-    sectionCoffee:'☕ Coffee — Pending Confirmation',
-    sectionWash:'🚗 Car Wash — Pending Confirmation',
+    loading:'Loading\u2026',
+    sectionCoffee:'\u2615 Coffee \u2014 Pending Confirmation',
+    sectionWash:'\uD83D\uDE97 Car Wash \u2014 Pending Confirmation',
     emptyTitle:'All clear!', emptySub:'No pending items at your station.',
-    confirmBtn:'Confirm ✓', rejectBtn:'Reject ✗',
-    doneBtn:'Confirmed ✓', rejectedBtn:'Rejected',
-    confirming:'Confirming…', rejecting:'Rejecting…',
+    confirmBtn:'Confirm \u2713', rejectBtn:'Reject \u2717',
+    doneBtn:'Confirmed \u2713', rejectedBtn:'Rejected',
+    confirming:'Confirming\u2026', rejecting:'Rejecting\u2026',
     toastConfirmed:'Confirmed!', toastRejected:'Rejected',
-    toastErr:'Error — please try again',
-    alreadyWashed:'Already washed today — monthly limit is 1 per day.',
-    searchCoffeeTitle:'☕ Coffee Progress',
-    searchWashTitle:'🚗 Wash 3-Get-1 Progress',
-    searchMonthlyTitle:'💳 Monthly Membership',
+    toastErr:'Error \u2014 please try again',
+    alreadyWashed:'Already washed today \u2014 monthly limit is 1 per day.',
+    searchCoffeeTitle:'\u2615 Coffee Progress',
+    searchWashTitle:'\uD83D\uDE97 Wash 3-Get-1 Progress',
+    searchMonthlyTitle:'\uD83D\uDCB3 Monthly Membership',
     lblMonthlySearchLabel:'Plate Number or Mobile',
     lblCoffeePhone:'Customer Mobile', lblWashSearchLabel:'Plate Number or Mobile', lblPlate:'Plate Number',
     searchBtn:'Search',
-    pendingAlertCta:'View →',
+    pendingAlertCta:'View \u2192',
     pendingAlertText:n=>`${n} item${n===1?'':'s'} pending confirmation`,
     historyTitle:'Recent History',
-    hbPending:'⏳ Pending', hbDone:'✅ Confirmed', hbRejected:'✗ Rejected',
+    hbPending:'\u23F3 Pending', hbDone:'\u2705 Confirmed', hbRejected:'\u2717 Rejected',
     notFound:'No record found.',
     rfName:'Name', rfPhone:'Mobile', rfEmail:'Email',
     rfConfirmed:'Confirmed Purchases', rfFree:'Free Coffees Earned',
@@ -367,19 +347,19 @@ const S = {
     rfWashes:'Confirmed Washes', rfFreeWashes:'Free Washes Earned',
     rfPlate:'Plate', rfTier:'Membership', rfJoined:'Start Date', rfExpiry:'Expiry Date',
     rfTotalWashes:'Total Washes Confirmed',
-    freeCoffeeReady:'🎉 Free coffee ready — ask customer to show you the rewards screen.',
-    freeWashReady:'🎉 Free wash ready — confirm plate number with customer.',
-    redeemCoffeeBtn:'✓ Mark Free Coffee as Redeemed',
-    redeemWashBtn:'✓ Mark Free Wash as Redeemed',
-    confirmMonthlyWashBtn:'✓ Record Today's Wash',
-    alreadyWashedToday:'✅ Already washed today',
+    freeCoffeeReady:'\uD83C\uDF89 Free coffee ready \u2014 ask customer to show you the rewards screen.',
+    freeWashReady:'\uD83C\uDF89 Free wash ready \u2014 confirm plate number with customer.',
+    redeemCoffeeBtn:'\u2713 Mark Free Coffee as Redeemed',
+    redeemWashBtn:'\u2713 Mark Free Wash as Redeemed',
+    confirmMonthlyWashBtn:"\u2713 Record Today's Wash",
+    alreadyWashedToday:'\u2705 Already washed today',
     confirmMonthlyWashConfirm:(plate)=>`Confirm wash for ${plate} today?`,
     confirmMonthlyWashSuccess:'Wash recorded!',
     confirmMonthlyWashErr:'Could not record. Please try again.',
     membershipExpiredErr:'Membership has expired.',
     todayWashesLbl:'Today',
-    addMonthlyBtn:'💳 + Activate Monthly Membership',
-    renewMonthlyBtn:'💳 + Renew / Update Membership',
+    addMonthlyBtn:'\uD83D\uDCB3 + Activate Monthly Membership',
+    renewMonthlyBtn:'\uD83D\uDCB3 + Renew / Update Membership',
     addMonthlyTitle:'Activate Monthly Membership',
     addMonthlyConfirm:(plate)=>`Activate monthly membership for plate ${plate}?`,
     renewMonthlyConfirm:(plate)=>`Renew/update monthly membership for plate ${plate}?`,
@@ -388,8 +368,8 @@ const S = {
     notFoundMonthly:'No membership found for this plate. Fill in the details below to activate a new one.',
     lblMonthlyPhone:'Customer Mobile',
     lblMonthlyTier:'Plan',
-    selectTierStd:'Standard — $49/mo',
-    selectTierPrm:'Premium — $69/mo',
+    selectTierStd:'Standard \u2014 $49/mo',
+    selectTierPrm:'Premium \u2014 $69/mo',
     errMonthlyPlate:'Please enter a plate number.',
     errMonthlyPhone:'Please enter a valid mobile number.',
     errMonthlyTier:'Please select a plan.',
@@ -399,14 +379,14 @@ const S = {
     redeemConfirmWash:'Confirm: customer has received their free wash?',
     redeemSuccess:'Redeemed! Record updated.',
     redeemErr:'Could not mark as redeemed. Please try again.',
-    coffeeProgressLbl: (c,r) => `${c}/5 confirmed · ${r} more for a free coffee`,
-    washProgressLbl:   (c,r) => `${c}/3 confirmed · ${r} more for a free wash`,
-    addCoffeeBtn:'☕ + Add Coffee Purchase',
-    addWashBtn:'🚗 + Add Wash',
+    coffeeProgressLbl: (c,r) => `${c}/5 confirmed \u00B7 ${r} more for a free coffee`,
+    washProgressLbl:   (c,r) => `${c}/3 confirmed \u00B7 ${r} more for a free wash`,
+    addCoffeeBtn:'\u2615 + Add Coffee Purchase',
+    addWashBtn:'\uD83D\uDE97 + Add Wash',
     addCoffeeTitle:'Add Coffee Purchase',
     addWashTitle:'Add Car Wash',
-    addCoffeeSub:'Staff-recorded — counts as confirmed immediately.',
-    addWashSub:'Staff-recorded — counts as confirmed immediately.',
+    addCoffeeSub:'Staff-recorded \u2014 counts as confirmed immediately.',
+    addWashSub:'Staff-recorded \u2014 counts as confirmed immediately.',
     addConfirmCoffee:(phone)=>`Add 1 confirmed coffee purchase for ${phone}?`,
     addConfirmWash:(phone)=>`Add 1 confirmed wash for ${phone}?`,
     addSuccess:'Added! Progress updated.',
@@ -416,85 +396,85 @@ const S = {
     clearName:'Tap to change name',
   },
   zh:{
-    sEyebrow:'会员奖励管理', sHeading:'选择您的<span>站点</span>',
-    sSub:'只显示您站点的待确认记录。',
-    sbarChange:'更改', sbarSub:'会员奖励管理',
-    modalTitle:'您的姓名', modalSub:'请输入姓名以便记录', modalCancel:'取消', modalConfirm:'确认 →', modalErr:'请输入您的姓名。',
-    tabPending:'待确认', tabSearch:'查询', refreshLbl:'刷新',
-    loading:'加载中…',
-    sectionCoffee:'☕ 咖啡 — 待确认',
-    sectionWash:'🚗 洗车 — 待确认',
-    emptyTitle:'暂无待确认！', emptySub:'当前站点没有需要处理的记录。',
-    confirmBtn:'确认 ✓', rejectBtn:'拒绝 ✗',
-    doneBtn:'已确认 ✓', rejectedBtn:'已拒绝',
-    confirming:'确认中…', rejecting:'拒绝中…',
-    toastConfirmed:'已确认！', toastRejected:'已拒绝',
-    toastErr:'操作失败，请重试',
-    alreadyWashed:'该车牌今天已洗车，包月会员每日限一次。',
-    searchCoffeeTitle:'☕ 咖啡集点进度',
-    searchWashTitle:'🚗 洗三送一进度',
-    searchMonthlyTitle:'💳 包月会员查询',
-    lblMonthlySearchLabel:'车牌号码或手机号',
-    lblCoffeePhone:'顾客手机号', lblWashSearchLabel:'车牌号码或手机号', lblPlate:'车牌号码',
-    searchBtn:'查询',
-    pendingAlertCta:'查看 →',
-    pendingAlertText:n=>`${n} 条记录待确认`,
-    historyTitle:'历史记录',
-    hbPending:'⏳ 待确认', hbDone:'✅ 已确认', hbRejected:'✗ 已拒绝',
-    notFound:'未找到记录。',
-    rfName:'姓名', rfPhone:'手机', rfEmail:'邮箱',
-    rfConfirmed:'已确认购买次数', rfFree:'已领取免费咖啡',
-    rfProgress:'集点进度',
-    rfWashes:'已确认洗车次数', rfFreeWashes:'已领取免费洗车',
-    rfPlate:'车牌', rfTier:'套餐', rfJoined:'开始日期', rfExpiry:'到期日期',
-    rfTotalWashes:'已确认总洗车次数',
-    freeCoffeeReady:'🎉 免费咖啡已解锁 — 请让顾客出示奖励页面。',
-    freeWashReady:'🎉 免费洗车已解锁 — 请核对顾客手机号。',
-    redeemCoffeeBtn:'✓ 标记免费咖啡已领取',
-    redeemWashBtn:'✓ 标记免费洗车已使用',
-    confirmMonthlyWashBtn:'✓ 记录今日洗车',
-    alreadyWashedToday:'✅ 今日已洗车',
-    confirmMonthlyWashConfirm:(plate)=>`确认为车牌 ${plate} 记录今日洗车？`,
-    confirmMonthlyWashSuccess:'洗车记录成功！',
-    confirmMonthlyWashErr:'记录失败，请重试。',
-    membershipExpiredErr:'会员已到期。',
-    todayWashesLbl:'今日',
-    addMonthlyBtn:'💳 + 开通包月会员',
-    renewMonthlyBtn:'💳 + 续费 / 更新会员',
-    addMonthlyTitle:'开通包月会员',
-    addMonthlyConfirm:(plate)=>`确认为车牌 ${plate} 开通包月会员？`,
-    renewMonthlyConfirm:(plate)=>`确认为车牌 ${plate} 续费/更新包月会员？`,
-    addMonthlySuccess:'包月会员已开通！',
-    addMonthlyErr:'开通失败，请重试。',
-    notFoundMonthly:'未找到该车牌的会员记录，请填写以下信息开通新会员。',
-    lblMonthlyPhone:'顾客手机号',
-    lblMonthlyTier:'套餐',
-    selectTierStd:'Standard — $49/月',
-    selectTierPrm:'Premium — $69/月',
-    errMonthlyPlate:'请输入车牌号码。',
-    errMonthlyPhone:'请输入有效的手机号码。',
-    errMonthlyTier:'请选择套餐。',
-    rfRedeemed:'已兑换次数',
-    freePendingCount:'次待兑换',
-    redeemConfirmCoffee:'确认：顾客已领取免费咖啡？',
-    redeemConfirmWash:'确认：顾客已使用免费洗车？',
-    redeemSuccess:'已记录兑换！',
-    redeemErr:'标记失败，请重试。',
-    coffeeProgressLbl: (c,r) => `${c}/5 已确认 · 还需 ${r} 次可获免费咖啡`,
-    washProgressLbl:   (c,r) => `${c}/3 已确认 · 还需 ${r} 次可获免费洗车`,
-    addCoffeeBtn:'☕ + 登记一杯咖啡',
-    addWashBtn:'🚗 + 登记一次洗车',
-    addCoffeeTitle:'登记咖啡购买',
-    addWashTitle:'登记洗车',
-    addCoffeeSub:'员工直接登记，立即计为已确认。',
-    addWashSub:'员工直接登记，立即计为已确认。',
-    addConfirmCoffee:(phone)=>`确认为 ${phone} 登记一次咖啡购买？`,
-    addConfirmWash:(phone)=>`确认为 ${phone} 登记一次洗车？`,
-    addSuccess:'已登记！进度已更新。',
-    addErr:'登记失败，请重试。',
-    notFoundAddCoffee:'未找到该手机号，将自动建立新会员档案。',
-    notFoundAddWash:'未找到该手机号，将自动建立新会员档案。',
-    clearName:'点击更改名字',
+    sEyebrow:'\u4F1A\u5458\u5956\u52B1\u7BA1\u7406', sHeading:'\u9009\u62E9\u60A8\u7684<span>\u7AD9\u70B9</span>',
+    sSub:'\u53EA\u663E\u793A\u60A8\u7AD9\u70B9\u7684\u5F85\u786E\u8BA4\u8BB0\u5F55\u3002',
+    sbarChange:'\u66F4\u6539', sbarSub:'\u4F1A\u5458\u5956\u52B1\u7BA1\u7406',
+    modalTitle:'\u60A8\u7684\u59D3\u540D', modalSub:'\u8BF7\u8F93\u5165\u59D3\u540D\u4EE5\u4FBF\u8BB0\u5F55', modalCancel:'\u53D6\u6D88', modalConfirm:'\u786E\u8BA4 \u2192', modalErr:'\u8BF7\u8F93\u5165\u60A8\u7684\u59D3\u540D\u3002',
+    tabPending:'\u5F85\u786E\u8BA4', tabSearch:'\u67E5\u8BE2', refreshLbl:'\u5237\u65B0',
+    loading:'\u52A0\u8F7D\u4E2D\u2026',
+    sectionCoffee:'\u2615 \u548C\u5496\u5561 \u2014 \u5F85\u786E\u8BA4',
+    sectionWash:'\uD83D\uDE97 \u6D17\u8F66 \u2014 \u5F85\u786E\u8BA4',
+    emptyTitle:'\u6682\u65E0\u5F85\u786E\u8BA4\uFF01', emptySub:'\u5F53\u524D\u7AD9\u70B9\u6CA1\u6709\u9700\u8981\u5904\u7406\u7684\u8BB0\u5F55\u3002',
+    confirmBtn:'\u786E\u8BA4 \u2713', rejectBtn:'\u62D2\u7EDD \u2717',
+    doneBtn:'\u5DF2\u786E\u8BA4 \u2713', rejectedBtn:'\u5DF2\u62D2\u7EDD',
+    confirming:'\u786E\u8BA4\u4E2D\u2026', rejecting:'\u62D2\u7EDD\u4E2D\u2026',
+    toastConfirmed:'\u5DF2\u786E\u8BA4\uFF01', toastRejected:'\u5DF2\u62D2\u7EDD',
+    toastErr:'\u64CD\u4F5C\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5',
+    alreadyWashed:'\u8BE5\u8F66\u724C\u4ECA\u5929\u5DF2\u6D17\u8F66\uFF0C\u5305\u6708\u4F1A\u5458\u6BCF\u65E5\u9650\u4E00\u6B21\u3002',
+    searchCoffeeTitle:'\u2615 \u548C\u5496\u5561\u96C6\u70B9\u8FDB\u5EA6',
+    searchWashTitle:'\uD83D\uDE97 \u6D17\u4E09\u9001\u4E00\u8FDB\u5EA6',
+    searchMonthlyTitle:'\uD83D\uDCB3 \u5305\u6708\u4F1A\u5458\u67E5\u8BE2',
+    lblMonthlySearchLabel:'\u8F66\u724C\u53F7\u7801\u6216\u624B\u673A\u53F7',
+    lblCoffeePhone:'\u987E\u5BA2\u624B\u673A\u53F7', lblWashSearchLabel:'\u8F66\u724C\u53F7\u7801\u6216\u624B\u673A\u53F7', lblPlate:'\u8F66\u724C\u53F7\u7801',
+    searchBtn:'\u67E5\u8BE2',
+    pendingAlertCta:'\u67E5\u770B \u2192',
+    pendingAlertText:n=>`${n} \u6761\u8BB0\u5F55\u5F85\u786E\u8BA4`,
+    historyTitle:'\u5386\u53F2\u8BB0\u5F55',
+    hbPending:'\u23F3 \u5F85\u786E\u8BA4', hbDone:'\u2705 \u5DF2\u786E\u8BA4', hbRejected:'\u2717 \u5DF2\u62D2\u7EDD',
+    notFound:'\u672A\u627E\u5230\u8BB0\u5F55\u3002',
+    rfName:'\u59D3\u540D', rfPhone:'\u624B\u673A', rfEmail:'\u90AE\u7B95',
+    rfConfirmed:'\u5DF2\u786E\u8BA4\u8D2D\u4E70\u6B21\u6570', rfFree:'\u5DF2\u9886\u53D6\u514D\u8D39\u548C\u5496\u5561',
+    rfProgress:'\u96C6\u70B9\u8FDB\u5EA6',
+    rfWashes:'\u5DF2\u786E\u8BA4\u6D17\u8F66\u6B21\u6570', rfFreeWashes:'\u5DF2\u9886\u53D6\u514D\u8D39\u6D17\u8F66',
+    rfPlate:'\u8F66\u724C', rfTier:'\u5957\u9910', rfJoined:'\u5F00\u59CB\u65E5\u671F', rfExpiry:'\u5230\u671F\u65E5\u671F',
+    rfTotalWashes:'\u5DF2\u786E\u8BA4\u603B\u6D17\u8F66\u6B21\u6570',
+    freeCoffeeReady:'\uD83C\uDF89 \u514D\u8D39\u548C\u5496\u5561\u5DF2\u89E3\u9501 \u2014 \u8BF7\u8BA9\u987E\u5BA2\u51FA\u793A\u5956\u52B1\u9875\u9762\u3002',
+    freeWashReady:'\uD83C\uDF89 \u514D\u8D39\u6D17\u8F66\u5DF2\u89E3\u9501 \u2014 \u8BF7\u6838\u5BF9\u987E\u5BA2\u624B\u673A\u53F7\u3002',
+    redeemCoffeeBtn:'\u2713 \u6807\u8BB0\u514D\u8D39\u548C\u5496\u5561\u5DF2\u9886\u53D6',
+    redeemWashBtn:'\u2713 \u6807\u8BB0\u514D\u8D39\u6D17\u8F66\u5DF2\u4F7F\u7528',
+    confirmMonthlyWashBtn:'\u2713 \u8BB0\u5F55\u4ECA\u65E5\u6D17\u8F66',
+    alreadyWashedToday:'\u2705 \u4ECA\u65E5\u5DF2\u6D17\u8F66',
+    confirmMonthlyWashConfirm:(plate)=>`\u786E\u8BA4\u4E3A\u8F66\u724C ${plate} \u8BB0\u5F55\u4ECA\u65E5\u6D17\u8F66\uFF1F`,
+    confirmMonthlyWashSuccess:'\u6D17\u8F66\u8BB0\u5F55\u6210\u529F\uFF01',
+    confirmMonthlyWashErr:'\u8BB0\u5F55\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5\u3002',
+    membershipExpiredErr:'\u4F1A\u5458\u5DF2\u5230\u671F\u3002',
+    todayWashesLbl:'\u4ECA\u65E5',
+    addMonthlyBtn:'\uD83D\uDCB3 + \u5F00\u901A\u5305\u6708\u4F1A\u5458',
+    renewMonthlyBtn:'\uD83D\uDCB3 + \u7EED\u8D39 / \u66F4\u65B0\u4F1A\u5458',
+    addMonthlyTitle:'\u5F00\u901A\u5305\u6708\u4F1A\u5458',
+    addMonthlyConfirm:(plate)=>`\u786E\u8BA4\u4E3A\u8F66\u724C ${plate} \u5F00\u901A\u5305\u6708\u4F1A\u5458\uFF1F`,
+    renewMonthlyConfirm:(plate)=>`\u786E\u8BA4\u4E3A\u8F66\u724C ${plate} \u7EED\u8D39/\u66F4\u65B0\u5305\u6708\u4F1A\u5458\uFF1F`,
+    addMonthlySuccess:'\u5305\u6708\u4F1A\u5458\u5DF2\u5F00\u901A\uFF01',
+    addMonthlyErr:'\u5F00\u901A\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5\u3002',
+    notFoundMonthly:'\u672A\u627E\u5230\u8BE5\u8F66\u724C\u7684\u4F1A\u5458\u8BB0\u5F55\uFF0C\u8BF7\u586B\u5199\u4EE5\u4E0B\u4FE1\u606F\u5F00\u901A\u65B0\u4F1A\u5458\u3002',
+    lblMonthlyPhone:'\u987E\u5BA2\u624B\u673A\u53F7',
+    lblMonthlyTier:'\u5957\u9910',
+    selectTierStd:'Standard \u2014 $49/\u6708',
+    selectTierPrm:'Premium \u2014 $69/\u6708',
+    errMonthlyPlate:'\u8BF7\u8F93\u5165\u8F66\u724C\u53F7\u7801\u3002',
+    errMonthlyPhone:'\u8BF7\u8F93\u5165\u6709\u6548\u7684\u624B\u673A\u53F7\u7801\u3002',
+    errMonthlyTier:'\u8BF7\u9009\u62E9\u5957\u9910\u3002',
+    rfRedeemed:'\u5DF2\u5151\u6362\u6B21\u6570',
+    freePendingCount:'\u6B21\u5F85\u5151\u6362',
+    redeemConfirmCoffee:'\u786E\u8BA4\uFF1A\u987E\u5BA2\u5DF2\u9886\u53D6\u514D\u8D39\u548C\u5496\u5561\uFF1F',
+    redeemConfirmWash:'\u786E\u8BA4\uFF1A\u987E\u5BA2\u5DF2\u4F7F\u7528\u514D\u8D39\u6D17\u8F66\uFF1F',
+    redeemSuccess:'\u5DF2\u8BB0\u5F55\u5151\u6362\uFF01',
+    redeemErr:'\u6807\u8BB0\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5\u3002',
+    coffeeProgressLbl: (c,r) => `${c}/5 \u5DF2\u786E\u8BA4 \u00B7 \u8FD8\u9700 ${r} \u6B21\u53EF\u83B7\u514D\u8D39\u548C\u5496\u5561`,
+    washProgressLbl:   (c,r) => `${c}/3 \u5DF2\u786E\u8BA4 \u00B7 \u8FD8\u9700 ${r} \u6B21\u53EF\u83B7\u514D\u8D39\u6D17\u8F66`,
+    addCoffeeBtn:'\u2615 + \u767B\u8BB0\u4E00\u676F\u548C\u5496\u5561',
+    addWashBtn:'\uD83D\uDE97 + \u767B\u8BB0\u4E00\u6B21\u6D17\u8F66',
+    addCoffeeTitle:'\u767B\u8BB0\u548C\u5496\u5561\u8D2D\u4E70',
+    addWashTitle:'\u767B\u8BB0\u6D17\u8F66',
+    addCoffeeSub:'\u5458\u5DE5\u76F4\u63A5\u767B\u8BB0\uFF0C\u7ACB\u5373\u8BA1\u4E3A\u5DF2\u786E\u8BA4\u3002',
+    addWashSub:'\u5458\u5DE5\u76F4\u63A5\u767B\u8BB0\uFF0C\u7ACB\u5373\u8BA1\u4E3A\u5DF2\u786E\u8BA4\u3002',
+    addConfirmCoffee:(phone)=>`\u786E\u8BA4\u4E3A ${phone} \u767B\u8BB0\u4E00\u6B21\u548C\u5496\u5561\u8D2D\u4E70\uFF1F`,
+    addConfirmWash:(phone)=>`\u786E\u8BA4\u4E3A ${phone} \u767B\u8BB0\u4E00\u6B21\u6D17\u8F66\uFF1F`,
+    addSuccess:'\u5DF2\u767B\u8BB0\uFF01\u8FDB\u5EA6\u5DF2\u66F4\u65B0\u3002',
+    addErr:'\u767B\u8BB0\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5\u3002',
+    notFoundAddCoffee:'\u672A\u627E\u5230\u8BE5\u624B\u673A\u53F7\uFF0C\u5C06\u81EA\u52A8\u5EFA\u7ACB\u65B0\u4F1A\u5458\u6863\u6848\u3002',
+    notFoundAddWash:'\u672A\u627E\u5230\u8BE5\u624B\u673A\u53F7\uFF0C\u5C06\u81EA\u52A8\u5EFA\u7ACB\u65B0\u4F1A\u5458\u6863\u6848\u3002',
+    clearName:'\u70B9\u51FB\u66F4\u6539\u540D\u5B57',
   }
 };
 
@@ -507,7 +487,7 @@ function t(){ return S[lang]; }
 function setLang(l){
   lang=l; localStorage.setItem('ap_lang',l);
   document.querySelectorAll('.lang-btn').forEach(b=>{
-    b.classList.toggle('active',(l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='中文'));
+    b.classList.toggle('active',(l==='en'&&b.textContent==='EN')||(l==='zh'&&b.textContent==='\u4E2D\u6587'));
   });
   applyLang();
 }
@@ -525,7 +505,7 @@ function applyLang(){
   document.getElementById('s-sub').textContent      = L.sSub;
   buildStationList();
   const sd = STATIONS.find(s=>s.key===station);
-  document.getElementById('sbar-name').textContent  = sd?sd.display:(station||'—');
+  document.getElementById('sbar-name').textContent  = sd?sd.display:(station||'\u2014');
   document.getElementById('sbar-sub').textContent   = L.sbarSub;
   document.getElementById('sbar-change').textContent= L.sbarChange;
   document.getElementById('tab-pending-lbl').textContent = L.tabPending;
@@ -541,7 +521,7 @@ function applyLang(){
   document.getElementById('coffee-search-lbl').textContent      = L.searchBtn;
   document.getElementById('wash-search-lbl').textContent        = L.searchBtn;
   document.getElementById('plate-search-lbl').textContent       = L.searchBtn;
-  document.getElementById('pending-alert-cta').textContent      = L.pendingAlertCta||'View →';
+  document.getElementById('pending-alert-cta').textContent      = L.pendingAlertCta||'View \u2192';
   updateChip();
 }
 
@@ -554,13 +534,13 @@ function buildStationList(){
     div.onclick=()=>selectStation(st.key);
     div.innerHTML=`
       <div class="station-opt-left">
-        <div class="station-icon">⛽</div>
+        <div class="station-icon">\u26FD</div>
         <div>
           <div class="station-opt-name">${st.display}</div>
           <div class="station-opt-loc">${st.loc}</div>
         </div>
       </div>
-      <div class="station-opt-arrow">›</div>`;
+      <div class="station-opt-arrow">\u203A</div>`;
     box.appendChild(div);
   });
 }
@@ -578,11 +558,9 @@ function switchTab(tab){
   document.getElementById('tab-search').classList.toggle('active',  tab==='search');
   document.getElementById('pane-pending').style.display = tab==='pending' ? 'block' : 'none';
   document.getElementById('pane-search').style.display  = tab==='search'  ? 'block' : 'none';
-  // Hide alert banner when user switches to pending (they're already looking at it)
   if(tab==='pending') document.getElementById('pending-alert').classList.remove('show');
 }
 
-// ── LOAD PENDING ──
 function refreshPending(){
   const rb=document.getElementById('refresh-btn');
   if(rb) rb.disabled=true;
@@ -610,12 +588,10 @@ function renderPending(data){
   const rb=document.getElementById('refresh-btn');
   if(rb) rb.disabled=false;
 
-  // Tab badge
   const countEl=document.getElementById('pending-count');
   countEl.textContent=total;
   countEl.style.display=total?'inline':'none';
 
-  // Alert banner — only show when user is on Search tab
   const alertEl  =document.getElementById('pending-alert');
   const alertText=document.getElementById('pending-alert-text');
   if(total>0 && activeTab==='search'){
@@ -630,7 +606,7 @@ function renderPending(data){
   box.style.display='block';
 
   if(!total){
-    box.innerHTML=`<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">${L.emptyTitle}</div><div class="empty-sub">${L.emptySub}</div></div>`;
+    box.innerHTML=`<div class="empty-state"><div class="empty-icon">\u2705</div><div class="empty-title">${L.emptyTitle}</div><div class="empty-sub">${L.emptySub}</div></div>`;
     return;
   }
 
@@ -644,7 +620,7 @@ function renderPending(data){
         <div class="pending-stripe stripe-coffee"></div>
         <div class="pending-body">
           <div class="pending-type-row">
-            <span class="pending-type-badge badge-coffee">☕ Coffee</span>
+            <span class="pending-type-badge badge-coffee">\u2615 Coffee</span>
             <span class="pending-date">${r.purchaseDate||r.submittedAt||''}</span>
           </div>
           <div class="pending-row">
@@ -671,7 +647,7 @@ function renderPending(data){
       const isMonthly=r.plan==='monthly';
       const stripeClass=isMonthly?'stripe-monthly':'stripe-wash';
       const badgeClass=isMonthly?'badge-monthly':'badge-wash';
-      const badgeLabel=isMonthly?'💳 Monthly':'🚗 Wash';
+      const badgeLabel=isMonthly?'\uD83D\uDCB3 Monthly':'\uD83D\uDE97 Wash';
       html+=`
       <div class="pending-card" id="card-${r.id}">
         <div class="pending-stripe ${stripeClass}"></div>
@@ -691,7 +667,7 @@ function renderPending(data){
           </div>
           ${isMonthly&&r.startDate?`<div class="pending-field" style="font-size:11px;color:var(--muted);margin-top:3px">Start: ${r.startDate}</div>`:''}
           ${r.notes?`<div class="pending-notes">${esc(r.notes)}</div>`:''}
-          ${r.receiptUrl?`<a class="receipt-link" href="${r.receiptUrl}" target="_blank">📷 View Receipt</a>`:''}
+          ${r.receiptUrl?`<a class="receipt-link" href="${r.receiptUrl}" target="_blank">\uD83D\uDCF7 View Receipt</a>`:''}
         </div>
         <div class="pending-actions" id="actions-${r.id}">
           <button class="action-btn btn-confirm" onclick="confirmWash('${r.id}')">${L.confirmBtn}</button>
@@ -704,7 +680,6 @@ function renderPending(data){
   box.innerHTML=html;
 }
 
-// ── ACTIONS ──
 async function apiPost(body, staffName){
   const r=await fetch(API_URL,{method:'POST',body:JSON.stringify({...body,token:API_TOKEN,staffName:staffName||'Staff'})});
   return r.json();
@@ -772,7 +747,6 @@ function renderWashActions(id){
           <button class="action-btn btn-reject"  onclick="rejectWash('${id}')">${L.rejectBtn}</button>`;
 }
 
-// ── SEARCH ──
 async function searchCoffee(){
   const L=t();
   const phone=normalizePhone(document.getElementById('coffee-phone').value);
@@ -782,11 +756,8 @@ async function searchCoffee(){
   try{
     const url=`${API_URL}?action=searchCoffee&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
     const res=await fetch(url); const data=await res.json();
-
     const histData=await fetchHistory(phone,'');
     const histHtml=renderHistory(histData?.history||[], L);
-
-    // ── New customer: no record yet ──
     if(!data.found){
       box.innerHTML=`
         <div class="result-card">
@@ -797,21 +768,20 @@ async function searchCoffee(){
         </div>`;
       return;
     }
-
     const c=data.confirmedPurchases||0;
     const mod=c%5; const remaining=5-mod;
     const rewardReady=data.rewardReady||false;
     const freePending=data.freePending||0;
     let track='';
     for(let i=0;i<5;i++){
-      track+=`<div class="prog-dot${i<mod?' lit-green':''}">${i<mod?'✓':i+1}</div>`;
-      if(i<4) track+='<span class="prog-arrow">›</span>';
+      track+=`<div class="prog-dot${i<mod?' lit-green':''}">${i<mod?'\u2713':i+1}</div>`;
+      if(i<4) track+='<span class="prog-arrow">\u203A</span>';
     }
-    track+=`<span class="prog-arrow">›</span><div class="prog-free prog-free-green">FREE</div>`;
+    track+=`<span class="prog-arrow">\u203A</span><div class="prog-free prog-free-green">FREE</div>`;
     box.innerHTML=`
       <div class="result-card">
         <div class="result-card-title">${L.searchCoffeeTitle}</div>
-        <div class="result-row"><span class="result-key">${L.rfName}</span><span class="result-val">${esc(data.name||'—')}</span></div>
+        <div class="result-row"><span class="result-key">${L.rfName}</span><span class="result-val">${esc(data.name||'\u2014')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone||'')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfConfirmed}</span><span class="result-val blue">${c}</span></div>
         <div class="result-row"><span class="result-key">${L.rfRedeemed}</span><span class="result-val">${data.freeRedeemed||0}</span></div>
@@ -831,18 +801,17 @@ async function searchCoffee(){
   }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
 }
 
-// ── HISTORY HELPER ──────────────────────────────────────────
 function renderHistory(history, L){
   if(!history||!history.length) return '';
   const rows=history.slice(0,15).map(item=>{
-    const icon=item.type==='coffee'?'☕':item.type==='monthly'?'💳':'🚗';
+    const icon=item.type==='coffee'?'\u2615':item.type==='monthly'?'\uD83D\uDCB3':'\uD83D\uDE97';
     const st=(item.status||'pending').toLowerCase();
     const cls=st==='done'?'hb-done':st==='rejected'?'hb-rejected':'hb-pending';
-    const lbl=st==='done'?(L.hbDone||'✅ Confirmed'):st==='rejected'?(L.hbRejected||'✗ Rejected'):(L.hbPending||'⏳ Pending');
+    const lbl=st==='done'?(L.hbDone||'\u2705 Confirmed'):st==='rejected'?(L.hbRejected||'\u2717 Rejected'):(L.hbPending||'\u23F3 Pending');
     return `<div class="history-row">
       <div class="history-icon">${icon}</div>
       <div class="history-info">
-        <div class="history-date">${item.date||'—'}</div>
+        <div class="history-date">${item.date||'\u2014'}</div>
         <div class="history-loc">${esc(item.location||'')}</div>
       </div>
       <div class="history-badge ${cls}">${lbl}</div>
@@ -867,11 +836,9 @@ async function searchWash(){
   const box=document.getElementById('wash-result');
   if(!raw){ box.innerHTML=`<div class="err-inline">${L.lblWashSearchLabel||'Plate or Mobile'}?</div>`; return; }
   box.innerHTML=`<div class="loading"><span class="spinner"></span>${L.loading}</div>`;
-
   const isPhone=/^(04|4)\d{8}$/.test(raw);
   const phone=isPhone?normalizePhone(raw):'';
   const plate=isPhone?'':raw;
-
   try{
     let data, histData;
     if(isPhone){
@@ -883,9 +850,7 @@ async function searchWash(){
       data=await (await fetch(url)).json();
       histData=data.phone?await fetchHistory(normalizePhone(data.phone),plate):null;
     }
-
     const histHtml=renderHistory(histData?.history||[], L);
-
     if(!data.found){
       box.innerHTML=`
         <div class="result-card">
@@ -897,16 +862,15 @@ async function searchWash(){
         </div>`;
       return;
     }
-
     const c=data.confirmedWashes||0;
     const mod=c%3; const remaining=3-mod;
     const rewardReady=data.rewardReady||false; const freePending=data.freePending||0;
     let track='';
     for(let i=0;i<3;i++){
-      track+=`<div class="prog-dot${i<mod?' lit-red':''}">${i<mod?'✓':i+1}</div>`;
-      if(i<2) track+='<span class="prog-arrow">›</span>';
+      track+=`<div class="prog-dot${i<mod?' lit-red':''}">${i<mod?'\u2713':i+1}</div>`;
+      if(i<2) track+='<span class="prog-arrow">\u203A</span>';
     }
-    track+=`<span class="prog-arrow">›</span><div class="prog-free prog-free-red">FREE</div>`;
+    track+=`<span class="prog-arrow">\u203A</span><div class="prog-free prog-free-red">FREE</div>`;
     const addPhone=data.phone||phone;
     box.innerHTML=`
       <div class="result-card">
@@ -927,9 +891,8 @@ async function searchWash(){
 
 async function staffAddWashFromSearch(plate, phone, btn){
   const L=t();
-  // phone is optional — plate alone is sufficient to record the wash
   const name=await promptStaffName(); if(!name) return;
-  btn.disabled=true; btn.textContent='…';
+  btn.disabled=true; btn.textContent='\u2026';
   try{
     const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({
       action:'staffAddWash',phone,plate,station,staffName:name,token:API_TOKEN,date:todayStr()
@@ -946,28 +909,20 @@ async function searchPlate(){
   const box=document.getElementById('plate-result');
   if(!raw){ box.innerHTML=`<div class="err-inline">${L.lblMonthlySearchLabel||'Plate or Mobile'}?</div>`; return; }
   box.innerHTML=`<div class="loading"><span class="spinner"></span>${L.loading}</div>`;
-
-  // Detect: AU phone → search by phone via WashMonthlyMembers; otherwise plate
   const isPhone=/^(04|4)\d{8}$/.test(raw);
   const plate=isPhone?'':raw;
   const phone=isPhone?normalizePhone(raw):'';
-
   try{
     let data;
     if(isPhone){
-      // Search monthly by phone — look up WashMonthlyMembers for this phone
       const url=`${API_URL}?action=searchMonthlyByPhone&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
       const res=await fetch(url); data=await res.json();
     } else {
       const url=`${API_URL}?action=searchPlate&plate=${encodeURIComponent(plate)}&token=${API_TOKEN}`;
       const res=await fetch(url); data=await res.json();
     }
-
-    // Resolve plate and phone for the form
     const resolvedPlate = data.plate || plate;
     const resolvedPhone = data.phone ? normalizePhone(data.phone) : phone;
-
-    // ── No record found ──
     if(!data.found){
       box.innerHTML=`
         <div class="result-card">
@@ -977,13 +932,11 @@ async function searchPlate(){
         </div>`;
       return;
     }
-
-    // ── Existing membership ──
     const todayDate=new Date().toISOString().slice(0,10);
     const expired=data.expiryDate && data.expiryDate < todayDate;
     const washedToday=data.washedToday||false;
-    const expiredLabel=lang==='zh'?'会员已到期，在下方续费：':'Membership expired — renew below:';
-    const renewLabel  =lang==='zh'?'续费或更改套餐：':'Renew or update membership:';
+    const expiredLabel=lang==='zh'?'\u4F1A\u5458\u5DF2\u5230\u671F\uFF0C\u5728\u4E0B\u65B9\u7EED\u8D39\uFF1A':'Membership expired \u2014 renew below:';
+    const renewLabel  =lang==='zh'?'\u7EED\u8D39\u6216\u66F4\u6539\u5957\u9910\uFF1A':'Renew or update membership:';
     const washBtnHtml = expired
       ? `<div class="err-inline" style="margin-top:12px">${L.membershipExpiredErr||'Membership expired.'}</div>`
       : washedToday
@@ -995,10 +948,10 @@ async function searchPlate(){
       <div class="result-card">
         <div class="result-card-title">${L.searchMonthlyTitle}</div>
         <div class="result-row"><span class="result-key">${L.rfPlate}</span><span class="result-val">${esc(data.plate||'')}</span></div>
-        <div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone||'—')}</span></div>
+        <div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone||'\u2014')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfTier}</span><span class="result-val blue">${esc(data.monthlyTier||'Monthly')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfExpiry}</span>
-          <span class="result-val ${expired?'red':'green'}">${data.expiryDate||'—'}${expired?' ⚠️':''}</span></div>
+          <span class="result-val ${expired?'red':'green'}">${data.expiryDate||'\u2014'}${expired?' \u26A0\uFE0F':''}</span></div>
         <div class="result-row"><span class="result-key">${L.rfTotalWashes}</span><span class="result-val">${data.confirmedWashes||0}</span></div>
         ${washBtnHtml}
         <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
@@ -1013,7 +966,7 @@ async function confirmMonthlyWash(plate, phone, btn){
   const L=t();
   if(!confirm(L.confirmMonthlyWashConfirm(plate))) return;
   const name=await promptStaffName(); if(!name) return;
-  btn.disabled=true; btn.textContent='…';
+  btn.disabled=true; btn.textContent='\u2026';
   try{
     const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({
       action:'staffConfirmMonthlyWash', plate, phone, station,
@@ -1022,7 +975,6 @@ async function confirmMonthlyWash(plate, phone, btn){
     const data=await res.json();
     if(data.success){
       showToast(L.confirmMonthlyWashSuccess,'success');
-      // Refresh to show updated count and "already washed" state
       await searchPlate();
     } else if(data.error==='already_washed'){
       btn.disabled=false;
@@ -1096,18 +1048,14 @@ async function staffAddMonthly(btn){
   const plate   = (plateEl?.value||'').trim().toUpperCase();
   const phone   = normalizePhone(phoneEl?.value||'');
   const tier    = tierEl?.value||'';
-
   const showErr = (msg) => { if(errEl){ errEl.textContent=msg; errEl.style.display='block'; } };
-
   if(!plate){ showErr(L.errMonthlyPlate); return; }
   if(!phone||!/^04\d{8}$/.test(phone)){ showErr(L.errMonthlyPhone); return; }
   if(!tier){ showErr(L.errMonthlyTier); return; }
-
   if(!confirm(L.addMonthlyConfirm(plate))) return;
   const name=await promptStaffName();
   if(!name) return;
-
-  btn.disabled=true; btn.textContent='…';
+  btn.disabled=true; btn.textContent='\u2026';
   try{
     const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({
       action:'staffAddMonthly', plate, phone, tier, station,
@@ -1116,7 +1064,6 @@ async function staffAddMonthly(btn){
     const data=await res.json();
     if(data.success){
       showToast(L.addMonthlySuccess,'success');
-      // Refresh the plate search using the actual plate value
       document.getElementById('monthly-search-input').value=plate;
       await searchPlate();
     } else {
@@ -1129,7 +1076,6 @@ async function staffAddMonthly(btn){
   }
 }
 
-// ── Staff name — cached for 4 hours ──────────────────────────────────────────
 function getStaffName(){
   const name = localStorage.getItem('ap_staff_name') || '';
   const ts   = parseInt(localStorage.getItem('ap_staff_name_ts') || '0');
@@ -1152,20 +1098,17 @@ function updateChip(){
 }
 
 function clearCachedName(){
-  if(!confirm(lang==='zh'?'更改姓名？':'Change your name?')) return;
+  if(!confirm(lang==='zh'?'\u66F4\u6539\u59D3\u540D\uFF1F':'Change your name?')) return;
   localStorage.removeItem('ap_staff_name');
   localStorage.removeItem('ap_staff_name_ts');
   updateChip();
 }
 
-// ── Staff name modal — only shown when no cached name ─────────────────────────
 let _nameResolve = null;
 
 function promptStaffName(){
-  // If we have a valid cached name, use it directly — no modal needed
   const cached = getStaffName();
   if(cached) return Promise.resolve(cached);
-
   return new Promise(resolve=>{
     _nameResolve=resolve;
     const L=t();
@@ -1174,7 +1117,7 @@ function promptStaffName(){
     document.getElementById('modal-title').textContent  = L.modalTitle  || 'Your Name';
     document.getElementById('modal-sub').textContent    = L.modalSub    || 'Enter your name for the record';
     document.getElementById('modal-cancel').textContent = L.modalCancel || 'Cancel';
-    document.getElementById('modal-confirm').textContent= L.modalConfirm|| 'Confirm →';
+    document.getElementById('modal-confirm').textContent= L.modalConfirm|| 'Confirm \u2192';
     document.getElementById('modal-err').style.display='none';
     input.value='';
     modal.style.display='flex';
@@ -1192,7 +1135,6 @@ function resolveNameModal(){
     err.style.display='block';
     return;
   }
-  // Cache name for 4 hours
   localStorage.setItem('ap_staff_name', val);
   localStorage.setItem('ap_staff_name_ts', String(Date.now()));
   document.getElementById('name-modal').style.display='none';
@@ -1205,7 +1147,6 @@ function cancelNameModal(){
   if(_nameResolve){ _nameResolve(null); _nameResolve=null; }
 }
 
-// ── TOAST ──
 function showToast(msg, type=''){
   const el=document.getElementById('toast');
   el.textContent=msg; el.className='toast'+(type?' '+type:'');
@@ -1213,13 +1154,12 @@ function showToast(msg, type=''){
   setTimeout(()=>el.classList.remove('show'),2800);
 }
 
-// ── STAFF DIRECT ADD ──
 async function staffAddCoffee(phone, btn){
   const L=t();
   if(!confirm(L.addConfirmCoffee(phone))) return;
   const name=await promptStaffName();
   if(!name) return;
-  btn.disabled=true; btn.textContent='…';
+  btn.disabled=true; btn.textContent='\u2026';
   try{
     const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({
       action:'staffAddCoffee', phone, station, staffName:name,
@@ -1228,7 +1168,6 @@ async function staffAddCoffee(phone, btn){
     const data=await res.json();
     if(data.success){
       showToast(L.addSuccess,'success');
-      // Refresh the result card by re-running the search
       await searchCoffee();
     } else {
       btn.disabled=false; btn.textContent=L.addCoffeeBtn;
@@ -1242,7 +1181,7 @@ async function staffAddWash(phone, btn){
   if(!confirm(L.addConfirmWash(phone))) return;
   const name=await promptStaffName();
   if(!name) return;
-  btn.disabled=true; btn.textContent='…';
+  btn.disabled=true; btn.textContent='\u2026';
   try{
     const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({
       action:'staffAddWash', phone, station, staffName:name,
@@ -1264,18 +1203,17 @@ function todayStr(){
   return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 
-// ── REDEEM ──
 async function redeemCoffee(phone, btn){
   const L=t();
   if(!confirm(L.redeemConfirmCoffee)) return;
   const name=await promptStaffName();
   if(!name) return;
-  btn.disabled=true; btn.textContent='…';
+  btn.disabled=true; btn.textContent='\u2026';
   try{
     const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'redeemCoffee',phone,token:API_TOKEN,staffName:name})});
     const data=await res.json();
     if(data.success){
-      btn.textContent='✓ '+L.redeemSuccess;
+      btn.textContent='\u2713 '+L.redeemSuccess;
       btn.style.background='var(--bp-green-dark)';
       showToast(L.redeemSuccess,'success');
     } else {
@@ -1290,12 +1228,12 @@ async function redeemWash(phone, btn){
   if(!confirm(L.redeemConfirmWash)) return;
   const name=await promptStaffName();
   if(!name) return;
-  btn.disabled=true; btn.textContent='…';
+  btn.disabled=true; btn.textContent='\u2026';
   try{
     const res=await fetch(API_URL,{method:'POST',body:JSON.stringify({action:'redeemWash',phone,token:API_TOKEN,staffName:name})});
     const data=await res.json();
     if(data.success){
-      btn.textContent='✓ '+L.redeemSuccess;
+      btn.textContent='\u2713 '+L.redeemSuccess;
       btn.style.background='var(--sinopec-red-dark)';
       showToast(L.redeemSuccess,'success');
     } else {
@@ -1308,7 +1246,6 @@ async function redeemWash(phone, btn){
 function esc(str){
   return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
-// Normalize phone: strip spaces, restore leading 0 if Sheets ate it
 function normalizePhone(raw){
   const s=String(raw||'').replace(/\s/g,'').trim();
   if(!s) return '';
@@ -1316,9 +1253,8 @@ function normalizePhone(raw){
   return s;
 }
 
-// ── INIT ──
 document.querySelectorAll('.lang-btn').forEach(b=>{
-  b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='中文'));
+  b.classList.toggle('active',(lang==='en'&&b.textContent==='EN')||(lang==='zh'&&b.textContent==='\u4E2D\u6587'));
 });
 applyLang();
 if(station){ showScreen('portal'); loadPending(); }
