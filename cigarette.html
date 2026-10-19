@@ -235,7 +235,7 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
    The same payload keeps the same requestId until it succeeds, so a retry
    can never create a second row.
 ──────────────────────────────────────────────────────────────────────── */
-const AP_MIN_API_VERSION = 11;
+const AP_MIN_API_VERSION = 12;
 const AP_TIMEOUT_MS = 45000;
 const AP_TXT = {
   en:{ saving:'Saving to Google Sheet…', failedTitle:'Not saved',
@@ -430,6 +430,7 @@ const S = {
     syncingList:'SYNCING',
     syncError:'NOT SAVED TO SHEET — tap to retry',
     syncConflict:'LIST CHANGED ON ANOTHER DEVICE — tap to reload',
+    syncVersionUnknown:'LATEST LIST NOT LOADED — tap to reload',
   },
   zh: {
     pageTitle:'香烟库存盘点 — Aries Petroleum',
@@ -468,6 +469,7 @@ const S = {
     syncingList:'同步中',
     syncError:'未保存到表格 — 点此重试',
     syncConflict:'列表已在其他设备更新 — 点此刷新',
+    syncVersionUnknown:'未读取到最新列表 — 点此刷新',
   }
 };
 function t() { return S[lang]; }
@@ -603,7 +605,7 @@ async function saveProductsToServer(list) {
         cigPending = cigPending.filter(id => id !== req.requestId);
         apDone('cigProducts');
         cigSyncQueued = null;
-        showSyncBadge('conflict');
+        showSyncBadge(result.data.versionUnknown ? 'versionUnknown' : 'conflict');
       } else {
         if (result.status === 'failed') cigPending = cigPending.filter(id => id !== req.requestId);
         console.warn('CigProducts save not confirmed:', result);
@@ -617,9 +619,11 @@ async function saveProductsToServer(list) {
 
 function showSyncBadge(type, unsavedList) {
   const el = document.getElementById('sync-badge');
-  const conflict = type === 'conflict';
+  const conflict = type === 'conflict' || type === 'versionUnknown';
   el.className = 'sync-badge ' + (conflict ? 'error' : type);
-  el.textContent = type === 'syncing' ? t().syncingList : (conflict ? t().syncConflict : t().syncError);
+  el.textContent = type === 'syncing' ? t().syncingList
+                 : type === 'versionUnknown' ? t().syncVersionUnknown
+                 : (conflict ? t().syncConflict : t().syncError);
   // Red badge: tap to retry with the same request (no duplicate list), or reload after a conflict
   el.style.cursor = (type === 'error' || conflict) ? 'pointer' : '';
   el.onclick = conflict ? () => location.reload()

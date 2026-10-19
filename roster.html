@@ -714,7 +714,7 @@ body{
    The same payload keeps the same requestId until it succeeds, so a retry
    can never create a second row.
 ──────────────────────────────────────────────────────────────────────── */
-const AP_MIN_API_VERSION = 11;
+const AP_MIN_API_VERSION = 12;
 const AP_TIMEOUT_MS = 45000;
 const AP_TXT = {
   en:{ saving:'Saving to Google Sheet…', failedTitle:'Not saved',
@@ -883,7 +883,7 @@ const TEXT = {
     staffName:'Staff Name',staffRole:'Role',staffPhone:'Phone / Notes',addStaff:'Add Staff',
     date:'Date',shift:'Shift',start:'Start Time',finish:'Finish Time',staff:'Staff',role:'Role',notes:'Notes',
     saveShift:'Save Shift',clear:'Clear',noRoster:'No roster entered for this day.',noStaff:'No staff added yet.',
-    edit:'Edit',remove:'Remove',savedLocal:'Saved locally. Google Sheet URL not connected yet.',savedSheet:'Saved to Google Sheet.',savingSheet:'Saving to Google Sheet…',notSavedSheet:'NOT saved to Google Sheet — the change is only on this device.',unknownSheet:'Save not confirmed (connection timed out). It may be saved — tap Retry; it cannot be recorded twice.',retrySave:'Retry',conflictSheet:'Not saved: someone saved a newer roster first. Reload the page and make your change again.',reloadPage:'Reload',
+    edit:'Edit',remove:'Remove',savedLocal:'Saved locally. Google Sheet URL not connected yet.',savedSheet:'Saved to Google Sheet.',savingSheet:'Saving to Google Sheet…',notSavedSheet:'NOT saved to Google Sheet — the change is only on this device.',unknownSheet:'Save not confirmed (connection timed out). It may be saved — tap Retry; it cannot be recorded twice.',retrySave:'Retry',conflictSheet:'Not saved: someone saved a newer roster first. Reload the page and make your change again.',reloadPage:'Reload',versionUnknownSheet:'Not saved: this page could not read the latest roster from Google Sheet. Reload the page and make your change again.',
     loading:'Loading…',saving:'Saving…',fillRequired:'Please complete date, staff, start time and finish time.',
     weekStarting:'Week starting',removeConfirm:'Remove this shift?'
   },
@@ -900,7 +900,7 @@ const TEXT = {
     staffName:'员工姓名',staffRole:'职位',staffPhone:'电话 / 备注',addStaff:'添加员工',
     date:'日期',shift:'班次',start:'开始时间',finish:'结束时间',staff:'员工',role:'职位',notes:'备注',
     saveShift:'保存班次',clear:'清空',noRoster:'当天还没有排班。',noStaff:'还没有添加员工。',
-    edit:'修改',remove:'删除',savedLocal:'已保存到本机。Google Sheet 网址还未连接。',savedSheet:'已保存到 Google Sheet。',savingSheet:'正在保存到 Google Sheet…',notSavedSheet:'未保存到 Google Sheet，修改目前只在这台设备上。',unknownSheet:'保存结果未确认（网络超时），可能已经保存。请点"重试"，系统不会重复记录。',retrySave:'重试',conflictSheet:'未保存：已有人先保存了更新的排班。请刷新页面后重新修改。',reloadPage:'刷新页面',
+    edit:'修改',remove:'删除',savedLocal:'已保存到本机。Google Sheet 网址还未连接。',savedSheet:'已保存到 Google Sheet。',savingSheet:'正在保存到 Google Sheet…',notSavedSheet:'未保存到 Google Sheet，修改目前只在这台设备上。',unknownSheet:'保存结果未确认（网络超时），可能已经保存。请点"重试"，系统不会重复记录。',retrySave:'重试',conflictSheet:'未保存：已有人先保存了更新的排班。请刷新页面后重新修改。',reloadPage:'刷新页面',versionUnknownSheet:'未保存：本页面没有读取到表格里的最新排班。请刷新页面后重新修改。',
     loading:'加载中…',saving:'保存中…',fillRequired:'请填写日期、员工、开始时间和结束时间。',
     weekStarting:'本周开始',removeConfirm:'确定删除这个班次吗？'
   }
@@ -1032,7 +1032,7 @@ async function runRosterSync(){
         // Someone else saved a newer version: nothing was written, editing further would overwrite them
         rosterPending[ft] = pend.filter(id => id !== req.requestId);
         apDone(ft);
-        rosterSync.conflict = true;
+        rosterSync.conflict = (r.data.versionUnknown ? 'unknown' : true);
         rosterSync.queued = {}; rosterSync.failed = {};
       } else {
         if(r.status === 'failed') rosterPending[ft] = pend.filter(id => id !== req.requestId); // definitely not written
@@ -1043,7 +1043,7 @@ async function runRosterSync(){
     rosterSync.running = false;
     const failedTypes = Object.keys(rosterSync.failed);
     if(rosterSync.conflict){
-      showStatus(T().conflictSheet,'warn',true,()=>location.reload(),T().reloadPage);
+      showStatus(rosterSync.conflict==='unknown' ? T().versionUnknownSheet : T().conflictSheet,'warn',true,()=>location.reload(),T().reloadPage);
     } else if(failedTypes.length){
       const r = rosterSync.failed[failedTypes[0]].result;
       showStatus((r.status==='unknown' ? T().unknownSheet : T().notSavedSheet) + (r.status==='failed' && r.error && !r.offline ? ' ('+r.error+')' : ''), 'warn', true, retryRosterSync);
