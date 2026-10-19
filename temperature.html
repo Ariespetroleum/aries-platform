@@ -238,7 +238,7 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
    The same payload keeps the same requestId until it succeeds, so a retry
    can never create a second row.
 ──────────────────────────────────────────────────────────────────────── */
-const AP_MIN_API_VERSION = 12;
+const AP_MIN_API_VERSION = 13;
 const AP_TIMEOUT_MS = 45000;
 const AP_TXT = {
   en:{ saving:'Saving to Google Sheet…', failedTitle:'Not saved',
@@ -264,7 +264,8 @@ const apPendingBySig = {};
 function apRequestFor(key, stablePayload, makeExtra){
   const sig = key + '|' + JSON.stringify(stablePayload);
   if (!apPendingBySig[key] || apPendingBySig[key].sig !== sig) {
-    apPendingBySig[key] = { sig, requestId: apNewRequestId(key), extra: makeExtra ? makeExtra() : null };
+    // requestedAt = when this request was first created; retries keep it (the server refuses very old requests)
+    apPendingBySig[key] = { sig, requestId: apNewRequestId(key), createdAt: Date.now(), extra: makeExtra ? makeExtra() : null };
   }
   return apPendingBySig[key];
 }
@@ -367,7 +368,7 @@ async function apRun(o){
     const stable = Object.assign({}, o.buildPayload(null));
     ['submittedAt','completedAt','updatedAt','openedAt','requestId'].forEach(k => delete stable[k]);
     const req = apRequestFor(o.key, stable, o.makeExtra);
-    const payload = Object.assign({}, o.buildPayload(req.extra), { requestId:req.requestId });
+    const payload = Object.assign({}, o.buildPayload(req.extra), { requestId:req.requestId, requestedAt:req.createdAt });
     apShowSaving();
     const result = await apSubmit(o.url, payload);
     if (result.status === 'ok') {
