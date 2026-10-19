@@ -714,7 +714,7 @@ body{
    The same payload keeps the same requestId until it succeeds, so a retry
    can never create a second row.
 ──────────────────────────────────────────────────────────────────────── */
-const AP_MIN_API_VERSION = 10;
+const AP_MIN_API_VERSION = 11;
 const AP_TIMEOUT_MS = 45000;
 const AP_TXT = {
   en:{ saving:'Saving to Google Sheet…', failedTitle:'Not saved',
@@ -883,7 +883,7 @@ const TEXT = {
     staffName:'Staff Name',staffRole:'Role',staffPhone:'Phone / Notes',addStaff:'Add Staff',
     date:'Date',shift:'Shift',start:'Start Time',finish:'Finish Time',staff:'Staff',role:'Role',notes:'Notes',
     saveShift:'Save Shift',clear:'Clear',noRoster:'No roster entered for this day.',noStaff:'No staff added yet.',
-    edit:'Edit',remove:'Remove',savedLocal:'Saved locally. Google Sheet URL not connected yet.',savedSheet:'Saved to Google Sheet.',savingSheet:'Saving to Google Sheet…',notSavedSheet:'NOT saved to Google Sheet — the change is only on this device.',unknownSheet:'Save not confirmed (connection timed out). It may be saved — tap Retry; it cannot be recorded twice.',retrySave:'Retry',
+    edit:'Edit',remove:'Remove',savedLocal:'Saved locally. Google Sheet URL not connected yet.',savedSheet:'Saved to Google Sheet.',savingSheet:'Saving to Google Sheet…',notSavedSheet:'NOT saved to Google Sheet — the change is only on this device.',unknownSheet:'Save not confirmed (connection timed out). It may be saved — tap Retry; it cannot be recorded twice.',retrySave:'Retry',conflictSheet:'Not saved: someone saved a newer roster first. Reload the page and make your change again.',reloadPage:'Reload',
     loading:'Loading…',saving:'Saving…',fillRequired:'Please complete date, staff, start time and finish time.',
     weekStarting:'Week starting',removeConfirm:'Remove this shift?'
   },
@@ -900,7 +900,7 @@ const TEXT = {
     staffName:'员工姓名',staffRole:'职位',staffPhone:'电话 / 备注',addStaff:'添加员工',
     date:'日期',shift:'班次',start:'开始时间',finish:'结束时间',staff:'员工',role:'职位',notes:'备注',
     saveShift:'保存班次',clear:'清空',noRoster:'当天还没有排班。',noStaff:'还没有添加员工。',
-    edit:'修改',remove:'删除',savedLocal:'已保存到本机。Google Sheet 网址还未连接。',savedSheet:'已保存到 Google Sheet。',savingSheet:'正在保存到 Google Sheet…',notSavedSheet:'未保存到 Google Sheet，修改目前只在这台设备上。',unknownSheet:'保存结果未确认（网络超时），可能已经保存。请点"重试"，系统不会重复记录。',retrySave:'重试',
+    edit:'修改',remove:'删除',savedLocal:'已保存到本机。Google Sheet 网址还未连接。',savedSheet:'已保存到 Google Sheet。',savingSheet:'正在保存到 Google Sheet…',notSavedSheet:'未保存到 Google Sheet，修改目前只在这台设备上。',unknownSheet:'保存结果未确认（网络超时），可能已经保存。请点"重试"，系统不会重复记录。',retrySave:'重试',conflictSheet:'未保存：已有人先保存了更新的排班。请刷新页面后重新修改。',reloadPage:'刷新页面',
     loading:'加载中…',saving:'保存中…',fillRequired:'请填写日期、员工、开始时间和结束时间。',
     weekStarting:'本周开始',removeConfirm:'确定删除这个班次吗？'
   }
@@ -987,6 +987,9 @@ async function loadFromSheet(){
     const data=await res.json();
     staff=Array.isArray(data.staff)?data.staff:[];
     roster=Array.isArray(data.roster)?data.roster:[];
+    // Versions of what we just loaded: a save based on an older version is refused by the Sheet
+    if(typeof data.staffVersion==='number') rosterVer.rosterStaffSave=data.staffVersion;
+    if(typeof data.rosterVersion==='number') rosterVer.rosterShiftSave=data.rosterVersion;
     saveLocalOnly();
   }catch(e){
     loadLocal();
@@ -998,7 +1001,9 @@ async function loadFromSheet(){
 // whole roster, so only the latest one per type needs sending. "Saved to Google Sheet"
 // is shown only after the Apps Script confirms; until then the change exists on this
 // device only and the warning stays on screen with a retry button.
-const rosterSync = { running:false, queued:{}, failed:{} };
+const rosterSync = { running:false, queued:{}, failed:{}, conflict:false };
+const rosterVer = {};                                          // last version confirmed by the Sheet
+const rosterPending = { rosterStaffSave:[], rosterShiftSave:[] }; // our own sent-but-unconfirmed request ids
 function saveToSheet(payload){
   saveLocalOnly();
   if(!WEB_APP_URL){showStatus(T().savedLocal,'warn');return}
@@ -1014,14 +1019,32 @@ async function runRosterSync(){
       const ft = types[0]; const p = rosterSync.queued[ft]; delete rosterSync.queued[ft];
       showStatus(T().savingSheet,'warn',true);
       const req = apRequestFor(ft, { station:p.station, staff:p.staff, roster:p.roster });
-      const r = await apSubmit(WEB_APP_URL, Object.assign({}, p, { requestId:req.requestId }));
-      if(r.status === 'ok'){ apDone(ft); }
-      else if(!rosterSync.queued[ft]){ rosterSync.failed[ft] = { payload:p, result:r }; }
+      const pend = rosterPending[ft];
+      if(pend.indexOf(req.requestId) === -1) pend.push(req.requestId);
+      const r = await apSubmit(WEB_APP_URL, Object.assign({}, p, {
+        requestId:req.requestId, baseVersion:rosterVer[ft], pendingIds:pend.filter(id => id !== req.requestId)
+      }));
+      if(r.status === 'ok'){
+        apDone(ft);
+        if(r.data && typeof r.data.version === 'number') rosterVer[ft] = r.data.version;
+        rosterPending[ft] = [];
+      } else if(r.status === 'failed' && r.data && r.data.code === 'conflict'){
+        // Someone else saved a newer version: nothing was written, editing further would overwrite them
+        rosterPending[ft] = pend.filter(id => id !== req.requestId);
+        apDone(ft);
+        rosterSync.conflict = true;
+        rosterSync.queued = {}; rosterSync.failed = {};
+      } else {
+        if(r.status === 'failed') rosterPending[ft] = pend.filter(id => id !== req.requestId); // definitely not written
+        if(!rosterSync.queued[ft]){ rosterSync.failed[ft] = { payload:p, result:r }; }
+      }
     }
   }finally{
     rosterSync.running = false;
     const failedTypes = Object.keys(rosterSync.failed);
-    if(failedTypes.length){
+    if(rosterSync.conflict){
+      showStatus(T().conflictSheet,'warn',true,()=>location.reload(),T().reloadPage);
+    } else if(failedTypes.length){
       const r = rosterSync.failed[failedTypes[0]].result;
       showStatus((r.status==='unknown' ? T().unknownSheet : T().notSavedSheet) + (r.status==='failed' && r.error && !r.offline ? ' ('+r.error+')' : ''), 'warn', true, retryRosterSync);
     } else {
@@ -1149,10 +1172,10 @@ function formatDate(d){return d.toLocaleDateString(lang==='zh'?'zh-CN':'en-AU',{
 function formatDayName(d){return d.toLocaleDateString(lang==='zh'?'zh-CN':'en-AU',{weekday:'long'})}
 function makeId(){return 'id_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,8)}
 let statusTimer=null;
-function showStatus(msg,type,sticky,onRetry){
+function showStatus(msg,type,sticky,onRetry,retryLabel){
   const box=document.getElementById('statusBox');
   if(statusTimer){clearTimeout(statusTimer);statusTimer=null}
-  box.innerHTML=`<div class="alert ${type==='ok'?'ok':'warn'}">${escapeHtml(msg)}${onRetry?` <button type="button" id="roster-retry" style="margin-left:8px;border:none;border-radius:6px;padding:4px 10px;font-weight:700;cursor:pointer">${escapeHtml(T().retrySave)}</button>`:''}</div>`;
+  box.innerHTML=`<div class="alert ${type==='ok'?'ok':'warn'}">${escapeHtml(msg)}${onRetry?` <button type="button" id="roster-retry" style="margin-left:8px;border:none;border-radius:6px;padding:4px 10px;font-weight:700;cursor:pointer">${escapeHtml(retryLabel||T().retrySave)}</button>`:''}</div>`;
   if(onRetry){document.getElementById('roster-retry').onclick=onRetry}
   if(!sticky){statusTimer=setTimeout(()=>{box.innerHTML=''},3500)}
 }

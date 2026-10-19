@@ -235,7 +235,7 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
    The same payload keeps the same requestId until it succeeds, so a retry
    can never create a second row.
 ──────────────────────────────────────────────────────────────────────── */
-const AP_MIN_API_VERSION = 10;
+const AP_MIN_API_VERSION = 11;
 const AP_TIMEOUT_MS = 45000;
 const AP_TXT = {
   en:{ saving:'Saving to Google Sheet…', failedTitle:'Not saved',
@@ -429,6 +429,7 @@ const S = {
     loadingList:'Loading product list…',
     syncingList:'SYNCING',
     syncError:'NOT SAVED TO SHEET — tap to retry',
+    syncConflict:'LIST CHANGED ON ANOTHER DEVICE — tap to reload',
   },
   zh: {
     pageTitle:'香烟库存盘点 — Aries Petroleum',
@@ -466,6 +467,7 @@ const S = {
     loadingList:'正在加载产品列表…',
     syncingList:'同步中',
     syncError:'未保存到表格 — 点此重试',
+    syncConflict:'列表已在其他设备更新 — 点此刷新',
   }
 };
 function t() { return S[lang]; }
@@ -548,6 +550,7 @@ function loadProductsFromServer() {
       cleanup();
       try {
         if (data && data.success) {
+          if (typeof data.version === 'number') cigVersion = data.version;
           if (data.products === null) {
             _products = getDefaultProducts();
             saveProductsToServer(_products);
@@ -575,6 +578,8 @@ function loadProductsFromServer() {
 // on "not synced" until the Apps Script confirms the list was written to the Sheet.
 // Saves run one at a time; if the list changes while saving, the latest list is sent next.
 let cigSyncRunning = false, cigSyncQueued = null;
+let cigVersion;            // version of the list as last confirmed by the Sheet
+let cigPending = [];       // our own sent-but-unconfirmed request ids
 async function saveProductsToServer(list) {
   if (!station) return;
   setCachedProducts(list);
@@ -586,11 +591,21 @@ async function saveProductsToServer(list) {
       const next = cigSyncQueued; cigSyncQueued = null;
       showSyncBadge('syncing');
       const req = apRequestFor('cigProducts', { station, products: next });
-      const result = await apSubmit(SHEET_URL, { formType:'saveCigProducts', station, products:next, requestId:req.requestId });
+      if (cigPending.indexOf(req.requestId) === -1) cigPending.push(req.requestId);
+      const result = await apSubmit(SHEET_URL, { formType:'saveCigProducts', station, products:next, requestId:req.requestId,
+        baseVersion:cigVersion, pendingIds:cigPending.filter(id => id !== req.requestId) });
       if (result.status === 'ok') {
         apDone('cigProducts');
+        if (result.data && typeof result.data.version === 'number') cigVersion = result.data.version;
+        cigPending = [];
         if (!cigSyncQueued) hideSyncBadge();
+      } else if (result.status === 'failed' && result.data && result.data.code === 'conflict') {
+        cigPending = cigPending.filter(id => id !== req.requestId);
+        apDone('cigProducts');
+        cigSyncQueued = null;
+        showSyncBadge('conflict');
       } else {
+        if (result.status === 'failed') cigPending = cigPending.filter(id => id !== req.requestId);
         console.warn('CigProducts save not confirmed:', result);
         if (!cigSyncQueued) showSyncBadge('error', next);
       }
@@ -602,11 +617,13 @@ async function saveProductsToServer(list) {
 
 function showSyncBadge(type, unsavedList) {
   const el = document.getElementById('sync-badge');
-  el.className = 'sync-badge ' + type;
-  el.textContent = type === 'syncing' ? t().syncingList : t().syncError;
-  // Tap the red badge to retry with the same request (no duplicate list)
-  el.style.cursor = type === 'error' ? 'pointer' : '';
-  el.onclick = type === 'error' ? () => saveProductsToServer(unsavedList || getProducts()) : null;
+  const conflict = type === 'conflict';
+  el.className = 'sync-badge ' + (conflict ? 'error' : type);
+  el.textContent = type === 'syncing' ? t().syncingList : (conflict ? t().syncConflict : t().syncError);
+  // Red badge: tap to retry with the same request (no duplicate list), or reload after a conflict
+  el.style.cursor = (type === 'error' || conflict) ? 'pointer' : '';
+  el.onclick = conflict ? () => location.reload()
+             : type === 'error' ? () => saveProductsToServer(unsavedList || getProducts()) : null;
 }
 function hideSyncBadge() {
   const el = document.getElementById('sync-badge');
