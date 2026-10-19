@@ -223,6 +223,162 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
 </div>
 
 <script>
+/* ── AP reliable submit v1 ─────────────────────────────────────────────
+   Shared by every staff-portal form. Shows "saved" ONLY when the Apps
+   Script (API v9+) confirms the write for this exact requestId.
+     apSubmit(url, payload) → { status:'ok'|'failed'|'unknown', data, error }
+       ok      – written to Google Sheet (or already written earlier: duplicate)
+       failed  – definitely NOT written (server said so, or never sent: offline)
+       unknown – sent but no confirmation (timeout / connection lost / bad reply):
+                 it may have been written. Re-send with the SAME requestId only.
+   The same payload keeps the same requestId until it succeeds, so a retry
+   can never create a second row.
+──────────────────────────────────────────────────────────────────────── */
+const AP_MIN_API_VERSION = 9;
+const AP_TIMEOUT_MS = 45000;
+const AP_TXT = {
+  en:{ saving:'Saving to Google Sheet…', failedTitle:'Not saved',
+       failed:'Nothing was saved. Your entries are kept — check and submit again.',
+       offline:'No internet connection — nothing was sent. Your entries are kept. Reconnect and submit again.',
+       unknownTitle:'Save not confirmed',
+       unknown:'The connection timed out or dropped, so we could not confirm the save. It MAY already be saved. Do not fill the form in again. Tap "Send again" — it uses the same reference, so it can never be recorded twice.',
+       version:'The Google Sheet script is an older version and cannot confirm saves. Please tell the manager.',
+       retry:'Send again', close:'Close', busy:'Already saving — please wait.' },
+  zh:{ saving:'正在保存到 Google Sheet…', failedTitle:'未保存',
+       failed:'没有保存成功。您填写的内容都还在，请检查后重新提交。',
+       offline:'网络未连接，数据没有发出。您填写的内容都还在，请联网后重新提交。',
+       unknownTitle:'保存结果未确认',
+       unknown:'网络超时或中断，无法确认是否已保存，数据可能已经保存。请不要重新填写；点"再次提交"会使用同一编号，系统不会重复记录。',
+       version:'Google Sheet 后台脚本版本过旧，无法确认保存结果，请联系经理。',
+       retry:'再次提交', close:'关闭', busy:'正在保存，请稍候。' }
+};
+function apT(){ const l=(typeof lang!=='undefined'&&lang==='zh')?'zh':'en'; return AP_TXT[l]; }
+function apNewRequestId(prefix){ return (prefix||'REQ')+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,10); }
+
+const apPendingBySig = {};
+// Same content → same requestId (and same extra data, e.g. a reference no) until it succeeds
+function apRequestFor(key, stablePayload, makeExtra){
+  const sig = key + '|' + JSON.stringify(stablePayload);
+  if (!apPendingBySig[key] || apPendingBySig[key].sig !== sig) {
+    apPendingBySig[key] = { sig, requestId: apNewRequestId(key), extra: makeExtra ? makeExtra() : null };
+  }
+  return apPendingBySig[key];
+}
+function apDone(key){ delete apPendingBySig[key]; }
+
+async function apSubmit(url, payload, opts){
+  opts = opts || {};
+  if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    return { status:'failed', error:apT().offline, offline:true };
+  }
+  const ctrl = new AbortController();
+  const ms = opts.timeoutMs || (typeof window!=='undefined' && window.AP_TIMEOUT_OVERRIDE) || AP_TIMEOUT_MS;
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  let text = '';
+  try {
+    // No custom headers and no "no-cors": a plain text/plain POST is readable from Apps Script
+    const res = await fetch(url, { method:'POST', body:JSON.stringify(payload), signal:ctrl.signal, cache:'no-store', redirect:'follow' });
+    text = await res.text();
+  } catch (e) {
+    clearTimeout(timer);
+    return { status:'unknown', error:(e && e.name === 'AbortError') ? 'timeout' : 'network' };
+  }
+  clearTimeout(timer);
+  let data = null;
+  try { data = JSON.parse(text); } catch (e) { return { status:'unknown', error:'bad-response' }; }
+  if (!data || typeof data !== 'object') return { status:'unknown', error:'bad-response' };
+  if (data.success === false) return { status:'failed', data, error:String(data.error || 'error') };
+  if (data.success === true && data.saved === true && data.requestId === payload.requestId &&
+      Number(data.apiVersion) >= AP_MIN_API_VERSION) {
+    return { status:'ok', data };
+  }
+  if (data.success === true && !data.apiVersion) return { status:'unknown', error:'old-api', data };
+  return { status:'unknown', error:'unconfirmed', data };
+}
+
+// Full-screen "saving" layer + result dialog (fixed overlay: page layout untouched)
+function apEnsureUi(){
+  if (document.getElementById('ap-ui')) return;
+  const css = document.createElement('style');
+  css.textContent = '#ap-ui{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(15,23,42,.45);padding:16px}'
+   + '#ap-ui.show{display:flex}#ap-box{background:#fff;color:#111;border-radius:14px;max-width:420px;width:100%;padding:20px 18px;box-shadow:0 10px 40px rgba(0,0,0,.25);font-family:inherit}'
+   + '#ap-title{font-weight:800;font-size:17px;margin-bottom:8px}#ap-msg{font-size:14px;line-height:1.6;white-space:pre-line}'
+   + '#ap-detail{font-size:12px;color:#6b7280;margin-top:8px;word-break:break-word}'
+   + '#ap-btns{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}'
+   + '#ap-btns button{border:none;border-radius:9px;padding:10px 16px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}'
+   + '.ap-primary{background:#E60012;color:#fff}.ap-ghost{background:#eef0f3;color:#333}'
+   + '.ap-spin{display:inline-block;width:18px;height:18px;border:3px solid #e5e7eb;border-top-color:#E60012;border-radius:50%;animation:apspin .7s linear infinite;vertical-align:middle;margin-right:8px}'
+   + '@keyframes apspin{to{transform:rotate(360deg)}}#ap-box.warn #ap-title{color:#B45309}#ap-box.err #ap-title{color:#B91C1C}';
+  document.head.appendChild(css);
+  const ui = document.createElement('div');
+  ui.id = 'ap-ui';
+  ui.innerHTML = '<div id="ap-box"><div id="ap-title"></div><div id="ap-msg"></div><div id="ap-detail"></div><div id="ap-btns"></div></div>';
+  document.body.appendChild(ui);
+}
+function apShowSaving(){
+  apEnsureUi();
+  document.getElementById('ap-box').className = '';
+  document.getElementById('ap-title').innerHTML = '<span class="ap-spin"></span>' + apT().saving;
+  document.getElementById('ap-msg').textContent = '';
+  document.getElementById('ap-detail').textContent = '';
+  document.getElementById('ap-btns').innerHTML = '';
+  document.getElementById('ap-ui').classList.add('show');
+}
+function apHideUi(){ const u=document.getElementById('ap-ui'); if(u) u.classList.remove('show'); }
+function apShowResult(result, onRetry){
+  apEnsureUi();
+  const L = apT();
+  const unknown = result.status === 'unknown';
+  document.getElementById('ap-box').className = unknown ? 'warn' : 'err';
+  document.getElementById('ap-title').textContent = unknown ? ('⚠️ ' + L.unknownTitle) : ('❌ ' + L.failedTitle);
+  let msg = unknown ? L.unknown : (result.offline ? L.offline : L.failed);
+  if (unknown && result.error === 'old-api') msg = L.version;
+  document.getElementById('ap-msg').textContent = msg;
+  document.getElementById('ap-detail').textContent = (!unknown && !result.offline && result.error) ? result.error : '';
+  const btns = document.getElementById('ap-btns');
+  btns.innerHTML = '';
+  const close = document.createElement('button'); close.className='ap-ghost'; close.textContent=L.close;
+  close.onclick = apHideUi; btns.appendChild(close);
+  if (onRetry) {
+    const again = document.createElement('button'); again.className='ap-primary'; again.textContent=L.retry;
+    again.onclick = () => { apHideUi(); onRetry(); }; btns.appendChild(again);
+  }
+  document.getElementById('ap-ui').classList.add('show');
+}
+
+/* One-call helper for a whole form:
+   apRun({ key, url, buildPayload, makeExtra, onSaved, button })
+   - blocks double clicks, keeps entries on failure/unknown, retries with the same requestId */
+const apBusy = {};
+async function apRun(o){
+  if (apBusy[o.key]) { return; }
+  apBusy[o.key] = true;
+  const btn = o.button ? (typeof o.button === 'string' ? document.getElementById(o.button) : o.button) : null;
+  const btnWasDisabled = btn ? btn.disabled : false;
+  if (btn) btn.disabled = true;
+  try {
+    // Content signature: timestamps change on every click, so they don't count
+    const stable = Object.assign({}, o.buildPayload(null));
+    ['submittedAt','completedAt','updatedAt','openedAt','requestId'].forEach(k => delete stable[k]);
+    const req = apRequestFor(o.key, stable, o.makeExtra);
+    const payload = Object.assign({}, o.buildPayload(req.extra), { requestId:req.requestId });
+    apShowSaving();
+    const result = await apSubmit(o.url, payload);
+    if (result.status === 'ok') {
+      apHideUi();
+      apDone(o.key);
+      o.onSaved(result.data, req.extra, payload);
+    } else {
+      apShowResult(result, () => apRun(o));
+    }
+    return result;
+  } finally {
+    apBusy[o.key] = false;
+    if (btn) btn.disabled = btnWasDisabled;
+  }
+}
+</script>
+<script>
 // ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
@@ -269,7 +425,7 @@ const S = {
     staffHint:'✎ Not you? Tap to change',
     loadingList:'Loading product list…',
     syncingList:'SYNCING',
-    syncError:'SYNC ERROR — using local list',
+    syncError:'NOT SAVED TO SHEET — tap to retry',
   },
   zh: {
     pageTitle:'香烟库存盘点 — Aries Petroleum',
@@ -306,7 +462,7 @@ const S = {
     staffHint:'✎ 不是你？点击更改',
     loadingList:'正在加载产品列表…',
     syncingList:'同步中',
-    syncError:'同步失败 — 已使用本地列表',
+    syncError:'未保存到表格 — 点此重试',
   }
 };
 function t() { return S[lang]; }
@@ -412,31 +568,42 @@ function loadProductsFromServer() {
   });
 }
 
-// Save to server via no-cors POST with text/plain content type.
-// text/plain avoids CORS preflight, and Apps Script can read the raw body fine.
+// Save the shared product list. The local copy is only a cache: the badge stays
+// on "not synced" until the Apps Script confirms the list was written to the Sheet.
+// Saves run one at a time; if the list changes while saving, the latest list is sent next.
+let cigSyncRunning = false, cigSyncQueued = null;
 async function saveProductsToServer(list) {
   if (!station) return;
   setCachedProducts(list);
-  showSyncBadge('syncing');
+  cigSyncQueued = list;
+  if (cigSyncRunning) return;
+  cigSyncRunning = true;
   try {
-    const body = JSON.stringify({ formType: 'saveCigProducts', station, products: list });
-    await fetch(SHEET_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: body,
-    });
-    // no-cors means we can't read the response — assume success if no exception
-    hideSyncBadge();
-  } catch(err) {
-    console.warn('CigProducts save failed:', err);
-    showSyncBadge('error');
+    while (cigSyncQueued) {
+      const next = cigSyncQueued; cigSyncQueued = null;
+      showSyncBadge('syncing');
+      const req = apRequestFor('cigProducts', { station, products: next });
+      const result = await apSubmit(SHEET_URL, { formType:'saveCigProducts', station, products:next, requestId:req.requestId });
+      if (result.status === 'ok') {
+        apDone('cigProducts');
+        if (!cigSyncQueued) hideSyncBadge();
+      } else {
+        console.warn('CigProducts save not confirmed:', result);
+        if (!cigSyncQueued) showSyncBadge('error', next);
+      }
+    }
+  } finally {
+    cigSyncRunning = false;
   }
 }
 
-function showSyncBadge(type) {
+function showSyncBadge(type, unsavedList) {
   const el = document.getElementById('sync-badge');
   el.className = 'sync-badge ' + type;
   el.textContent = type === 'syncing' ? t().syncingList : t().syncError;
+  // Tap the red badge to retry with the same request (no duplicate list)
+  el.style.cursor = type === 'error' ? 'pointer' : '';
+  el.onclick = type === 'error' ? () => saveProductsToServer(unsavedList || getProducts()) : null;
 }
 function hideSyncBadge() {
   const el = document.getElementById('sync-badge');
@@ -752,8 +919,7 @@ function submitForm() {
     totalProducts:products.length,
     countedProducts:items.filter(x=>x.qty!==null).length,
   };
-  onSuccess();
-  fetch(SHEET_URL,{ method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) }).catch(()=>{});
+  apRun({ key:'cigarette', url:SHEET_URL, button:'cf-submit-btn', buildPayload:()=>payload, onSaved:()=>onSuccess() });
 }
 
 function onSuccess() { showScreen('success'); }
