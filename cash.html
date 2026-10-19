@@ -179,12 +179,13 @@ body{background:linear-gradient(180deg,#F8FAFC 0%,#EEF2F6 100%);color:var(--text
      apSubmit(url, payload) → { status:'ok'|'failed'|'unknown', data, error }
        ok      – written to Google Sheet (or already written earlier: duplicate)
        failed  – definitely NOT written (server said so, or never sent: offline)
-       unknown – sent but no confirmation (timeout / connection lost / bad reply):
+       unknown – sent but no confirmation (timeout / connection lost / bad reply /
+                 server reports "uncertain"):
                  it may have been written. Re-send with the SAME requestId only.
    The same payload keeps the same requestId until it succeeds, so a retry
    can never create a second row.
 ──────────────────────────────────────────────────────────────────────── */
-const AP_MIN_API_VERSION = 9;
+const AP_MIN_API_VERSION = 10;
 const AP_TIMEOUT_MS = 45000;
 const AP_TXT = {
   en:{ saving:'Saving to Google Sheet…', failedTitle:'Not saved',
@@ -237,12 +238,14 @@ async function apSubmit(url, payload, opts){
   let data = null;
   try { data = JSON.parse(text); } catch (e) { return { status:'unknown', error:'bad-response' }; }
   if (!data || typeof data !== 'object') return { status:'unknown', error:'bad-response' };
+  // The server says the outcome is uncertain (rows may be written) → never report "not saved"
+  if (data.uncertain === true || data.saved === null) return { status:'unknown', data, error:'unconfirmed' };
   if (data.success === false) return { status:'failed', data, error:String(data.error || 'error') };
   if (data.success === true && data.saved === true && data.requestId === payload.requestId &&
       Number(data.apiVersion) >= AP_MIN_API_VERSION) {
     return { status:'ok', data };
   }
-  if (data.success === true && !data.apiVersion) return { status:'unknown', error:'old-api', data };
+  if (data.success === true && !(Number(data.apiVersion) >= AP_MIN_API_VERSION)) return { status:'unknown', error:'old-api', data };
   return { status:'unknown', error:'unconfirmed', data };
 }
 
