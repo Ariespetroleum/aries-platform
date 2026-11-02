@@ -116,6 +116,12 @@ input,select{width:100%;padding:11px 13px;border:1.5px solid var(--border);borde
 input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px rgba(0,61,165,.09)}
 .search-btn{width:100%;padding:12px;border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:800;cursor:pointer;font-family:var(--sans);background:linear-gradient(135deg,var(--liberty-blue),var(--liberty-blue-dark));color:#fff;box-shadow:0 4px 14px rgba(0,61,165,.2)}
 .search-btn:disabled{opacity:.5;cursor:not-allowed}
+.search-box-sub{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.search-hint{font-size:12px;color:var(--muted);margin-top:10px;font-family:var(--mono)}
+.search-hint:empty{display:none}
+.search-hint strong{color:var(--text)}
+.history-card>div:first-child{margin-top:0!important;padding-top:0!important;border-top:none!important}
+.linked-note{font-size:11px;color:var(--muted);background:var(--surface-soft);border:1px solid var(--border);border-radius:8px;padding:7px 10px;margin-bottom:10px}
 
 .result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-top:12px;box-shadow:var(--shadow-sm);animation:slideUp .25s ease both}
 .result-card-title{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px}
@@ -234,48 +240,26 @@ input:focus,select:focus{border-color:var(--liberty-blue);box-shadow:0 0 0 3px r
     <div id="pane-search">
 
       <div class="search-box">
-        <div class="search-box-title" id="search-coffee-title">☕ Coffee Progress</div>
+        <div class="search-box-title" id="search-unified-title" style="margin-bottom:4px">🔍 Customer Lookup</div>
+        <div class="search-box-sub" id="search-unified-sub">☕ Coffee Buy 5 Get 1 · 🚗 Wash Buy 3 Get 1 · 💳 Monthly Wash Membership</div>
         <div class="fg">
-          <label class="flabel" id="lbl-coffee-phone">Customer Mobile</label>
-          <input type="tel" id="coffee-phone" placeholder="04xx xxx xxx" inputmode="tel" maxlength="13" onkeydown="if(event.key==='Enter')searchCoffee()">
+          <label class="flabel" id="lbl-unified-search">Mobile or Plate Number</label>
+          <input type="text" id="unified-search-input" placeholder="04xx xxx xxx or ABC123"
+            style="font-family:var(--mono);font-size:16px;font-weight:700;text-transform:uppercase"
+            autocomplete="off" autocorrect="off" spellcheck="false"
+            oninput="this.value=this.value.toUpperCase()"
+            onkeydown="if(event.key==='Enter')unifiedSearch()">
         </div>
-        <button class="search-btn" id="coffee-search-btn" onclick="searchCoffee()">
-          <span id="coffee-search-lbl">Search</span>
+        <button class="search-btn" id="unified-search-btn" onclick="unifiedSearch()">
+          <span id="unified-search-lbl">Search</span>
         </button>
-        <div id="coffee-result"></div>
+        <div id="unified-hint" class="search-hint"></div>
       </div>
 
-      <div class="search-box">
-        <div class="search-box-title" id="search-wash-title">🚗 Wash Reward Progress</div>
-        <div class="fg">
-          <label class="flabel" id="lbl-wash-search-label">Plate Number or Mobile</label>
-          <input type="text" id="wash-search-input" placeholder="e.g. ABC123 or 04xx xxx xxx"
-            style="font-family:var(--mono);font-size:14px;font-weight:700;text-transform:uppercase"
-            autocomplete="off"
-            oninput="this.value=this.value.toUpperCase()"
-            onkeydown="if(event.key==='Enter')searchWash()">
-        </div>
-        <button class="search-btn" id="wash-search-btn" onclick="searchWash()">
-          <span id="wash-search-lbl">Search</span>
-        </button>
-        <div id="wash-result"></div>
-      </div>
-
-      <div class="search-box">
-        <div class="search-box-title" id="search-monthly-title">💳 Monthly Membership</div>
-        <div class="fg">
-          <label class="flabel" id="lbl-monthly-search-label">Plate Number or Mobile</label>
-          <input type="text" id="monthly-search-input" placeholder="e.g. ABC123 or 04xx xxx xxx"
-            style="font-family:var(--mono);font-size:14px;font-weight:700;text-transform:uppercase"
-            autocomplete="off"
-            oninput="this.value=this.value.toUpperCase()"
-            onkeydown="if(event.key==='Enter')searchPlate()">
-        </div>
-        <button class="search-btn" id="plate-search-btn" onclick="searchPlate()">
-          <span id="plate-search-lbl">Search</span>
-        </button>
-        <div id="plate-result"></div>
-      </div>
+      <div id="coffee-result"></div>
+      <div id="wash-result"></div>
+      <div id="plate-result"></div>
+      <div id="history-result"></div>
 
     </div>
   </div>
@@ -336,6 +320,15 @@ const S = {
     lblMonthlySearchLabel:'Plate Number or Mobile',
     lblCoffeePhone:'Customer Mobile', lblWashSearchLabel:'Plate Number or Mobile', lblPlate:'Plate Number',
     searchBtn:'Search',
+    searchUnifiedTitle:'\ud83d\udd0d Customer Lookup',
+    searchUnifiedSub:'☕ Coffee Buy 5 Get 1 · 🚗 Wash Buy 3 Get 1 · 💳 Monthly Wash Membership',
+    lblUnifiedSearch:'Mobile or Plate Number',
+    unifiedPlaceholder:'04xx xxx xxx or ABC123',
+    unifiedEmpty:'Please enter a mobile or plate number.',
+    hintPhone:(q)=>`Searching by mobile <strong>${q}</strong> \u2014 coffee, wash 3-get-1 &amp; monthly`,
+    hintPlate:(q)=>`Searching by plate <strong>${q}</strong> \u2014 wash 3-get-1 &amp; monthly`,
+    hintPlateLinked:(q,p)=>`Searching by plate <strong>${q}</strong> \u00b7 linked mobile <strong>${p}</strong> \u2014 coffee also checked`,
+    linkedPhoneNote:(p,q)=>`Mobile ${p} found from plate ${q}`,
     pendingAlertCta:'View \u2192',
     pendingAlertText:n=>`${n} item${n===1?'':'s'} pending confirmation`,
     historyTitle:'Recent History',
@@ -367,6 +360,7 @@ const S = {
     noTicketWarn:(renewed)=>`${renewed?'Renewal':'Activation'} successful. This plate has ALREADY received today's wash ticket — do NOT issue another ticket.`,
     addMonthlyErr:'Could not activate. Please try again.',
     notFoundMonthly:'No membership found for this plate. Fill in the details below to activate a new one.',
+    notFoundMonthlyPhone:'No membership found for this mobile. Fill in the details below to activate a new one.',
     lblMonthlyPhone:'Customer Mobile',
     lblMonthlyTier:'Plan',
     selectTierStd:'Standard \u2014 $49/mo',
@@ -418,6 +412,15 @@ const S = {
     lblMonthlySearchLabel:'\u8F66\u724C\u53F7\u7801\u6216\u624B\u673A\u53F7',
     lblCoffeePhone:'\u987E\u5BA2\u624B\u673A\u53F7', lblWashSearchLabel:'\u8F66\u724C\u53F7\u7801\u6216\u624B\u673A\u53F7', lblPlate:'\u8F66\u724C\u53F7\u7801',
     searchBtn:'\u67E5\u8BE2',
+    searchUnifiedTitle:'\uD83D\uDD0D \u987E\u5BA2\u67E5\u8BE2',
+    searchUnifiedSub:'☕ 咖啡买五送一 · 🚗 洗车买三送一 · 💳 洗车包月会员',
+    lblUnifiedSearch:'\u624B\u673A\u53F7\u6216\u8F66\u724C\u53F7',
+    unifiedPlaceholder:'04xx xxx xxx \u6216 ABC123',
+    unifiedEmpty:'\u8BF7\u8F93\u5165\u624B\u673A\u53F7\u6216\u8F66\u724C\u53F7\u3002',
+    hintPhone:(q)=>`\u6309\u624B\u673A\u53F7 <strong>${q}</strong> \u67E5\u8BE2 \u2014\u2014 \u5496\u5561\u3001\u6D17\u4E09\u9001\u4E00\u3001\u5305\u6708\u4F1A\u5458`,
+    hintPlate:(q)=>`\u6309\u8F66\u724C <strong>${q}</strong> \u67E5\u8BE2 \u2014\u2014 \u6D17\u4E09\u9001\u4E00\u3001\u5305\u6708\u4F1A\u5458`,
+    hintPlateLinked:(q,p)=>`\u6309\u8F66\u724C <strong>${q}</strong> \u67E5\u8BE2 \u00B7 \u5173\u8054\u624B\u673A\u53F7 <strong>${p}</strong> \u2014\u2014 \u5DF2\u540C\u65F6\u67E5\u8BE2\u5496\u5561`,
+    linkedPhoneNote:(p,q)=>`\u624B\u673A\u53F7 ${p} \u6765\u81EA\u8F66\u724C ${q} \u7684\u767B\u8BB0\u8BB0\u5F55`,
     pendingAlertCta:'\u67E5\u770B \u2192',
     pendingAlertText:n=>`${n} \u6761\u8BB0\u5F55\u5F85\u786E\u8BA4`,
     historyTitle:'\u5386\u53F2\u8BB0\u5F55',
@@ -449,6 +452,7 @@ const S = {
     noTicketWarn:(renewed)=>`${renewed?'\u7EED\u8D39\u6210\u529F':'\u5F00\u901A\u6210\u529F'}\uFF0C\u4ECA\u5929\u5DF2\u9886\u8FC7\u6D17\u8F66\u7968\uFF0C\u8BF7\u52FF\u518D\u6B21\u53D1\u7968`,
     addMonthlyErr:'\u5F00\u901A\u5931\u8D25\uFF0C\u8BF7\u91CD\u8BD5\u3002',
     notFoundMonthly:'\u672A\u627E\u5230\u8BE5\u8F66\u724C\u7684\u4F1A\u5458\u8BB0\u5F55\uFF0C\u8BF7\u586B\u5199\u4EE5\u4E0B\u4FE1\u606F\u5F00\u901A\u65B0\u4F1A\u5458\u3002',
+    notFoundMonthlyPhone:'未找到该手机号的包月会员记录，请填写以下信息开通新会员。',
     lblMonthlyPhone:'\u987E\u5BA2\u624B\u673A\u53F7',
     lblMonthlyTier:'\u5957\u9910',
     selectTierStd:'Standard \u2014 $49/\u6708',
@@ -514,15 +518,11 @@ function applyLang(){
   document.getElementById('tab-search-lbl').textContent  = L.tabSearch;
   document.getElementById('loading-txt').textContent     = L.loading;
   const rl=document.getElementById('refresh-lbl'); if(rl) rl.textContent=L.refreshLbl;
-  document.getElementById('search-coffee-title').textContent  = L.searchCoffeeTitle;
-  document.getElementById('search-wash-title').textContent    = L.searchWashTitle;
-  document.getElementById('search-monthly-title').textContent = L.searchMonthlyTitle;
-  document.getElementById('lbl-coffee-phone').textContent      = L.lblCoffeePhone;
-  document.getElementById('lbl-wash-search-label').textContent  = L.lblWashSearchLabel;
-  document.getElementById('lbl-monthly-search-label').textContent = L.lblMonthlySearchLabel||'Plate Number or Mobile';
-  document.getElementById('coffee-search-lbl').textContent      = L.searchBtn;
-  document.getElementById('wash-search-lbl').textContent        = L.searchBtn;
-  document.getElementById('plate-search-lbl').textContent       = L.searchBtn;
+  document.getElementById('search-unified-title').textContent = L.searchUnifiedTitle;
+  document.getElementById('search-unified-sub').textContent   = L.searchUnifiedSub;
+  document.getElementById('lbl-unified-search').textContent   = L.lblUnifiedSearch;
+  document.getElementById('unified-search-input').placeholder = L.unifiedPlaceholder;
+  document.getElementById('unified-search-lbl').textContent   = L.searchBtn;
   document.getElementById('pending-alert-cta').textContent      = L.pendingAlertCta||'View \u2192';
   updateChip();
 }
@@ -753,26 +753,84 @@ function renderWashActions(id){
           <button class="action-btn btn-reject"  onclick="rejectWash('${id}')">${L.rejectBtn}</button>`;
 }
 
-async function searchCoffee(){
+/* ── Unified lookup: one box for mobile OR plate ──
+   Mobile → coffee + wash 3-get-1 + monthly, all in parallel.
+   Plate  → wash 3-get-1 + monthly; if either record has a mobile, coffee is checked with it. */
+let lastQuery = '';
+let searchBusy = false;
+
+async function unifiedSearch(rawIn){
   const L=t();
-  const phone=normalizePhone(document.getElementById('coffee-phone').value);
+  const input=document.getElementById('unified-search-input');
+  const raw=String(rawIn!==undefined?rawIn:input.value).trim().toUpperCase().replace(/\s/g,'');
+  const hint=document.getElementById('unified-hint');
+  const boxes=['coffee-result','wash-result','plate-result','history-result'].map(id=>document.getElementById(id));
+  if(!raw){
+    boxes.forEach(b=>b.innerHTML='');
+    hint.innerHTML=`<span style="color:var(--sinopec-red)">${L.unifiedEmpty}</span>`;
+    return;
+  }
+  if(searchBusy) return;
+  searchBusy=true;
+  lastQuery=raw;
+  const btn=document.getElementById('unified-search-btn');
+  btn.disabled=true;
+  boxes.forEach(b=>b.innerHTML='');
+  const isPhone=/^(04|4)\d{8}$/.test(raw);
+  try{
+    if(isPhone){
+      const phone=normalizePhone(raw);
+      hint.innerHTML=L.hintPhone(esc(phone));
+      await Promise.all([ searchCoffee(phone), searchWash(phone,''), searchPlate(phone,'') ]);
+      await loadHistory(phone,'');
+    } else {
+      hint.innerHTML=L.hintPlate(esc(raw));
+      const [w,m]=await Promise.all([ searchWash('',raw), searchPlate('',raw) ]);
+      const linked=normalizePhone((w&&w.found&&w.phone)||(m&&m.found&&m.phone)||'');
+      if(linked){
+        hint.innerHTML=L.hintPlateLinked(esc(raw),esc(linked));
+        // No membership yet for this plate → pre-fill the activation form with the mobile from the wash record
+        if(m && !m.found){
+          const mfPhone=document.getElementById('mf-phone');
+          if(mfPhone && !mfPhone.value) mfPhone.value=linked;
+        }
+        await searchCoffee(linked, raw);
+        await loadHistory(linked, raw);
+      }
+    }
+  }finally{
+    searchBusy=false;
+    btn.disabled=false;
+  }
+}
+
+function rerunSearch(){ return lastQuery ? unifiedSearch(lastQuery) : Promise.resolve(); }
+
+async function loadHistory(phone, plate){
+  const box=document.getElementById('history-result');
+  const histData=await fetchHistory(phone, plate);
+  const hist=histData?.history||[];
+  box.innerHTML = hist.length ? `<div class="result-card history-card">${renderHistory(hist, t())}</div>` : '';
+}
+
+async function searchCoffee(phone, viaPlate){
+  const L=t();
   const box=document.getElementById('coffee-result');
-  if(!phone){ box.innerHTML=`<div class="err-inline">${L.lblCoffeePhone}?</div>`; return; }
+  if(!phone){ box.innerHTML=''; return null; }
   box.innerHTML=`<div class="loading"><span class="spinner"></span>${L.loading}</div>`;
+  const linkedNote = viaPlate ? `<div class="linked-note">🔗 ${L.linkedPhoneNote(esc(phone),esc(viaPlate))}</div>` : '';
   try{
     const url=`${API_URL}?action=searchCoffee&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
     const res=await fetch(url); const data=await res.json();
-    const histData=await fetchHistory(phone,'');
-    const histHtml=renderHistory(histData?.history||[], L);
     if(!data.found){
       box.innerHTML=`
         <div class="result-card">
           <div class="result-card-title">${L.searchCoffeeTitle}</div>
+          ${linkedNote}
           <div style="font-size:13px;color:var(--muted);margin-bottom:12px">${L.notFoundAddCoffee}</div>
           <button class="redeem-btn" onclick="staffAddCoffee('${esc(phone)}',this)">${L.addCoffeeBtn}</button>
-          ${histHtml}
         </div>`;
-      return;
+      return data;
     }
     const c=data.confirmedPurchases||0;
     const mod=c%5; const remaining=5-mod;
@@ -787,6 +845,7 @@ async function searchCoffee(){
     box.innerHTML=`
       <div class="result-card">
         <div class="result-card-title">${L.searchCoffeeTitle}</div>
+        ${linkedNote}
         <div class="result-row"><span class="result-key">${L.rfName}</span><span class="result-val">${esc(data.name||'\u2014')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone||'')}</span></div>
         <div class="result-row"><span class="result-key">${L.rfConfirmed}</span><span class="result-val blue">${c}</span></div>
@@ -802,9 +861,9 @@ async function searchCoffee(){
           : ''}
         <button class="redeem-btn" style="margin-top:10px;background:linear-gradient(135deg,#0369a1,#075985)"
           onclick="staffAddCoffee('${esc(phone)}',this)">${L.addCoffeeBtn}</button>
-        ${histHtml}
       </div>`;
-  }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
+    return data;
+  }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; return null; }
 }
 
 function renderHistory(history, L){
@@ -836,27 +895,21 @@ async function fetchHistory(phone, plate){
   }catch(e){ return null; }
 }
 
-async function searchWash(){
+async function searchWash(phone, plate){
   const L=t();
-  const raw=document.getElementById('wash-search-input').value.trim().toUpperCase().replace(/\s/g,'');
   const box=document.getElementById('wash-result');
-  if(!raw){ box.innerHTML=`<div class="err-inline">${L.lblWashSearchLabel||'Plate or Mobile'}?</div>`; return; }
+  if(!phone && !plate){ box.innerHTML=''; return null; }
   box.innerHTML=`<div class="loading"><span class="spinner"></span>${L.loading}</div>`;
-  const isPhone=/^(04|4)\d{8}$/.test(raw);
-  const phone=isPhone?normalizePhone(raw):'';
-  const plate=isPhone?'':raw;
+  const isPhone=!!phone;
   try{
-    let data, histData;
+    let data;
     if(isPhone){
       const url=`${API_URL}?action=searchWashReward&phone=${encodeURIComponent(phone)}&token=${API_TOKEN}`;
       data=await (await fetch(url)).json();
-      histData=await fetchHistory(phone,'');
     } else {
       const url=`${API_URL}?action=searchWashByPlate&plate=${encodeURIComponent(plate)}&token=${API_TOKEN}`;
       data=await (await fetch(url)).json();
-      histData=data.phone?await fetchHistory(normalizePhone(data.phone),plate):null;
     }
-    const histHtml=renderHistory(histData?.history||[], L);
     if(!data.found){
       box.innerHTML=`
         <div class="result-card">
@@ -864,9 +917,8 @@ async function searchWash(){
           <div style="font-size:13px;color:var(--muted);margin-bottom:12px">${L.notFoundAddWash}</div>
           ${plate?`<div style="font-size:12px;color:var(--label);margin-bottom:10px">Plate: <strong style="font-family:var(--mono)">${esc(plate)}</strong></div>`:''}
           <button class="redeem-btn redeem-btn-red" onclick="staffAddWashFromSearch('${esc(plate)}','${esc(phone)}',this)">${L.addWashBtn}</button>
-          ${histHtml}
         </div>`;
-      return;
+      return data;
     }
     const c=data.confirmedWashes||0;
     const mod=c%3; const remaining=3-mod;
@@ -881,7 +933,7 @@ async function searchWash(){
     box.innerHTML=`
       <div class="result-card">
         <div class="result-card-title">${L.searchWashTitle}</div>
-        ${data.phone?`<div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(data.phone)}</span></div>`:''}
+        ${data.phone?`<div class="result-row"><span class="result-key">${L.rfPhone}</span><span class="result-val">${esc(normalizePhone(data.phone))}</span></div>`:''}
         ${plate?`<div class="result-row"><span class="result-key">${L.rfPlate}</span><span class="result-val">${esc(plate)}</span></div>`:''}
         <div class="result-row"><span class="result-key">${L.rfWashes}</span><span class="result-val red">${c}</span></div>
         <div class="result-row"><span class="result-key">${L.rfRedeemed}</span><span class="result-val">${data.freeRedeemed||0}</span></div>
@@ -890,9 +942,9 @@ async function searchWash(){
         ${rewardReady?`<div class="prog-free-banner">${L.freeWashReady}${freePending>1?`<span style="font-size:11px;display:block;margin-top:4px;opacity:.8">(${freePending} ${L.freePendingCount})</span>`:''}</div><button class="redeem-btn redeem-btn-red" onclick="redeemWash('${esc(addPhone)}',this)">${L.redeemWashBtn}</button>`:''}
         <button class="redeem-btn redeem-btn-red" style="margin-top:10px;background:linear-gradient(135deg,#b91c1c,#991b1b)"
           onclick="staffAddWashFromSearch('${esc(plate)}','${esc(addPhone)}',this)">${L.addWashBtn}</button>
-        ${histHtml}
       </div>`;
-  }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
+    return data;
+  }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; return null; }
 }
 
 async function staffAddWashFromSearch(plate, phone, btn){
@@ -904,20 +956,17 @@ async function staffAddWashFromSearch(plate, phone, btn){
       action:'staffAddWash',phone,plate,station,staffName:name,token:API_TOKEN,date:todayStr()
     })});
     const data=await res.json();
-    if(data.success){ showToast(L.addSuccess,'success'); await searchWash(); }
+    if(data.success){ showToast(L.addSuccess,'success'); await rerunSearch(); }
     else{ btn.disabled=false; btn.textContent=L.addWashBtn; showToast(data.error||L.addErr,'error'); }
   }catch(e){ btn.disabled=false; btn.textContent=L.addWashBtn; showToast(L.addErr,'error'); }
 }
 
-async function searchPlate(){
+async function searchPlate(phone, plate){
   const L=t();
-  const raw=document.getElementById('monthly-search-input').value.trim().toUpperCase().replace(/\s/g,'');
   const box=document.getElementById('plate-result');
-  if(!raw){ box.innerHTML=`<div class="err-inline">${L.lblMonthlySearchLabel||'Plate or Mobile'}?</div>`; return; }
+  if(!phone && !plate){ box.innerHTML=''; return null; }
   box.innerHTML=`<div class="loading"><span class="spinner"></span>${L.loading}</div>`;
-  const isPhone=/^(04|4)\d{8}$/.test(raw);
-  const plate=isPhone?'':raw;
-  const phone=isPhone?normalizePhone(raw):'';
+  const isPhone=!!phone;
   try{
     let data;
     if(isPhone){
@@ -933,10 +982,10 @@ async function searchPlate(){
       box.innerHTML=`
         <div class="result-card">
           <div class="result-card-title">${L.searchMonthlyTitle}</div>
-          <div style="font-size:13px;color:var(--muted);margin-bottom:14px">${L.notFoundMonthly}</div>
+          <div style="font-size:13px;color:var(--muted);margin-bottom:14px">${isPhone?L.notFoundMonthlyPhone:L.notFoundMonthly}</div>
           ${renderMonthlyForm(resolvedPlate, resolvedPhone)}
         </div>`;
-      return;
+      return data;
     }
     const todayDate=new Date().toISOString().slice(0,10);
     const expired=data.expiryDate && data.expiryDate < todayDate;
@@ -965,7 +1014,8 @@ async function searchPlate(){
           ${renderMonthlyForm(data.plate||resolvedPlate, data.phone||resolvedPhone)}
         </div>
       </div>`;
-  }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; }
+    return data;
+  }catch(e){ box.innerHTML=`<div class="err-inline">${L.toastErr}</div>`; return null; }
 }
 
 async function confirmMonthlyWash(plate, phone, btn){
@@ -981,7 +1031,7 @@ async function confirmMonthlyWash(plate, phone, btn){
     const data=await res.json();
     if(data.success){
       showToast(L.confirmMonthlyWashSuccess,'success');
-      await searchPlate();
+      await rerunSearch();
     } else if(data.error==='already_washed'){
       btn.disabled=false;
       btn.textContent=L.alreadyWashedToday;
@@ -1071,8 +1121,7 @@ async function staffAddMonthly(btn){
     if(data.success){
       if(data.ticketIssued===false){ showToast(L.noTicketWarn(data.renewed),'error'); alert(L.noTicketWarn(data.renewed)); }
       else showToast(L.addMonthlySuccess,'success');
-      document.getElementById('monthly-search-input').value=plate;
-      await searchPlate();
+      await rerunSearch();
     } else {
       btn.disabled=false; btn.textContent=L.addMonthlyBtn;
       showErr(data.error||L.addMonthlyErr);
@@ -1175,7 +1224,7 @@ async function staffAddCoffee(phone, btn){
     const data=await res.json();
     if(data.success){
       showToast(L.addSuccess,'success');
-      await searchCoffee();
+      await rerunSearch();
     } else {
       btn.disabled=false; btn.textContent=L.addCoffeeBtn;
       showToast(data.error||L.addErr,'error');
@@ -1197,7 +1246,7 @@ async function staffAddWash(phone, btn){
     const data=await res.json();
     if(data.success){
       showToast(L.addSuccess,'success');
-      await searchWash();
+      await rerunSearch();
     } else {
       btn.disabled=false; btn.textContent=L.addWashBtn;
       showToast(data.error||L.addErr,'error');
